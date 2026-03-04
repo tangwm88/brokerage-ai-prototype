@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超级数字员工工作台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+        }
+        
+        /* 顶部 */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e5e6eb;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 18px; font-weight: 600; color: #3370ff; }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, #3370ff, #85a5ff);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px;
+        }
+        
+        /* 主内容 */
+        .main {
+            margin-top: 56px;
+            padding: 24px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 今日任务区 - AI自动推送 */
+        .today-tasks {
+            background: linear-gradient(135deg, #3370ff 0%, #7b9dff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .today-tasks h2 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .task-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .task-item:hover { background: rgba(255,255,255,0.25); }
+        .task-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .task-content { flex: 1; }
+        .task-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .task-desc { font-size: 12px; opacity: 0.85; }
+        .task-tag {
+            background: rgba(255,255,255,0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        /* 超级数字员工区 */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .digital-workers {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .worker-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e5e6eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .worker-card:hover {
+            border-color: #3370ff;
+            box-shadow: 0 4px 12px rgba(51,112,255,0.1);
+        }
+        .worker-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .worker-avatar {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+        }
+        .worker-avatar.blue { background: #e8f0ff; }
+        .worker-avatar.green { background: #e6f7e6; }
+        .worker-avatar.orange { background: #fff3e0; }
+        .worker-avatar.purple { background: #f3e5f5; }
+        .worker-avatar.cyan { background: #e0f7fa; }
+        .worker-avatar.red { background: #ffebee; }
+        .worker-avatar.indigo { background: #e8eaf6; }
+        
+        .worker-info h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .worker-info p {
+            font-size: 12px;
+            color: #86909c;
+        }
+        .worker-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .action-chip {
+            background: #f2f3f5;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #4e5969;
+        }
+        
+        /* 主动发起任务区 */
+        .initiate-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e6eb;
+        }
+        .input-area {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .task-input {
+            flex: 1;
+            border: 1px solid #dcdfe6;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            outline: none;
+        }
+        .task-input:focus { border-color: #3370ff; }
+        .submit-btn {
+            background: #3370ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .quick-btn {
+            background: #f2f3f5;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            color: #4e5969;
+            cursor: pointer;
+        }
+        .quick-btn:hover { background: #e5e6eb; }
+        
+        /* 工作进展 */
+        .progress-section {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e5e6eb;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2329;
+        }
+        .stat-trend {
+            font-size: 12px;
+            color: #00b42a;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="logo">🤖 超级数字员工工作台</div>
+        <div class="header-right">
+            <span style="font-size: 13px; color: #86909c;">前端团队 · 客户经理</span>
+            <div class="avatar">张</div>
+        </div>
+    </div>
+    
+    <!-- 主内容 -->
+    <div class="main">
+        <!-- 今日任务 - AI自动推送 -->
+        <div class="today-tasks">
+            <h2>📋 今日重点任务（AI自动识别）</h2>
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-icon">💰</div>
+                    <div class="task-content">
+                        <div class="task-title">客户资金盘活提醒</div>
+                        <div class="task-desc">客户【深圳某私募基金】账户闲置资金800万，建议推荐稳健理财产品</div>
+                    </div>
+                    <span class="task-tag">财富管理</span>
+                </div>
+                <div class="task-item">
+                    <div class="task-icon">📊</div>
+                    <div class="task-content">
+                        <div class="task-title">尽调任务待完成</div>
+                        <div class="task-desc">【芯源电子并购项目】需补充财务尽调信息，投行机器人已生成清单</div>
+                    </div>
+                    <span class="task-tag">投资银行</span>
+                </div>
+                <div class="task-item">
+                    <div class="task-icon">🎯</div>
+                    <div class="task-content">
+                        <div class="task-title">产品销售机会</div>
+                        <div class="task-desc">一级债【24国开05】匹配3家潜在客户，销售机器人已准备话术</div>
+                    </div>
+                    <span class="task-tag">销售交易</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 超级数字员工 -->
+        <div class="section-title">
+            <span>🚀 调用超级数字员工</span>
+            <span style="font-size: 13px; color: #86909c; font-weight: normal;">点击即可分配任务</span>
+        </div>
+        <div class="digital-workers">
+            <div class="worker-card">
+                <div class="worker-header">
+                    <div class="worker-avatar blue">📈</div>
+                    <div class="worker-info">
+                        <h3>资产分析数字员工</h3>
+                        <p>信评分析 · 资产定价 · 风险评估</p>
+                    </div>
+                </div>
+                <div class="worker-actions">
+                    <span class="action-chip">债券信评</span>
+                    <span class="action-chip">股票分析</span>
+                    <span class="action-chip">资产定价</span>
+                    <span class="action-chip">风险扫描</span>
+                </div>
+            </div>
+            
+            <div class="worker-card">
+                <div class="worker-header">
+                    <div class="worker-avatar green">🎧</div>
+                    <div class="worker-info">
+                        <h3>客户服务数字员工</h3>
+                        <p>舆情监控 · 定期回访 · 投诉处理</p>
+                    </div>
+                </div>
+                <div class="worker-actions">
+                    <span class="action-chip">舆情监测</span>
+                    <span class="action-chip">客户回访</span>
+                    <span class="action-chip">满意度调查</span>
+                    <span class="action-chip">投诉跟进</span>
+                </div>
+            </div>
+            
+            <div class="worker-card">
+                <div class="worker-header">
+                    <div class="worker-avatar orange">⚡</div>
+                    <div class="worker-info">
+                        <h3>交易能力数字员工</h3>
+                        <p>算法配置 · 订单执行 · 成交分析</p>
+                    </div>
+                </div>
+                <div class="worker-actions">
+                    <span class="action-chip">TWAP配置</span>
+                    <span class="action-chip">VWAP配置</span>
+                    <span class="action-chip">异常监控</span>
+                    <span class="action-chip">成本分析</span>
+                </div>
+            </div>
+            
+            <div class="worker-card">
+                <div class="worker-header">
+                    <div class="worker-avatar purple">🔬</div>
+                    <div class="worker-info">
+                        <h3>研究数字员工</h3>
+                        <p>研报生成 · 数据挖掘 · 行业洞察</p>
+                    </div>
+                </div>
+                <div class="worker-actions">
+                    <span class="action-chip">研报撰写</span>
+                    <span class="action-chip">数据收集</span>
+                    <span class="action-chip">行业跟踪</span>
+                    <span class="action-chip">事件提醒</span>
+                </div>
+            </div>
+            
+            <div class="worker-card">
+                <div class="worker-header">
+                    <div class="worker-avatar cyan">💡</div>
+                    <div class="worker-info">
+                        <h3>产品创设数字员工</h3>
+                        <p>方案设计 · 材料制作 · 合规审核</p>
+                    </div>
+                </div>
+                <div class="worker-actions">
+                    <span class="action-chip">资管产品</span>
+                    <span class="action-chip">投顾方案</span>
+                    <span class="action-chip">材料生成</span>
+                    <span class="action-chip">合规检查</span>
+                </div>
+            </div>
+            
+            <div class="worker-card">
+                <div class="worker-header">
+                    <div class="worker-avatar red">🎯</div>
+                    <div class="worker-info">
+                        <h3>产品销售数字员工</h3>
+                        <p>客户匹配 · 销售话术 · 机会挖掘</p>
+                    </div>
+                </div>
+                <div class="worker-actions">
+                    <span class="action-chip">客户画像</span>
+                    <span class="action-chip">产品匹配</span>
+                    <span class="action-chip">话术生成</span>
+                    <span class="action-chip">机会提醒</span>
+                </div>
+            </div>
+            
+            <div class="worker-card">
+                <div class="worker-header">
+                    <div class="worker-avatar indigo">💼</div>
+                    <div class="worker-info">
+                        <h3>投资数字员工</h3>
+                        <p>组合管理 · 收益分析 · 策略建议</p>
+                    </div>
+                </div>
+                <div class="worker-actions">
+                    <span class="action-chip">组合诊断</span>
+                    <span class="action-chip">收益归因</span>
+                    <span class="action-chip">策略回测</span>
+                    <span class="action-chip">调仓建议</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主动发起任务 -->
+        <div class="initiate-section">
+            <div class="section-title">
+                <span>✍️ 发起新任务</span>
+                <span style="font-size: 13px; color: #86909c; font-weight: normal;">描述业务需求，AI自动分解并派发</span>
+            </div>
+            <div class="input-area">
+                <input type="text" class="task-input" placeholder="例如：帮我准备深圳某私募客户的季度资产配置方案，需要包含债券和权益类产品">
+                <button class="submit-btn">提交任务</button>
+            </div>
+            <div class="quick-actions">
+                <button class="quick-btn">📋 高净值客户开户</button>
+                <button class="quick-btn">📊 生成尽调报告</button>
+                <button class="quick-btn">🎯 产品销售推荐</button>
+                <button class="quick-btn">⚠️ 舆情事件响应</button>
+                <button class="quick-btn">📈 客户账户分析</button>
+            </div>
+        </div>
+        
+        <!-- 工作进展 -->
+        <div class="progress-section">
+            <div class="stat-card">
+                <div class="stat-label">本月任务完成</div>
+                <div class="stat-value">28</div>
+                <div class="stat-trend">↑ 12% 较上月</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">AI辅助次数</div>
+                <div class="stat-value">156</div>
+                <div class="stat-trend">↑ 35% 较上月</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">客户转化数</div>
+                <div class="stat-value">6</div>
+                <div class="stat-trend">↑ 20% 较上月</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构经纪业务组织者工作台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+        }
+        
+        /* 顶部 */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e5e6eb;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 18px; font-weight: 600; color: #3370ff; }
+        .org-badge {
+            background: linear-gradient(135deg, #3370ff, #7b9dff);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .round-table-btn {
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, #3370ff, #85a5ff);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px;
+        }
+        
+        /* 主内容 */
+        .main {
+            margin-top: 56px;
+            padding: 24px;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 顶部统计 */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #e5e6eb;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2329;
+        }
+        .stat-change {
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        .stat-change.up { color: #00b42a; }
+        .stat-change.down { color: #f53f3f; }
+        
+        /* 主要内容区 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 380px;
+            gap: 20px;
+        }
+        
+        /* 超级数字员工调度 */
+        .workers-panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e5e6eb;
+            padding: 20px;
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .panel-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .panel-subtitle {
+            font-size: 12px;
+            color: #86909c;
+        }
+        
+        .worker-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .worker-row {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            gap: 12px;
+        }
+        .worker-icon {
+            width: 40px; height: 40px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .worker-icon.blue { background: #e8f0ff; }
+        .worker-icon.green { background: #e6f7e6; }
+        .worker-icon.orange { background: #fff3e0; }
+        .worker-icon.purple { background: #f3e5f5; }
+        .worker-icon.cyan { background: #e0f7fa; }
+        .worker-icon.red { background: #ffebee; }
+        
+        .worker-detail { flex: 1; }
+        .worker-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .worker-status { font-size: 12px; color: #86909c; }
+        .worker-stats {
+            display: flex;
+            gap: 16px;
+            text-align: center;
+        }
+        .w-stat { 
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .w-stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #3370ff;
+        }
+        .w-stat-label {
+            font-size: 10px;
+            color: #86909c;
+        }
+        
+        /* 任务调度 */
+        .tasks-panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e5e6eb;
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #e5e6eb;
+            padding-bottom: 12px;
+        }
+        .tab {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #4e5969;
+        }
+        .tab.active {
+            background: #e8f0ff;
+            color: #3370ff;
+            font-weight: 500;
+        }
+        .tab-badge {
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+        
+        .task-item {
+            padding: 14px;
+            border: 1px solid #e5e6eb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .task-item.urgent {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .task-title { font-size: 14px; font-weight: 500; }
+        .task-priority {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .task-priority.high {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .task-priority.normal {
+            background: #f2f3f5;
+            color: #86909c;
+        }
+        .task-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 10px;
+        }
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #3370ff;
+            color: #fff;
+        }
+        .btn-secondary {
+            background: #f2f3f5;
+            color: #4e5969;
+        }
+        
+        /* 右侧边栏 */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        /* 圆桌会议动态 */
+        .round-panel {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            border-radius: 12px;
+            padding: 16px;
+            color: #fff;
+        }
+        .round-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .round-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .round-item-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .round-item-desc {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        
+        /* 考核看板 */
+        .kpi-panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e5e6eb;
+            padding: 16px;
+        }
+        .kpi-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .kpi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .kpi-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .kpi-name { font-size: 13px; }
+        .kpi-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3370ff;
+        }
+        .kpi-progress {
+            width: 60px;
+            height: 4px;
+            background: #e5e6eb;
+            border-radius: 2px;
+            margin-top: 4px;
+        }
+        .kpi-progress-bar {
+            height: 100%;
+            background: #3370ff;
+            border-radius: 2px;
+        }
+        
+        /* 快速调度 */
+        .quick-panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e5e6eb;
+            padding: 16px;
+        }
+        .quick-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .quick-btn {
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .quick-btn:hover {
+            background: #e8f0ff;
+            border-color: #3370ff;
+            color: #3370ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部 -->
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div class="logo">🏛️ 机构经纪业务组织者工作台</div>
+            <span class="org-badge">业务支持中心</span>
+        </div>
+        <div class="header-right">
+            <button class="round-table-btn">
+                🔔 圆桌会议
+                <span style="background: #fff; color: #ff6b6b; padding: 2px 8px; border-radius: 10px; font-size: 11px;">3</span>
+            </button>
+            <span style="font-size: 13px; color: #86909c;">组织者 · 李经理</span>
+            <div class="avatar">李</div>
+        </div>
+    </div>
+    
+    <!-- 主内容 -->
+    <div class="main">
+        <!-- 统计栏 -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-label">今日活跃员工</div>
+                <div class="stat-value">24</div>
+                <div class="stat-change up">↑ 4人较昨日</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">进行中的任务</div>
+                <div class="stat-value">18</div>
+                <div class="stat-change up">↑ 5个较昨日</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">待处理请示</div>
+                <div class="stat-value" style="color: #ff6b6b;">3</div>
+                <div class="stat-change down">需今日处理</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">本月业务目标</div>
+                <div class="stat-value">82%</div>
+                <div class="stat-change up">↑ 超前进度</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">客户转化率</div>
+                <div class="stat-value">23%</div>
+                <div class="stat-change up">↑ 2%较上月</div>
+            </div>
+        </div>
+        
+        <!-- 内容区 -->
+        <div class="content-grid">
+            <!-- 左侧：超级数字员工调度 -->
+            <div class="workers-panel">
+                <div class="panel-header">
+                    <span class="panel-title">🤖 超级数字员工调度</span>
+                    <span class="panel-subtitle">统筹管理各角色数字员工</span>
+                </div>
+                
+                <div class="worker-list">
+                    <div class="worker-row">
+                        <div class="worker-icon blue">📈</div>
+                        <div class="worker-detail">
+                            <div class="worker-name">资产分析数字员工</div>
+                            <div class="worker-status">运行中 · 信评任务 12个</div>
+                        </div>
+                        <div class="worker-stats">
+                            <div class="w-stat">
+                                <span class="w-stat-value">156</span>
+                                <span class="w-stat-label">本月任务</span>
+                            </div>
+                            <div class="w-stat">
+                                <span class="w-stat-value">98%</span>
+                                <span class="w-stat-label">完成率</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="worker-row">
+                        <div class="worker-icon green">🎧</div>
+                        <div class="worker-detail">
+                            <div class="worker-name">客户服务数字员工</div>
+                            <div class="worker-status">运行中 · 舆情监控 8个客户</div>
+                        </div>
+                        <div class="worker-stats">
+                            <div class="w-stat">
+                                <span class="w-stat-value">89</span>
+                                <span class="w-stat-label">本月回访</span>
+                            </div>
+                            <div class="w-stat">
+                                <span class="w-stat-value">4.8</span>
+                                <span class="w-stat-label">满意度</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="worker-row">
+                        <div class="worker-icon orange">⚡</div>
+                        <div class="worker-detail">
+                            <div class="worker-name">交易能力数字员工</div>
+                            <div class="worker-status">运行中 · 算法配置 5个</div>
+                        </div>
+                        <div class="worker-stats">
+                            <div class="w-stat">
+                                <span class="w-stat-value">42</span>
+                                <span class="w-stat-label">配置任务</span>
+                            </div>
+                            <div class="w-stat">
+                                <span class="w-stat-value">0</span>
+                                <span class="w-stat-label">异常</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="worker-row">
+                        <div class="worker-icon purple">🔬</div>
+                        <div class="worker-detail">
+                            <div class="worker-name">研究数字员工</div>
+                            <div class="worker-status">运行中 · 研报撰写 3篇</div>
+                        </div>
+                        <div class="worker-stats">
+                            <div class="w-stat">
+                                <span class="w-stat-value">28</span>
+                                <span class="w-stat-label">本月研报</span>
+                            </div>
+                            <div class="w-stat">
+                                <span class="w-stat-value">15</span>
+                                <span class="w-stat-label">路演</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="worker-row">
+                        <div class="worker-icon cyan">💡</div>
+                        <div class="worker-detail">
+                            <div class="worker-name">产品创设数字员工</div>
+                            <div class="worker-status">运行中 · 方案设计 6个</div>
+                        </div>
+                        <div class="worker-stats">
+                            <div class="w-stat">
+                                <span class="w-stat-value">12</span>
+                                <span class="w-stat-label">方案完成</span>
+                            </div>
+                            <div class="w-stat">
+                                <span class="w-stat-value">8</span>
+                                <span class="w-stat-label">审核中</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="worker-row">
+                        <div class="worker-icon red">🎯</div>
+                        <div class="worker-detail">
+                            <div class="worker-name">产品销售数字员工</div>
+                            <div class="worker-status">运行中 · 机会挖掘 15个</div>
+                        </div>
+                        <div class="worker-stats">
+                            <div class="w-stat">
+                                <span class="w-stat-value">68</span>
+                                <span class="w-stat-label">推荐数</span>
+                            </div>
+                            <div class="w-stat">
+                                <span class="w-stat-value">23%</span>
+                                <span class="w-stat-label">转化率</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 中间：任务调度 -->
+            <div class="tasks-panel">
+                <div class="panel-header">
+                    <span class="panel-title">📋 任务调度中心</span>
+                    <span class="panel-subtitle">前端输入任务 · 智能分解 · 派发执行</span>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active">
+                        待派发
+                        <span class="tab-badge">3</span>
+                    </div>
+                    <div class="tab">执行中</div>
+                    <div class="tab">待审核</div>
+                    <div class="tab">已完成</div>
+                </div>
+                
+                <div class="task-item urgent">
+                    <div class="task-header">
+                        <span class="task-title">🚨 跨部门协调：某战略级客户综合服务方案</span>
+                        <span class="task-priority high">请示</span>
+                    </div>
+                    <div class="task-meta">
+                        <span>发起人：张经理（前端团队）</span>
+                        <span>涉及：财富/投行/研究</span>
+                        <span>2小时前</span>
+                    </div>
+                    <div style="font-size: 13px; color: #4e5969; margin-bottom: 10px;">
+                        客户为管理规模50亿的私募，需要综合金融服务，涉及资管产品定制、并购咨询、研究服务。
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-sm btn-primary">向圆桌会议请示</button>
+                        <button class="btn-sm btn-secondary">先协调内部</button>
+                    </div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">季度资产配置方案制作</span>
+                        <span class="task-priority normal">待派发</span>
+                    </div>
+                    <div class="task-meta">
+                        <span>发起人：王经理</span>
+                        <span>客户：深圳某私募基金</span>
+                        <span>期望：3天内完成</span>
+                    </div>
+                    <div style="font-size: 13px; color: #4e5969; margin-bottom: 10px;">
+                        需要资产分析+产品创设+产品销售三个数字员工协作
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-sm btn-primary">一键派发</button>
+                        <button class="btn-sm btn-secondary">调整任务</button>
+                    </div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">舆情事件应急响应</span>
+                        <span class="task-priority high">紧急</span>
+                    </div>
+                    <div class="task-meta">
+                        <span>触发：系统自动</span>
+                        <span>客户：持仓某股票重大公告</span>
+                        <span>10分钟前</span>
+                    </div>
+                    <div style="font-size: 13px; color: #4e5969; margin-bottom: 10px;">
+                        客户服务数字员工已生成简报，需指派客户经理跟进
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-sm btn-primary">立即指派</button>
+                        <button class="btn-sm btn-secondary">查看简报</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧边栏 -->
+            <div class="sidebar">
+                <!-- 圆桌会议 -->
+                <div class="round-panel">
+                    <div class="round-title">
+                        🔔 圆桌会议动态
+                        <span style="margin-left: auto; font-size: 12px; font-weight: normal;">查看全部></span>
+                    </div>
+                    
+                    <div class="round-item">
+                        <div class="round-item-title">⚠️ 待决策：战略级客户政策</div>
+                        <div class="round-item-desc">某50亿私募需要定制费率，需领导审批</div>
+                    </div>
+                    
+                    <div class="round-item">
+                        <div class="round-item-title">📊 重要通报：Q1业绩回顾</div>
+                        <div class="round-item-desc">业务目标达成82%，需冲刺最后两周</div>
+                    </div>
+                    
+                    <div class="round-item">
+                        <div class="round-item-title">🚀 创新支持：AI展业工具试点</div>
+                        <div class="round-item-desc">申请3名前端员工参与智能体试点</div>
+                    </div>
+                </div>
+                
+                <!-- 考核看板 -->
+                <div class="kpi-panel">
+                    <div class="kpi-header">📊 AI驱动考核看板</div>
+                    
+                    <div class="kpi-list">
+                        <div class="kpi-item">
+                            <div>
+                                <div class="kpi-name">客户开发总数</div>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar" style="width: 82%;"></div>
+                                </div>
+                            </div>
+                            <div class="kpi-value">82/100</div>
+                        </div>
+                        
+                        <div class="kpi-item">
+                            <div>
+                                <div class="kpi-name">服务满意度</div>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar" style="width: 96%;"></div>
+                                </div>
+                            </div>
+                            <div class="kpi-value">4.8/5</div>
+                        </div>
+                        
+                        <div class="kpi-item">
+                            <div>
+                                <div class="kpi-name">底座数据回流</div>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar" style="width: 95%;"></div>
+                                </div>
+                            </div>
+                            <div class="kpi-value">95%</div>
+                        </div>
+                        
+                        <div class="kpi-item">
+                            <div>
+                                <div class="kpi-name">数字员工活跃度</div>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar" style="width: 88%;"></div>
+                                </div>
+                            </div>
+                            <div class="kpi-value">88%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 快速调度 -->
+                <div class="quick-panel">
+                    <div class="quick-title">⚡ 快速调度</div>
+                    
+                    <div class="quick-grid">
+                        <div class="quick-btn">🚀 启动数字员工</div>
+                        <div class="quick-btn">📊 查看运行状态</div>
+                        <div class="quick-btn">📝 发布任务</div>
+                        <div class="quick-btn">⚠️ 异常处理</div>
+                        <div class="quick-btn">📈 生成报表</div>
+                        <div class="quick-btn">🔔 圆桌请示</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
