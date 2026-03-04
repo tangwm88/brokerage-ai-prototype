@@ -15,6 +15,7 @@
             --text: #1d1d1f;
             --text-secondary: rgba(0,0,0,0.5);
             --primary: #007aff;
+            --success: #34c759;
             --warning: #ff9500;
             --danger: #ff3b30;
         }
@@ -40,7 +41,7 @@
         
         .brand { font-size: 16px; font-weight: 600; }
         .status { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); }
-        .status-dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite; }
+        .status-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
         
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -78,8 +79,8 @@
         
         .ai-content { flex: 1; font-size: 15px; line-height: 1.7; }
         
-        /* 业务导航网格 - 核心 */
-        .biz-nav {
+        /* 工作台概览卡片 */
+        .workbench-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -87,149 +88,165 @@
             margin: 8px 0;
         }
         
-        .nav-title {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-        
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        
-        .nav-item {
-            background: rgba(0,0,0,0.03);
-            border-radius: 12px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-            text-align: center;
-        }
-        
-        .nav-item:hover {
-            background: rgba(0,0,0,0.06);
-            border-color: rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .nav-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-        
-        .nav-name {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        
-        .nav-desc {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        
-        /* 分类详情面板 */
-        .category-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            margin: 8px 0;
-        }
-        
-        .panel-header {
+        .wb-header {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
         }
         
-        .panel-icon {
+        .wb-icon {
             width: 36px; height: 36px;
             border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
             font-size: 18px;
         }
         
-        .panel-title { font-size: 16px; font-weight: 600; }
+        .wb-title { font-size: 16px; font-weight: 600; flex: 1; }
+        .wb-count { font-size: 13px; color: var(--text-secondary); }
         
-        /* 子分类列表 */
-        .subcategory-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        /* 任务项 */
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
         
-        .sub-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
+        .task-item {
             background: rgba(0,0,0,0.02);
             border-radius: 12px;
+            padding: 14px;
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid transparent;
+            position: relative;
         }
         
-        .sub-item:hover {
+        .task-item:hover {
             background: rgba(0,0,0,0.04);
-            border-color: var(--primary);
+            border-color: rgba(0,0,0,0.1);
         }
         
-        .sub-icon {
-            width: 36px; height: 36px;
+        .task-item.urgent { border-left: 3px solid var(--danger); }
+        .task-item.warning { border-left: 3px solid var(--warning); }
+        .task-item.success { border-left: 3px solid var(--success); }
+        
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .task-avatar {
+            width: 32px; height: 32px;
             border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-            background: rgba(0,0,0,0.05);
+            font-size: 14px; font-weight: 600;
         }
         
-        .sub-info { flex: 1; }
-        .sub-name { font-size: 14px; font-weight: 500; }
-        .sub-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-        .sub-arrow { font-size: 18px; color: var(--text-secondary); }
+        .task-info { flex: 1; }
+        .task-name { font-size: 14px; font-weight: 500; }
+        .task-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
         
-        /* 业务卡片 */
-        .biz-card {
+        .task-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-urgent { background: rgba(255,59,48,0.1); color: var(--danger); }
+        .status-warning { background: rgba(255,149,0,0.1); color: var(--warning); }
+        .status-progress { background: rgba(0,122,255,0.1); color: var(--primary); }
+        
+        /* 步骤进度 */
+        .task-steps {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.02);
+            border-radius: 8px;
+        }
+        
+        .step-dot {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px;
+        }
+        
+        .step-done { background: var(--success); color: white; }
+        .step-current { background: var(--primary); color: white; }
+        .step-pending { background: rgba(0,0,0,0.1); color: var(--text-secondary); }
+        
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .step-line.done { background: var(--success); }
+        .step-line.current { background: linear-gradient(90deg, var(--success) 50%, rgba(0,0,0,0.1) 50%); }
+        
+        /* AI提醒 */
+        .ai-reminder {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(0,122,255,0.05);
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .ai-reminder-icon { font-size: 14px; }
+        
+        /* 卡片详情 */
+        .detail-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 16px;
             margin: 10px 0;
         }
         
-        .biz-card.urgent { border-left: 3px solid var(--danger); }
-        .biz-card.warning { border-left: 3px solid var(--warning); }
-        
-        .biz-header {
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 12px;
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
         }
         
-        .biz-avatar {
-            width: 40px; height: 40px;
-            border-radius: 10px;
+        .detail-avatar {
+            width: 48px; height: 48px;
+            border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px; font-weight: 600;
+            font-size: 20px; font-weight: 600;
         }
         
-        .biz-title { font-size: 15px; font-weight: 600; }
-        .biz-subtitle { font-size: 12px; color: var(--text-secondary); }
-        .biz-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 12px 0; }
+        .detail-title { font-size: 17px; font-weight: 600; }
+        .detail-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
         
-        .biz-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .detail-section { margin: 16px 0; }
+        .section-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text-secondary); }
+        
+        .detail-body { font-size: 14px; line-height: 1.7; }
+        
+        .detail-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
         
         .btn {
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 13px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
             border: none;
@@ -237,17 +254,20 @@
         
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn:hover { opacity: 0.9; }
         
         .tag {
             display: inline-block;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 11px;
-            margin-right: 4px;
+            font-size: 12px;
+            margin-right: 6px;
         }
         
         .tag-urgent { background: rgba(255,59,48,0.1); color: var(--danger); }
         .tag-warning { background: rgba(255,149,0,0.1); color: var(--warning); }
+        .tag-success { background: rgba(52,199,89,0.1); color: var(--success); }
         
         /* 输入区 */
         .input-area {
@@ -329,7 +349,7 @@
     <div class="app">
         <div class="top-bar">
             <div class="brand">🦁 机构经纪智能体</div>
-            <div class="status"><div class="status-dot"></div><span>在线</span></div>
+            <div class="status"><div class="status-dot"></div><span>AI运行中</span></div>
         </div>
 
         <div class="chat" id="chat"></div>
@@ -337,7 +357,7 @@
         <div class="input-area">
             <div class="suggestions" id="suggestions"></div>
             <div class="input-box">
-                <input type="text" class="input-field" id="input" placeholder="输入业务关键词或直接点击上方分类..." onkeypress="if(event.key==='Enter')send()">
+                <input type="text" class="input-field" id="input" placeholder="输入任务名称或点击查看工作台..." onkeypress="if(event.key==='Enter')send()">
                 <div class="input-btn send" onclick="send()">↑</div>
             </div>
         </div>
@@ -348,71 +368,129 @@
         const input = document.getElementById('input');
         const suggestions = document.getElementById('suggestions');
 
-        // 业务分类数据 - 完整版
-        const businessCategories = {
+        // 今日任务数据 - AI驱动的工作台
+        const todayWorkbench = {
             '引入客户': {
                 icon: '👤',
                 color: '#3b82f6',
-                desc: '客户开发、线索管理',
-                subcategories: [
-                    { name: '线索收集', desc: '从邮件、名片、活动收集客户线索', icon: '📧' },
-                    { name: '资质初筛', desc: 'AI评估客户资质、匹配度', icon: '⚡' },
-                    { name: '客户画像', desc: '完善客户信息、需求分析', icon: '🎨' },
-                    { name: '分配跟进', desc: '分配给客户经理、设置提醒', icon: '📋' }
+                total: 4,
+                tasks: [
+                    {
+                        name: '华泰资管',
+                        status: 'urgent',
+                        statusText: '🔴 即将超时',
+                        steps: ['线索收集', '资质初筛', '客户画像', '分配跟进'],
+                        currentStep: 2,
+                        reminder: '⏰ 资料补充截止剩余2小时，建议立即催办',
+                        details: {
+                            title: '华泰资管',
+                            subtitle: '准入审核中 · 公募基金',
+                            body: '⚠️ **紧急事项**\n\n缺失材料：\n• 法人身份证复印件（正反面）\n• 授权委托书（加盖公章）\n• 风险测评问卷\n\n联系人：王经理 138xxxx8888',
+                            actions: ['✓ 一键催办', '电话提醒', '延后2小时']
+                        }
+                    },
+                    {
+                        name: '华夏理财',
+                        status: 'progress',
+                        statusText: '🔵 评估中',
+                        steps: ['线索收集', '资质初筛', '客户画像', '分配跟进'],
+                        currentStep: 1,
+                        reminder: '💡 AI评估完成，建议分配给张经理跟进',
+                        details: {
+                            title: '华夏理财',
+                            subtitle: '新客户 · AI评估92分',
+                            body: '📊 **AI评估报告**\n\n客户类型：公募基金\n预计规模：3-5亿\n匹配度：92%（高价值）\n\n联系人：张总\n需求：股票交易、算法交易',
+                            actions: ['开始评估', '分配给张经理', '添加到日程']
+                        }
+                    }
                 ]
             },
             '账户开立': {
                 icon: '📝',
                 color: '#8b5cf6',
-                desc: '开户审核、协议签署',
-                subcategories: [
-                    { name: '准入审核', desc: '资料完整性、合规性审核', icon: '✓' },
-                    { name: '协议生成', desc: '自动生成开户协议、风险揭示书', icon: '📄' },
-                    { name: '权限配置', desc: '交易权限、额度设置', icon: '🔐' },
-                    { name: '账户激活', desc: '开通通知、使用指导', icon: '▶️' }
+                total: 3,
+                tasks: [
+                    {
+                        name: '嘉实基金',
+                        status: 'progress',
+                        statusText: '🔵 审核中',
+                        steps: ['准入审核', '协议生成', '权限配置', '账户激活'],
+                        currentStep: 1,
+                        reminder: '📋 资料齐全，预计30分钟完成审核',
+                        details: {
+                            title: '嘉实基金',
+                            subtitle: '资料审核中 · 第2步/4步',
+                            body: '✓ **已提交**：营业执照、法人身份证\n⏳ **待审核**：授权书、风险测评\n\n预计完成时间：今日14:30',
+                            actions: ['快速审核', '退回补充', '联系客户']
+                        }
+                    }
                 ]
             },
             '交易服务': {
                 icon: '💰',
                 color: '#10b981',
-                desc: '算法交易、订单执行',
-                subcategories: [
-                    { name: '算法配置', desc: 'TWAP、VWAP算法参数设置', icon: '⚙️' },
-                    { name: '订单执行', desc: '订单监控、执行反馈', icon: '📊' },
-                    { name: '异常预警', desc: '价格异动、成交异常监控', icon: '🚨' },
-                    { name: '成交反馈', desc: '实时成交报告、分析', icon: '📈' }
+                total: 5,
+                tasks: [
+                    {
+                        name: '广发基金',
+                        status: 'progress',
+                        statusText: '🔵 配置中',
+                        steps: ['算法配置', '风险评估', '订单执行', '成交反馈'],
+                        currentStep: 0,
+                        reminder: '⚙️ TWAP算法参数待配置',
+                        details: {
+                            title: '广发基金',
+                            subtitle: '算法交易配置 · 预计规模5000万/日',
+                            body: '**申请服务**：TWAP算法交易\n\n配置参数：\n• 时间窗口：9:30-15:00\n• 单笔上限：100万\n• 滑点控制：≤0.1%',
+                            actions: ['配置算法', '风险评估', '安排培训']
+                        }
+                    }
                 ]
             },
             '客户服务': {
                 icon: '🎧',
                 color: '#f59e0b',
-                desc: '客户维护、风险监控',
-                subcategories: [
-                    { name: '咨询响应', desc: '解答客户业务咨询', icon: '💬' },
-                    { name: '对账服务', desc: '生成对账单、差异处理', icon: '📑' },
-                    { name: '舆情跟踪', desc: '监控客户主体舆情动态', icon: '📰' },
-                    { name: '监管关联', desc: '监管问询、处罚预警', icon: '🏛️' },
-                    { name: '风险预警', desc: '综合风险评分、分级预警', icon: '⚠️' },
-                    { name: '满意度管理', desc: '定期调研、反馈收集', icon: '😊' }
+                total: 6,
+                tasks: [
+                    {
+                        name: '中银基金',
+                        status: 'warning',
+                        statusText: '🟡 舆情预警',
+                        steps: ['舆情监控', '简报生成', '客户沟通', '跟踪反馈'],
+                        currentStep: 0,
+                        reminder: '📰 2小时前发现负面舆情，建议主动沟通',
+                        details: {
+                            title: '中银基金',
+                            subtitle: '舆情预警 · 持仓2.3亿',
+                            body: '📰 **舆情预警详情**\n\n来源：财经网\n时间：2小时前\n内容：投资业绩波动报道\n\n建议措施：\n• 主动联系客户说明情况\n• 准备业绩说明材料',
+                            actions: ['生成简报', '联系客户', '标记已读']
+                        }
+                    },
+                    {
+                        name: '鹏华基金',
+                        status: 'progress',
+                        statusText: '🔵 待回访',
+                        steps: ['定期回访', '满意度调研', '反馈收集', '服务优化'],
+                        currentStep: 0,
+                        reminder: '📞 30天未回访，建议今日联系',
+                        details: {
+                            title: '鹏华基金',
+                            subtitle: '定期回访 · 上次30天前',
+                            body: '**回访提醒**\n\n客户状态：正常\n交易活跃度：高\n满意度历史：4.5/5.0\n\n建议话题：\n• 近期交易体验\n• 新产品推荐',
+                            actions: ['发送调研', '预约回访', '查看历史']
+                        }
+                    }
                 ]
             }
         };
 
-        // 今日任务数据
-        const todayTasks = {
-            '引入客户': { total: 4, urgent: 1 },
-            '账户开立': { total: 3, urgent: 0 },
-            '交易服务': { total: 5, urgent: 0 },
-            '客户服务': { total: 6, urgent: 1 }
-        };
-
-        // 初始欢迎 + 业务导航
+        // 初始欢迎
         window.onload = () => {
             setTimeout(() => {
-                typeWriter(`你好！我是你的机构经纪助手。
+                typeWriter(`早上好！AI已为你准备好今日工作台。
 
-我可以帮你处理以下业务，点击或输入关键词即可开始：`, () => {
-                    addBusinessNav();
+📊 **今日概览**：18项任务 · 2个紧急 · 5个提醒`, () => {
+                    addWorkbenchOverview();
                     updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
                 });
             }, 300);
@@ -444,36 +522,112 @@
             type();
         }
 
-        // 添加业务导航网格
-        function addBusinessNav() {
-            const navHtml = `
-                <div class="biz-nav">
-                    <div class="nav-title">🎯 业务目标分类（点击选择）</div>
-                    <div class="nav-grid">
-                        ${Object.entries(businessCategories).map(([name, data]) => {
-                            const task = todayTasks[name];
-                            return `
-                                <div class="nav-item" onclick="selectCategory('${name}')" style="border-left:3px solid ${data.color};">
-                                    <div class="nav-icon">${data.icon}</div>
-                                    <div class="nav-name">${name}</div>
-                                    <div class="nav-desc">${data.desc}</div>
-                                    ${task.urgent > 0 ? `<div style="margin-top:6px;font-size:12px;color:#ff3b30;">🔴 ${task.urgent} 紧急 · ${task.total} 项</div>` : `<div style="margin-top:6px;font-size:12px;color:var(--text-secondary);">${task.total} 项待办</div>`}
+        // 添加工作台概览
+        function addWorkbenchOverview() {
+            Object.entries(todayWorkbench).forEach(([category, data]) => {
+                const wbHtml = `
+                    <div class="workbench-card">
+                        <div class="wb-header">
+                            <div class="wb-icon" style="background:${data.color}15;color:${data.color};">${data.icon}</div>
+                            <div class="wb-title">${category}</div>
+                            <div class="wb-count">${data.total} 项任务 ›</div>
+                        </div>
+                        <div class="task-list">
+                            ${data.tasks.map((task, idx) => `
+                                <div class="task-item ${task.status}" onclick="showTaskDetail('${category}', ${idx})">
+                                    <div class="task-header">
+                                        <div class="task-avatar" style="background:${data.color}15;color:${data.color};">${task.name[0]}</div>
+                                        <div class="task-info">
+                                            <div class="task-name">${task.name}</div>
+                                            <div class="task-meta">${task.statusText}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="task-steps">
+                                        ${task.steps.map((step, sIdx) => {
+                                            if (sIdx < task.currentStep) {
+                                                return `<div class="step-dot step-done">✓</div>`;
+                                            } else if (sIdx === task.currentStep) {
+                                                return `<div class="step-dot step-current">${sIdx+1}</div>`;
+                                            } else {
+                                                return `<div class="step-dot step-pending">${sIdx+1}</div>`;
+                                            }
+                                        }).join('<div class="step-line ${task.currentStep > sIdx ? 'done' : task.currentStep === sIdx ? 'current' : ''}"></div>')}
+                                    </div>
+                                    
+                                    <div class="ai-reminder">
+                                        <span class="ai-reminder-icon">🤖</span>
+                                        <span>${task.reminder}</span>
+                                    </div>
                                 </div>
-                            `;
-                        }).join('')}
+                            `).join('')}
+                        </div>
                     </div>
-                </div>
-            `;
-            
-            const lastMsg = chat.lastElementChild;
-            if (lastMsg) {
-                lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', navHtml);
-            }
+                `;
+                
+                const lastMsg = chat.lastElementChild;
+                if (lastMsg) {
+                    lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', wbHtml);
+                }
+            });
             chat.scrollTop = chat.scrollHeight;
         }
 
-        function selectCategory(categoryName) {
-            send(categoryName);
+        function showTaskDetail(category, taskIndex) {
+            const task = todayWorkbench[category].tasks[taskIndex];
+            const details = task.details;
+            
+            // 用户消息
+            addUserMessage(`查看 ${task.name} 详情`);
+            
+            setTimeout(() => {
+                typeWriter(`正在打开 **${task.name}** 任务卡片...`, () => {
+                    const detailHtml = `
+                        <div class="detail-card">
+                            <div class="detail-header">
+                                <div class="detail-avatar" style="background:${todayWorkbench[category].color}15;color:${todayWorkbench[category].color};">${task.name[0]}</div>
+                                <div>
+                                    <div class="detail-title">${details.title}</div>
+                                    <div class="detail-subtitle">${details.subtitle}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-body">${details.body.replace(/\n/g, '<br>')}</div>
+                            
+                            <div class="detail-actions">
+                                ${details.actions.map(a => `
+                                    <button class="btn ${a.includes('✓') ? 'btn-success' : 'btn-secondary'}" onclick="handleAction('${a.replace('✓ ', '')}', '${task.name}')">${a}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) {
+                        lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', detailHtml);
+                    }
+                    chat.scrollTop = chat.scrollHeight;
+                    
+                    updateSuggestions(details.actions.map(a => a.replace('✓ ', '')).slice(0, 3));
+                });
+            }, 400);
+        }
+
+        function handleAction(action, taskName) {
+            addUserMessage(action);
+            
+            setTimeout(() => {
+                if (action.includes('催办')) {
+                    typeWriter(`✓ **催办已发送**\n\n📱 短信+邮件已发送至：王经理（华泰资管）\n⏱️ 预计10分钟内送达\n🔔 我会在对方查看后提醒你`);
+                } else if (action.includes('分配')) {
+                    typeWriter(`✓ **已分配**\n\n客户：${taskName}\n分配给：张经理\n跟进时间：今日15:00\n\n系统已自动设置提醒。`);
+                } else if (action.includes('简报')) {
+                    typeWriter(`📄 **舆情简报生成中**\n\n正在整理：\n• 舆情来源与传播路径\n• 客户持仓影响分析\n• 建议沟通话术\n\n预计1分钟后完成...`);
+                } else {
+                    typeWriter(`✓ **已记录**：${action}\n\nAI会继续跟踪该任务进展，有更新时会主动提醒你。`);
+                }
+                updateSuggestions(['查看其他任务', '返回工作台', '今日概览']);
+            }, 500);
         }
 
         function send(text) {
@@ -482,7 +636,20 @@
 
             addUserMessage(msg);
             input.value = '';
-            processResponse(msg);
+
+            // 简单响应
+            setTimeout(() => {
+                if (msg.includes('工作台') || msg.includes('概览')) {
+                    typeWriter(`📊 **今日工作台概览**\n\n已为你整理全部18项任务：`, () => {
+                        addWorkbenchOverview();
+                    });
+                } else {
+                    typeWriter(`收到。请从下方工作台选择任务，或直接点击任务卡片查看详情。`, () => {
+                        addWorkbenchOverview();
+                    });
+                }
+                updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
+            }, 500);
         }
 
         function addUserMessage(text) {
@@ -493,181 +660,8 @@
             chat.scrollTop = chat.scrollHeight;
         }
 
-        function processResponse(userMsg) {
-            const msg = userMsg.trim();
-            const category = Object.keys(businessCategories).find(k => msg.includes(k));
-            
-            if (category) {
-                showCategoryDetail(category);
-            }
-            else if (msg.includes('今日') || msg.includes('任务')) {
-                showTodayOverview();
-            }
-            else {
-                // 默认回复
-                setTimeout(() => {
-                    typeWriter(`收到。请从下方选择业务分类，或直接输入关键词：
-
-关键词示例：
-• "引入客户" → 进入客户开发流程
-• "账户开立" → 查看开户待办
-• "客户服务" → 查看服务事项
-• "交易服务" → 查看交易相关
-
-也可以直接输入客户名称，如"华泰资管"`, () => {
-                        addBusinessNav();
-                    });
-                    updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
-                }, 500);
-            }
-        }
-
-        // 显示分类详情
-        function showCategoryDetail(categoryName) {
-            const data = businessCategories[categoryName];
-            const task = todayTasks[categoryName];
-            
-            setTimeout(() => {
-                typeWriter(`已进入 **${categoryName}** 工作台
-
-今日任务：${task.total} 项${task.urgent > 0 ? ` · 🔴 ${task.urgent} 个紧急` : ''}
-
-请选择具体业务：`, () => {
-                    // 添加子分类面板
-                    const panelHtml = `
-                        <div class="category-panel">
-                            <div class="panel-header">
-                                <div class="panel-icon" style="background:${data.color}20;color:${data.color};">${data.icon}</div>
-                                <div class="panel-title">${categoryName}</div>
-                            </div>
-                            <div class="subcategory-list">
-                                ${data.subcategories.map(sub => `
-                                    <div class="sub-item" onclick="handleSubcategory('${categoryName}', '${sub.name}')">
-                                        <div class="sub-icon">${sub.icon}</div>
-                                        <div class="sub-info">
-                                            <div class="sub-name">${sub.name}</div>
-                                            <div class="sub-desc">${sub.desc}</div>
-                                        </div>
-                                        <div class="sub-arrow">›</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                    
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) {
-                        lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', panelHtml);
-                    }
-                    
-                    // 根据不同分类显示示例任务
-                    if (categoryName === '引入客户') {
-                        setTimeout(() => {
-                            addBizCard({
-                                avatar: '华',
-                                color: '#ef4444',
-                                title: '华泰资管',
-                                subtitle: '准入审核 · 剩余2小时',
-                                body: '⚠️ 紧急：资料补充即将超时\n缺失：法人身份证、授权委托书',
-                                tags: ['<span class="tag tag-urgent">即将超时</span>'],
-                                actions: ['一键催办', '查看详情']
-                            });
-                        }, 400);
-                    }
-                    else if (categoryName === '客户服务') {
-                        setTimeout(() => {
-                            addBizCard({
-                                avatar: '中',
-                                color: '#f59e0b',
-                                title: '中银基金',
-                                subtitle: '舆情预警 · 2小时前',
-                                body: '📰 发现负面舆情：投资业绩波动报道\n建议：主动沟通，准备说明材料',
-                                tags: ['<span class="tag tag-warning">舆情预警</span>'],
-                                actions: ['生成简报', '联系客户', '标记已读']
-                            });
-                        }, 400);
-                    }
-                    
-                    chat.scrollTop = chat.scrollHeight;
-                    updateSuggestions([...data.subcategories.slice(0,3).map(s => s.name), '查看全部', '返回首页']);
-                });
-            }, 500);
-        }
-
-        // 显示今日概览
-        function showTodayOverview() {
-            setTimeout(() => {
-                typeWriter(`📊 **今日任务概览**
-
-共 18 项待处理 · 2 个紧急
-
-各业务线任务分布：`, () => {
-                    const overviewHtml = `
-                        <div class="biz-nav">
-                            <div class="nav-grid">
-                                ${Object.entries(businessCategories).map(([name, data]) => {
-                                    const task = todayTasks[name];
-                                    return `
-                                        <div class="nav-item" onclick="selectCategory('${name}')" style="border-left:3px solid ${data.color};">
-                                            <div class="nav-icon" style="font-size:20px;">${data.icon}</div>
-                                            <div class="nav-name" style="font-size:14px;">${name}</div>
-                                            <div class="nav-desc" style="font-size:13px;margin-top:4px;">${task.urgent > 0 ? `🔴 ${task.urgent} 紧急 · ` : ''}${task.total} 项</div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    `;
-                    
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) {
-                        lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', overviewHtml);
-                    }
-                    chat.scrollTop = chat.scrollHeight;
-                    updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
-                });
-            }, 500);
-        }
-
-        // 处理子分类点击
-        function handleSubcategory(category, subcategory) {
-            setTimeout(() => {
-                typeWriter(`已进入 **${category} - ${subcategory}**
-
-正在加载相关数据...`, () => {
-                    // 这里可以加载具体子分类的数据
-                    updateSuggestions(['查看列表', '添加新任务', '返回' + category, '返回首页']);
-                });
-            }, 300);
-        }
-
-        function addBizCard(data) {
-            const card = document.createElement('div');
-            card.className = 'biz-card urgent';
-            card.innerHTML = `
-                <div class="biz-header">
-                    <div class="biz-avatar" style="background:${data.color}20;color:${data.color};">${data.avatar}</div>
-                    <div>
-                        <div class="biz-title">${data.title}</div>
-                        <div class="biz-subtitle">${data.subtitle}</div>
-                    </div>
-                </div>
-                <div class="biz-body">${data.body}</div>
-                <div style="margin-bottom:12px;">${data.tags.join('')}</div>
-                <div class="biz-actions">
-                    ${data.actions.map(a => `<button class="btn ${a.includes('一键') ? 'btn-primary' : 'btn-secondary'}" onclick="send('${a}')">${a}</button>`).join('')}
-                </div>
-            `;
-            
-            const lastMsg = chat.lastElementChild;
-            if (lastMsg && lastMsg.classList.contains('message-ai')) {
-                lastMsg.querySelector('.ai-content').appendChild(card);
-            }
-            chat.scrollTop = chat.scrollHeight;
-        }
-
         function updateSuggestions(list) {
-            suggestions.innerHTML = list.map(s => `<div class="chip" onclick="send('${s.replace(/🔴|🟡|🔵|👤|📝|💰|🎧|✓|📊|🎯|/g, '').trim()}')">${s}</div>`).join('');
+            suggestions.innerHTML = list.map(s => `<div class="chip" onclick="send('${s.replace(/🔴|🟡|🔵|👤|📝|💰|🎧|✓|📊|/g, '').trim()}')">${s}</div>`).join('');
         }
     </script>
 </body>
