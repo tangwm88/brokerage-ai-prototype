@@ -2,534 +2,201 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>机构经纪智能体</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构经纪智能体工作台 · 入口导航</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        :root {
-            --bg: #f5f5f7; --surface: #ffffff; --card: #ffffff;
-            --border: rgba(0,0,0,0.08); --text: #1d1d1f;
-            --text-secondary: rgba(0,0,0,0.5); --primary: #007aff;
-            --success: #34c759; --warning: #ff9500; --danger: #ff3b30;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
-        .app { height: 100vh; display: flex; flex-direction: column; }
-        .top-bar { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface); }
-        .brand { font-size: 16px; font-weight: 600; }
-        .status { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); }
-        .status-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .chat { flex: 1; overflow-y: auto; padding: 16px 16px 120px 16px; display: flex; flex-direction: column; gap: 16px; }
-        .message { max-width: 92%; animation: fadeIn 0.3s ease; }
-        .message-user { align-self: flex-end; background: var(--primary); color: white; padding: 12px 16px; border-radius: 20px 20px 4px 20px; font-size: 15px; }
-        .message-ai { display: flex; gap: 10px; }
-        .ai-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-        .ai-content { flex: 1; font-size: 15px; line-height: 1.7; }
-        .nav-center { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin: 8px 0; }
-        .biz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .biz-entry { background: rgba(0,0,0,0.02); border-radius: 16px; padding: 16px; cursor: pointer; transition: all 0.25s; border: 2px solid transparent; }
-        .biz-entry:hover { background: rgba(0,0,0,0.04); transform: translateY(-2px); }
-        .entry-keyword { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
-        .entry-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
-        .case-box { margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px; font-size: 12px; }
-        .case-title { font-weight: 500; margin-bottom: 4px; }
-        .case-desc { color: var(--text-secondary); }
-        .quick-prompts { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-        .quick-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
-        .prompt-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-        .prompt-tag { padding: 8px 14px; background: rgba(0,122,255,0.08); border: 1px solid rgba(0,122,255,0.2); border-radius: 16px; font-size: 13px; color: var(--primary); cursor: pointer; }
-        .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin: 10px 0; }
-        .task-card.urgent { border-left: 4px solid var(--danger); }
-        .task-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-        .task-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
-        .task-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: none; }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
-        .btn-success { background: var(--success); color: #fff; }
-        .tag-urgent { display: inline-block; padding: 2px 8px; background: rgba(255,59,48,0.1); color: var(--danger); border-radius: 4px; font-size: 11px; margin-bottom: 8px; }
-        .input-area { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 24px; background: linear-gradient(180deg, transparent 0%, var(--bg) 30%); }
-        .suggestions { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; }
-        .suggestions::-webkit-scrollbar { display: none; }
-        .chip { padding: 6px 12px; background: rgba(0,0,0,0.05); border: 1px solid var(--border); border-radius: 14px; font-size: 13px; white-space: nowrap; cursor: pointer; }
-        .input-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 4px 4px 4px 16px; display: flex; align-items: center; gap: 8px; }
-        .input-field { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; outline: none; padding: 10px 0; }
-        .input-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; background: var(--primary); color: #fff; }
-        .cursor { display: inline-block; width: 8px; height: 18px; background: var(--primary); margin-left: 2px; animation: blink 1s infinite; vertical-align: middle; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .sub-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin: 16px 0; }
-        .sub-item { padding: 12px; background: rgba(0,0,0,0.02); border-radius: 12px; cursor: pointer; }
-        .sub-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-        .sub-desc { font-size: 11px; color: var(--text-secondary); }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            color: #fff;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .workbenches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+        }
+        .workbench-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .workbench-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .workbench-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .workbench-card.blue .workbench-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .workbench-card.green .workbench-icon { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .workbench-card.orange .workbench-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        
+        .workbench-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1f2329;
+        }
+        .workbench-desc {
+            font-size: 14px;
+            color: #86909c;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .workbench-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .feature-tag {
+            background: #f2f3f5;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #4e5969;
+        }
+        .enter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1f2329;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .workbench-card.blue .enter-btn { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .workbench-card.green .enter-btn { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .workbench-card.orange .enter-btn { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        
+        .enter-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+        @media (max-width: 768px) {
+            .workbenches {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="app">
-        <div class="top-bar">
-            <div class="brand">🦁 机构经纪智能体</div>
-            <div class="status"><div class="status-dot"></div><span>AI运行中</span></div>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 机构经纪智能体工作台</h1>
+            <p>基于公司自动驾驶大模型底座的三层架构设计 · 选择适合您的工作台</p>
         </div>
-        <div class="chat" id="chat"></div>
-        <div class="input-area">
-            <div class="suggestions" id="suggestions"></div>
-            <div class="input-box">
-                <input type="text" class="input-field" id="input" placeholder="输入关键词或点击上方入口..." onkeypress="if(event.key==='Enter')send()">
-                <div class="input-btn" onclick="send()">↑</div>
-            </div>
+        
+        <div class="workbenches">
+            <!-- 超级数字员工工作台 -->
+            <a href="super_digital_worker_workbench.html" class="workbench-card blue">
+                <div class="workbench-icon">🤖</div>
+                <div class="workbench-title">超级数字员工工作台</div>
+                <div class="workbench-desc">
+                    面向前端团队客户经理的展业工作台。AI自动推送今日任务，一键调用7大数字员工，3-4步完成业务目标。
+                </div>
+                <div class="workbench-features">
+                    <span class="feature-tag">🎯 角色：客户经理</span>
+                    <span class="feature-tag">🤖 7大数字员工</span>
+                    <span class="feature-tag">📋 AI自动任务</span>
+                    <span class="feature-tag">✍️ 主动发起</span>
+                </div>
+                <div class="enter-btn">
+                    进入工作台 →
+                </div>
+            </a>
+            
+            <!-- 业务组织者工作台 -->
+            <a href="organizer_workbench.html" class="workbench-card green">
+                <div class="workbench-icon">🏛️</div>
+                <div class="workbench-title">业务组织者工作台</div>
+                <div class="workbench-desc">
+                    面向业务支持中心组织者的统筹调度中心。管理数字员工、调度任务、圆桌会议、AI驱动考核。
+                </div>
+                <div class="workbench-features">
+                    <span class="feature-tag">🎯 角色：组织者</span>
+                    <span class="feature-tag">📊 数字员工调度</span>
+                    <span class="feature-tag">🔔 圆桌会议</span>
+                    <span class="feature-tag">📈 AI考核</span>
+                </div>
+                <div class="enter-btn">
+                    进入工作台 →
+                </div>
+            </a>
+            
+            <!-- 多任务空间工作台 -->
+            <a href="multi_space_workbench.html" class="workbench-card orange">
+                <div class="workbench-icon">🚀</div>
+                <div class="workbench-title">多任务空间工作台</div>
+                <div class="workbench-desc">
+                    升级版多空间并行工作台。每个客户/任务独立空间，数字员工跨空间复用，全局AI助手统一调度。
+                </div>
+                <div class="workbench-features">
+                    <span class="feature-tag">🚀 多空间并行</span>
+                    <span class="feature-tag">💼 客户专属空间</span>
+                    <span class="feature-tag">📊 任务专项空间</span>
+                    <span class="feature-tag">🔄 数字员工复用</span>
+                </div>
+                <div class="enter-btn">
+                    进入工作台 →
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>机构经纪业务智能体原型系统 · 基于公司自动驾驶大模型底座</p>
+            <p style="margin-top: 8px;">三层架构：公司自动驾驶大模型 → 业务组织智能体 → 超级数字员工</p>
         </div>
     </div>
-
-    <script>
-        const chat = document.getElementById('chat');
-        const input = document.getElementById('input');
-        const suggestions = document.getElementById('suggestions');
-
-        const businessNav = {
-            '引入客户': {
-                color: '#3b82f6', desc: '线索收集、资质评估、分配跟进',
-                count: { total: 4, urgent: 1 },
-                cases: [
-                    { title: '华泰资管 - 资料待补充', desc: '准入审核中，2小时截止', urgent: true },
-                    { title: '华夏理财 - AI评估完成', desc: '92分高价值客户，建议跟进', urgent: false }
-                ]
-            },
-            '账户开立': {
-                color: '#8b5cf6', desc: '准入审核、协议签署、权限配置',
-                count: { total: 3, urgent: 0 },
-                cases: [
-                    { title: '嘉实基金 - 资料审核中', desc: '授权书待补充，预计今日完成', urgent: false },
-                    { title: '南方基金 - 协议待签署', desc: '电子协议已发送，等待回复', urgent: false }
-                ]
-            },
-            '交易服务': {
-                color: '#10b981', desc: '系统配置、订单执行、成交分析',
-                count: { total: 5, urgent: 0 },
-                cases: [
-                    { title: '广发基金 - 系统配置申请', desc: 'TWAP算法参数，5000万/日规模', urgent: false },
-                    { title: '博时基金 - 成交异常提醒', desc: '昨日大单成交滑点超阈值', urgent: false }
-                ]
-            },
-            '客户服务': {
-                color: '#f59e0b', desc: '咨询响应、舆情监控、风险预警',
-                count: { total: 6, urgent: 1 },
-                cases: [
-                    { title: '中银基金 - 舆情预警', desc: '负面报道，需主动沟通', urgent: true },
-                    { title: '鹏华基金 - 定期回访', desc: '30天未回访，建议今日联系', urgent: false }
-                ]
-            }
-        };
-
-        window.onload = () => {
-            setTimeout(() => {
-                typeWriter('📋 今日重点工作：', () => {
-                    addBusinessNavCenter();
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
-                });
-            }, 200);
-        };
-
-        function typeWriter(text, callback) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'message message-ai';
-            wrapper.innerHTML = '<div class="ai-icon">🦁</div><div class="ai-content"><span id="typing-text"></span><span class="cursor"></span></div>';
-            chat.appendChild(wrapper);
-            chat.scrollTop = chat.scrollHeight;
-            
-            const span = wrapper.querySelector('#typing-text');
-            let i = 0;
-            const type = () => {
-                if (i < text.length) {
-                    span.textContent += text.charAt(i);
-                    i++;
-                    chat.scrollTop = chat.scrollHeight;
-                    setTimeout(type, 15);
-                } else {
-                    wrapper.querySelector('.cursor').remove();
-                    if (callback) callback();
-                }
-            };
-            type();
-        }
-
-        function addBusinessNavCenter() {
-            let navHtml = '<div class="nav-center"><div class="biz-grid">';
-            
-            for (const [keyword, data] of Object.entries(businessNav)) {
-                const firstCase = data.cases[0];
-                const secondCase = data.cases[1];
-                
-                navHtml += '<div class="biz-entry" onclick="enterCategory(\'' + keyword + '\')" style="border-color:transparent;" onmouseover="this.style.borderColor=\'' + data.color + '40\'" onmouseout="this.style.borderColor=\'transparent\'">';
-                navHtml += '<div class="entry-keyword">' + keyword + '</div>';
-                navHtml += '<div class="entry-desc">' + data.desc + '</div>';
-                navHtml += '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary);">';
-                navHtml += (data.count.urgent > 0 ? '<span style="color:var(--danger);font-weight:500;">🔴 ' + data.count.urgent + ' 紧急</span> · ' : '');
-                navHtml += '<span style="font-weight:500;">' + data.count.total + ' 项待办</span></div>';
-                
-                if (firstCase) {
-                    navHtml += '<div class="case-box" style="' + (firstCase.urgent ? 'border-left:2px solid var(--danger);' : '') + '">';
-                    navHtml += '<div class="case-title" style="color:' + (firstCase.urgent ? 'var(--danger)' : 'var(--text)') + ';">' + firstCase.title + '</div>';
-                    navHtml += '<div class="case-desc">' + firstCase.desc + '</div></div>';
-                }
-                if (secondCase) {
-                    navHtml += '<div class="case-box" style="' + (secondCase.urgent ? 'border-left:2px solid var(--danger);' : '') + '">';
-                    navHtml += '<div class="case-title" style="color:' + (secondCase.urgent ? 'var(--danger)' : 'var(--text)') + ';">' + secondCase.title + '</div>';
-                    navHtml += '<div class="case-desc">' + secondCase.desc + '</div></div>';
-                }
-                navHtml += '</div>';
-            }
-            
-            navHtml += '</div><div class="quick-prompts"><div class="quick-title">💡 常用提示词</div><div class="prompt-tags">';
-            navHtml += '<div class="prompt-tag" onclick="send(\'今日工作台\')">📊 今日工作台</div>';
-            navHtml += '<div class="prompt-tag" onclick="send(\'🔴 紧急事项\')">🔴 紧急事项</div>';
-            navHtml += '<div class="prompt-tag" onclick="send(\'🔍 潜客挖掘\')">🔍 潜客挖掘</div>';
-            navHtml += '</div></div></div>';
-            
-            const lastMsg = chat.lastElementChild;
-            if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', navHtml);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function enterCategory(keyword) { send(keyword); }
-
-        function send(text) {
-            const msg = text || input.value.trim();
-            if (!msg) return;
-            addUserMessage(msg);
-            input.value = '';
-            processResponse(msg);
-        }
-
-        function addUserMessage(text) {
-            const div = document.createElement('div');
-            div.className = 'message message-user';
-            div.textContent = text;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function processResponse(userMsg) {
-            const msg = userMsg.trim();
-            
-            if (businessNav[msg]) {
-                showCategoryInterface(msg);
-            } else if (msg.includes('潜客挖掘')) {
-                showNewLeadEntry();
-            } else if (msg.includes('快速开户')) {
-                showQuickOpenAccount();
-            } else if (msg.includes('申请事项')) {
-                showApplyMenu();
-            } else if (msg.includes('业绩看板')) {
-                showPerformanceDashboard();
-            } else if (msg.includes('紧急')) {
-                showUrgentTasks();
-            } else if (msg.includes('今日') || msg.includes('工作台')) {
-                showTodayOverview();
-            } else {
-                setTimeout(() => {
-                    typeWriter('收到。请从上方选择今日重点工作，或使用底部快捷入口：', () => {
-                        addBusinessNavCenter();
-                    });
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
-                }, 500);
-            }
-        }
-
-        function showCategoryInterface(keyword) {
-            const data = businessNav[keyword];
-            const welcomeMsgs = {
-                '引入客户': '👤 **引入客户** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个紧急' : '') + '\n\n🎯 **重点待办**：',
-                '账户开立': '📝 **账户开立** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务 · 预计今日完成 2 单\n\n🎯 **审核进度**：',
-                '交易服务': '💰 **交易服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项服务请求\n\n🎯 **服务动态**：',
-                '客户服务': '🎧 **客户服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个预警' : '') + '\n\n🎯 **服务提醒**：'
-            };
-            
-            setTimeout(() => {
-                typeWriter(welcomeMsgs[keyword], () => {
-                    // 显示案例卡片
-                    data.cases.forEach((caseItem, idx) => {
-                        setTimeout(() => addCaseCard(caseItem, data.color), idx * 200);
-                    });
-                    updateSuggestions(['处理', '查看全部', '返回']);
-                });
-            }, 500);
-        }
-
-        function addCaseCard(caseItem, color) {
-            let actionsHtml = '';
-            if (caseItem.title.includes('华泰')) {
-                actionsHtml = '<button class="btn btn-success" onclick="completeAction(\'一键催办\')">✓ 一键催办</button><button class="btn btn-secondary" onclick="completeAction(\'查看资料清单\')">资料清单</button>';
-            } else if (caseItem.title.includes('华夏')) {
-                actionsHtml = '<button class="btn btn-primary" onclick="completeAction(\'开始评估\')">开始评估</button><button class="btn btn-secondary" onclick="completeAction(\'分配给张经理\')">分配给张经理</button>';
-            } else if (caseItem.title.includes('中银') || caseItem.title.includes('舆情')) {
-                actionsHtml = '<button class="btn btn-primary" onclick="completeAction(\'生成简报\')">生成简报</button><button class="btn btn-secondary" onclick="completeAction(\'联系客户\')">联系客户</button>';
-            } else {
-                actionsHtml = '<button class="btn btn-primary" onclick="completeAction(\'查看详情\')">查看详情</button><button class="btn btn-secondary" onclick="completeAction(\'开始处理\')">开始处理</button>';
-            }
-            
-            const cardHtml = '<div class="task-card ' + (caseItem.urgent ? 'urgent' : '') + '" style="border-left:4px solid ' + (caseItem.urgent ? 'var(--danger)' : color) + '">' +
-                '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                '<div><div class="task-title">' + caseItem.title + '</div><div class="task-desc">' + caseItem.desc + '</div></div>' +
-                (caseItem.urgent ? '<span class="tag-urgent">紧急</span>' : '') +
-                '</div><div class="task-actions">' + actionsHtml + '</div></div>';
-            
-            const lastMsg = chat.lastElementChild;
-            if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', cardHtml);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function completeAction(action) {
-            addUserMessage(action);
-            setTimeout(() => {
-                // 根据操作类型给出详细反馈
-                if (action === '一键催办') {
-                    typeWriter('✓ **催办已发送**\n\n📱 **发送详情**：\n• 短信：已发送至王经理 138xxxx8888\n• 邮件：已发送至 wang@huatai.com\n• 站内信：已推送至客户门户\n\n⏱️ **预计送达**：10分钟内\n🔔 **后续提醒**：对方查看后我会第一时间通知你\n\n📊 **催办记录**：已记录至客户档案，可追踪处理进度', () => {
-                        updateSuggestions(['查看催办状态', '电话跟进', '处理其他任务']);
-                    });
-                } else if (action === '开始评估') {
-                    typeWriter('⚡ **AI评估启动中...**\n\n📊 **评估维度**：\n• 注册资本：✓ 符合标准\n• 管理规模：✓ 500亿+（优秀）\n• 成立年限：✓ 8年（稳定）\n• 投资风格：✓ 与系统匹配\n\n🎯 **评估结果**：\n**匹配度：92分（高价值客户）**\n建议优先级：**立即跟进**\n预计成交周期：2-3周\n\n💡 **AI建议**：\n分配给张经理（匹配度95%），已准备话术模板', () => {
-                        updateSuggestions(['分配给张经理', '查看评估报告', '添加到日程']);
-                    });
-                } else if (action === '生成简报') {
-                    typeWriter('📄 **舆情简报已生成**\n\n📰 **舆情摘要**：\n• 来源：财经网\n• 时间：2024-03-04 10:30\n• 标题：《某基金公司业绩波动引发关注》\n• 情感：**负面**\n\n📊 **影响分析**：\n• 客户持仓：中银基金为持仓客户（2.3亿）\n• 风险等级：**中风险**\n• 传播趋势：已监测到5家媒体转载\n\n💡 **建议措施**：\n1. 主动致电客户说明情况\n2. 准备业绩归因分析报告\n3. 安排投资经理路演\n\n📎 **附件**：简报PDF已生成，可发送至客户', () => {
-                        updateSuggestions(['发送给客户', '安排路演', '联系投资经理']);
-                    });
-                } else if (action === '录入线索') {
-                    typeWriter('✓ **线索录入成功**\n\n📝 **线索信息**：\n• 客户名称：易方达投资\n• 来源渠道：邮件咨询\n• 需求类型：算法交易\n• 预计规模：5000万/月\n\n⚡ **AI自动处理**：\n• ✓ 已创建客户档案\n• ✓ 已分配客户编码：C2024030401\n• ✓ 已设置跟进提醒：明日15:00\n• ✓ 已通知客户经理：张经理\n\n📋 **待办事项**：\n1. 补充客户详细资料\n2. 准备算法交易方案\n3. 预约客户拜访\n\n🎯 **下一步建议**：开始资质评估或准备拜访材料', () => {
-                        updateSuggestions(['开始资质评估', '准备拜访材料', '查看客户档案']);
-                    });
-                } else if (action === '快速审核') {
-                    typeWriter('✓ **快速审核完成**\n\n📋 **审核结果**：\n• 客户名称：嘉实基金\n• 审核类型：准入审核\n• 审核状态：**通过**\n• 审核时间：2024-03-04 13:30\n\n✅ **已审核项目**：\n• ✓ 营业执照（有效期内）\n• ✓ 法人身份证（已核验）\n• ✓ 授权书（公章清晰）\n• ✓ 风险测评（R4等级）\n\n⚠️ **待补充材料**：\n• 机构信用代码证（已通知补充）\n\n📊 **下一步**：\n进入协议签署阶段，预计今日完成开户', () => {
-                        updateSuggestions(['进入协议签署', '通知客户补充材料', '查看审核记录']);
-                    });
-                } else if (action === '分配给张经理') {
-                    typeWriter('✓ **客户分配成功**\n\n👤 **分配信息**：\n• 客户名称：华夏理财\n• 分配给：张经理（资深客户经理）\n• 分配时间：2024-03-04 13:35\n\n📊 **张经理匹配度分析**：\n• 客户类型匹配：95%（擅长公募基金）\n• 地域匹配：100%（同区域）\n• 工作负载：适中（当前跟进12个客户）\n\n📅 **自动设置**：\n• ✓ 已添加至张经理日程\n• ✓ 已发送通知给张经理\n• ✓ 已设置跟进提醒：3天后\n• ✓ 客户已收到客户经理联系方式\n\n💡 **下一步建议**：\n张经理将在24小时内联系客户，你可以在【跟进记录】中查看进展', () => {
-                        updateSuggestions(['查看跟进记录', '修改分配', '处理其他任务']);
-                    });
-                } else if (action === '电话提醒') {
-                    typeWriter('📞 **电话提醒准备**\n\n👤 **联系人信息**：\n• 姓名：王经理\n• 电话：138xxxx8888\n• 客户：华泰资管\n• 事由：资料补充催办\n\n💡 **AI建议话术**：\n"王经理您好，我是XX证券的小李，想提醒您一下华泰资管的资料补充，因为今天截止，您看今天下午方便发过来吗？"\n\n📋 **通话要点**：\n1. 确认收到之前的短信/邮件\n2. 了解是否有疑问或困难\n3. 确认具体补充时间\n4. 记录沟通结果\n\n📊 **通话后操作**：\n通话结束后请记录结果，我会自动更新客户档案', () => {
-                        updateSuggestions(['开始拨打', '修改话术', '延后处理']);
-                    });
-                } else if (action === '延后' || action === '延后2小时' || action === '今日下班前' || action === '明天上午') {
-                    const timeMap = {
-                        '延后': '稍后',
-                        '延后2小时': '2小时后（15:35）',
-                        '今日下班前': '今日下班前（17:00）',
-                        '明天上午': '明天上午（09:00）'
-                    };
-                    const selectedTime = timeMap[action] || action;
-                    typeWriter('⏰ **提醒已设置**\n\n📅 **设置详情**：\n• 提醒时间：' + selectedTime + '\n• 提醒对象：华泰资管 - 资料补充\n• 提醒方式：系统推送 + 短信\n\n✓ **已记录**：\n• 延后原因：资料补充截止提醒\n• 设置时间：' + new Date().toLocaleString() + '\n\n💡 **温馨提示**：\n到期前30分钟会再次提醒，确保不遗漏\n\n📊 **延后记录**：\n此记录已同步至客户档案，可在【操作记录】中查看', () => {
-                        updateSuggestions(['查看提醒列表', '修改提醒时间', '处理其他任务']);
-                    });
-                } else if (action === '联系客户' || action === '发送资料' || action === 'AI评估' || action === '发送给客户' || action === '安排路演') {
-                    const actionDetails = {
-                        '联系客户': {
-                            title: '📞 **联系客户准备**',
-                            content: '👤 **客户信息**：\n• 客户名称：中银基金\n• 联系人：张总\n• 电话：138xxxx9999\n• 事由：舆情沟通\n\n💡 **沟通要点**：\n1. 主动说明情况，表达关切\n2. 提供业绩归因分析\n3. 介绍公司应对措施\n4. 确认客户疑虑并记录\n\n📋 **准备材料**：\n• 舆情简报（已生成）\n• 业绩分析报告\n• 公司声明稿\n\n📊 **沟通后**：\n记录沟通结果，更新客户满意度评分'
-                        },
-                        '发送资料': {
-                            title: '📧 **发送资料准备**',
-                            content: '📋 **资料清单**：\n• 公司介绍\n• 算法交易方案\n• 费率说明\n• 案例分享\n\n👤 **收件人**：\n• 易方达投资\n• 联系人：张总\n• 邮箱：zhang@yfd.com\n\n💡 **AI建议**：\n根据客户关注的TWAP算法，重点突出相关案例和费率优势。\n\n📊 **发送后跟踪**：\n系统会自动跟踪邮件打开情况，48小时内未打开将提醒跟进。'
-                        },
-                        'AI评估': {
-                            title: '⚡ **AI资质评估**',
-                            content: '📊 **评估对象**：国泰基金（活动线索）\n\n📋 **评估维度**：\n• 注册资本：2亿 ✓\n• 管理规模：300亿+ ✓\n• 成立年限：5年 ✓\n• 投资风格：稳健型\n• 合规记录：良好 ✓\n\n🎯 **评估结果**：\n**匹配度：88分（优质客户）**\n建议优先级：高\n预计成交周期：1-2个月\n\n💡 **下一步建议**：\n1. 优先安排拜访\n2. 准备定制化方案\n3. 邀请参加策略会'
-                        },
-                        '发送给客户': {
-                            title: '📄 **简报发送准备**',
-                            content: '📧 **发送内容**：\n• 舆情简报（PDF）\n• 公司应对声明\n• 投资经理观点\n\n👤 **收件人**：\n• 中银基金\n• 收件人：风控部/投资部\n• 邮箱：risk@zyfund.com\n\n💡 **AI建议**：\n简报已优化，重点突出客观数据和公司应对措施，降低客户担忧。\n\n📊 **发送后跟踪**：\n系统将跟踪阅读情况，建议2小时后电话跟进确认收到。'
-                        },
-                        '安排路演': {
-                            title: '🎯 **路演安排**',
-                            content: '📅 **路演信息**：\n• 主题：市场波动下的投资策略\n• 形式：线上/线下\n• 时长：60分钟\n\n👥 **参与人员**：\n• 主讲：投资总监 李总\n• 嘉宾：中银基金投研团队\n• 人数：预计15-20人\n\n📋 **准备事项**：\n• 预约场地/会议室\n• 准备演示材料\n• 发送邀请函\n• 准备茶歇\n\n⏰ **建议时间**：\n下周三或周四下午，避开月末busy期。'
-                        }
-                    };
-                    
-                    const detail = actionDetails[action] || { title: '✓ **' + action + '**', content: '操作已记录' };
-                    typeWriter(detail.title + '\n\n' + detail.content + '\n\n📊 **后续跟踪**：\n操作已记录，AI将持续跟踪进展并主动提醒。', () => {
-                        updateSuggestions(['确认执行', '修改方案', '处理其他任务']);
-                    });
-                } else if (action === '查看详情') {
-                    typeWriter('📋 **任务详情**\n\n👤 **客户信息**：\n• 客户名称：华夏理财\n• 客户类型：公募基金\n• 预计规模：3-5亿\n\n📊 **当前状态**：\n• 评估完成：92分（高价值）\n• 待分配：建议分配给张经理\n• 跟进状态：待首次接触\n\n📅 **时间线**：\n• 线索录入：2024-03-01\n• AI评估：2024-03-04\n• 下次跟进：待安排\n\n💡 **建议操作**：\n1. 分配给张经理跟进\n2. 准备拜访材料\n3. 预约首次拜访', () => {
-                        updateSuggestions(['分配给张经理', '准备拜访材料', '添加到日程']);
-                    });
-                } else if (action === '开始处理') {
-                    typeWriter('🚀 **开始处理任务**\n\n📋 **任务信息**：\n• 任务类型：客户服务\n• 客户名称：鹏华基金\n• 任务描述：定期回访（30天未联系）\n\n💡 **AI建议处理步骤**：\n1. 查看客户近期交易记录\n2. 回顾上次沟通要点\n3. 准备回访话术\n4. 确认客户时间偏好\n5. 执行回访并记录\n\n📊 **回访目标**：\n• 了解近期交易体验\n• 推荐新产品/服务\n• 收集反馈意见\n• 更新客户满意度\n\n⚡ **快捷操作**：\n可直接拨打电话或发送回访邀请', () => {
-                        updateSuggestions(['拨打电话', '发送邀请', '查看交易记录']);
-                    });
-                } else {
-                    typeWriter('✓ **' + action + '** 已完成\n\n📊 **操作记录**：\n• 操作时间：' + new Date().toLocaleString() + '\n• 操作人：当前用户\n• 状态：已记录\n\n💡 AI会继续跟踪该任务进展，有更新时会主动提醒你。', () => {
-                        updateSuggestions(['查看操作记录', '继续处理', '返回工作台']);
-                    });
-                }
-            }, 500);
-        }
-
-        function showNewLeadEntry() {
-            setTimeout(() => {
-                typeWriter('🔍 **潜客挖掘** - 新客户线索发现\n\nAI扫描到以下潜在线索：', () => {
-                    const html = '<div class="task-card"><div class="task-title">易方达投资（邮件）</div><div class="task-desc">张总咨询TWAP算法，预计5000万/月</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料\')">发送资料</button></div></div>' +
-                        '<div class="task-card"><div class="task-title">国泰基金（活动）</div><div class="task-desc">李总对量化交易感兴趣，名片已扫描</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'AI评估\')">AI评估</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['录入易方达线索', '录入国泰线索']);
-                });
-            }, 500);
-        }
-
-        function showQuickOpenAccount() {
-            setTimeout(() => {
-                typeWriter('⚡ **高净值客户开户** - 专属开户通道\n\n请选择客户类型：', () => {
-                    const html = '<div class="sub-grid">' +
-                        '<div class="sub-item" onclick="startHighNetWorthOpen()">' +
-                        '<div class="sub-name" style="color:#3b82f6;">高净值个人</div>' +
-                        '<div class="sub-desc">资产1000万+，专属服务</div></div>' +
-                        '<div class="sub-item" onclick="startInstitutionOpen()">' +
-                        '<div class="sub-name" style="color:#8b5cf6;">专业机构</div>' +
-                        '<div class="sub-desc">私募/资管/企业客户</div></div>' +
-                        '<div class="sub-item" onclick="startFamilyOfficeOpen()">' +
-                        '<div class="sub-name" style="color:#10b981;">家族办公室</div>' +
-                        '<div class="sub-desc">家族财富管理</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['高净值个人开户', '专业机构开户', '家族办公室开户']);
-                });
-            }, 500);
-        }
-
-        function startHighNetWorthOpen() {
-            addUserMessage('高净值个人开户');
-            setTimeout(() => {
-                typeWriter('📋 **高净值个人开户**\n\n请提交客户信息：', () => {
-                    const formHtml = '<div class="task-card">' +
-                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">基本信息</div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="客户姓名" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="身份证号" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="联系电话" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="预计资产规模（万）" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div class="task-actions" style="margin-top:16px;">' +
-                        '<button class="btn btn-primary" onclick="submitClientInfo()">提交信息</button>' +
-                        '<button class="btn btn-secondary" onclick="scanIDCard()">扫描身份证</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
-                    updateSuggestions(['扫描身份证', '上传资料', '预约面签']);
-                });
-            }, 500);
-        }
-
-        function startInstitutionOpen() {
-            addUserMessage('专业机构开户');
-            setTimeout(() => {
-                typeWriter('🏢 **专业机构开户**\n\n请提交机构信息：', () => {
-                    const formHtml = '<div class="task-card">' +
-                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">机构信息</div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="机构全称" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="统一社会信用代码" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="法定代表人" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><select style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;"><option>机构类型</option><option>私募基金</option><option>证券资管</option><option>企业法人</option><option>其他机构</option></select></div>' +
-                        '<div class="task-actions" style="margin-top:16px;">' +
-                        '<button class="btn btn-primary" onclick="submitInstitutionInfo()">提交信息</button>' +
-                        '<button class="btn btn-secondary" onclick="uploadLicense()">上传营业执照</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
-                    updateSuggestions(['上传营业执照', '上传授权书', '预约尽调']);
-                });
-            }, 500);
-        }
-
-        function startFamilyOfficeOpen() {
-            addUserMessage('家族办公室开户');
-            setTimeout(() => {
-                typeWriter('👨‍👩‍👧‍👦 **家族办公室开户**\n\n请提交家族信息：', () => {
-                    const formHtml = '<div class="task-card">' +
-                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">家族信息</div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="家族代表姓名" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="家族总资产规模（亿）" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="投资需求描述" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><select style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;"><option>风险承受能力</option><option>R4-积极型</option><option>R5-激进型</option></select></div>' +
-                        '<div class="task-actions" style="margin-top:16px;">' +
-                        '<button class="btn btn-primary" onclick="submitFamilyInfo()">提交信息</button>' +
-                        '<button class="btn btn-secondary" onclick="schedulePrivateMeeting()">预约私享会</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
-                    updateSuggestions(['预约私享会', '定制方案', '专属服务']);
-                });
-            }, 500);
-        }
-
-        function submitClientInfo() {
-            completeAction('提交客户信息');
-        }
-
-        function scanIDCard() {
-            completeAction('扫描身份证');
-        }
-
-        function submitInstitutionInfo() {
-            completeAction('提交机构信息');
-        }
-
-        function uploadLicense() {
-            completeAction('上传营业执照');
-        }
-
-        function submitFamilyInfo() {
-            completeAction('提交家族信息');
-        }
-
-        function schedulePrivateMeeting() {
-            completeAction('预约私享会');
-        }
-
-        function showApplyMenu() {
-            setTimeout(() => {
-                typeWriter('📋 **申请事项** - 业务申请中心\n\n请选择申请类型：', () => {
-                    const html = '<div class="sub-grid"><div class="sub-item" onclick="send(\'申请算法交易\')"><div class="sub-name" style="color:#3b82f6;">算法交易</div><div class="sub-desc">TWAP/VWAP等算法服务</div></div><div class="sub-item" onclick="send(\'申请两融业务\')"><div class="sub-name" style="color:#8b5cf6;">融资融券</div><div class="sub-desc">开通融资融券权限</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['申请算法交易', '申请两融业务']);
-                });
-            }, 500);
-        }
-
-        function showPerformanceDashboard() {
-            setTimeout(() => {
-                typeWriter('📊 **业绩看板** - 今日数据概览\n\n📈 **关键指标**：', () => {
-                    const html = '<div class="sub-grid"><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#10b981;">2.3亿</div><div class="sub-desc">今日成交额</div></div><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#3b82f6;">18</div><div class="sub-desc">在办任务</div></div><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#8b5cf6;">4</div><div class="sub-desc">本月新客</div></div><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#f59e0b;">96%</div><div class="sub-desc">客户满意度</div></div></div><div class="task-card" style="margin-top:10px;"><div class="task-desc">💡 AI洞察：今日成交额超目标，建议重点跟进华泰资管开户</div><div class="task-actions"><button class="btn btn-primary" onclick="send(\'查看华泰资管\')">查看详情</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['查看详细数据', '导出日报']);
-                });
-            }, 500);
-        }
-
-        function showUrgentTasks() {
-            setTimeout(() => {
-                typeWriter('🔴 **紧急事项** - 需立即处理\n\n共 **2 项** 紧急任务：', () => {
-                    const html = '<div class="task-card urgent"><div class="task-title">华泰资管</div><div class="task-desc">引入客户 · 资料待补充 · 剩余2小时</div><div class="task-actions"><button class="btn btn-success" onclick="completeAction(\'一键催办\')">✓ 一键催办</button><button class="btn btn-secondary" onclick="completeAction(\'电话提醒\')">电话提醒</button></div></div><div class="task-card urgent"><div class="task-title">中银基金</div><div class="task-desc">客户服务 · 舆情预警 · 2小时前</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'生成简报\')">生成简报</button><button class="btn btn-secondary" onclick="completeAction(\'联系客户\')">联系客户</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['一键催办华泰', '生成中银简报']);
-                });
-            }, 500);
-        }
-
-        function showTodayOverview() {
-            setTimeout(() => {
-                typeWriter('📊 **今日任务概览**\n\n共 **18 项任务** · **2 个紧急**\n\n各业务线分布：', () => {
-                    for (const [keyword, data] of Object.entries(businessNav)) {
-                        const html = '<div class="task-card" style="cursor:pointer;" onclick="enterCategory(\'' + keyword + '\')"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:600;">' + keyword + '</div><div class="task-desc">' + data.desc + '</div></div><div style="text-align:right;"><div style="font-size:18px;font-weight:600;">' + data.count.total + '</div><div style="font-size:11px;color:var(--text-secondary);">' + (data.count.urgent > 0 ? '🔴 ' + data.count.urgent + '紧急' : '项任务') + '</div></div></div></div>';
-                        const lastMsg = chat.lastElementChild;
-                        if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    }
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
-                });
-            }, 500);
-        }
-
-        function updateSuggestions(list) {
-            suggestions.innerHTML = list.map(s => '<div class="chip" onclick="send(\'' + s + '\')">' + s + '</div>').join('');
-        }
-    </script>
 </body>
 </html>
