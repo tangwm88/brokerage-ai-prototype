@@ -144,6 +144,13 @@
             color: rgba(255,255,255,0.7);
             font-size: 13px;
         }
+        .biz-focus {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-top: 16px;
+            font-size: 13px;
+        }
         @media (max-width: 768px) {
             .workbenches {
                 grid-template-columns: 1fr;
@@ -157,7 +164,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏛️ 机构经纪智能体工作台</h1>
+            <h1>💼 机构经纪智能体工作台</h1>
             <p>基于公司自动驾驶大模型底座的三层架构设计</p>
             
             <div class="arch-flow">
@@ -168,7 +175,7 @@
                 <span>→</span>
                 <div class="arch-step">
                     <span>🏛️</span>
-                    <span>业务组织智能体</span>
+                    <span>机构经纪组织智能体</span>
                 </div>
                 <span>→</span>
                 <div class="arch-step">
@@ -176,39 +183,43 @@
                     <span>超级数字员工</span>
                 </div>
             </div>
+            
+            <div class="biz-focus">
+                🎯 业务聚焦：公募基金 · 私募基金 · 保险资管 · 银行理财等机构投资者服务
+            </div>
         </div>
         
         <div class="workbenches">
-            <!-- 超级数字员工工作台 -->
-            <a href="workbench_employee.html" class="workbench-card blue">
-                <div class="workbench-icon">🤖</div>
-                <div class="workbench-title">超级数字员工工作台</div>
-                <span class="workbench-role">前端团队 · 客户经理</span>
+            <!-- 机构经纪业务工作台 -->
+            <a href="institutional_brokerage_employee.html" class="workbench-card blue">
+                <div class="workbench-icon">💼</div>
+                <div class="workbench-title">机构经纪业务工作台</div>
+                <span class="workbench-role">机构客户经理</span>
                 <div class="workbench-desc">
-                    AI自动推送任务，一键调用7大数字员工，3-4步完成业务目标。支持主动发起任务并同步至圆桌会议。
+                    专注机构经纪业务展业。AI自动识别机构客户服务机会，一键调用交易/研究/销售/托管四大核心服务数字员工。
                 </div>
                 <div class="workbench-features">
-                    <span class="feature-tag">📋 AI自动任务</span>
-                    <span class="feature-tag">🤖 7大数字员工</span>
-                    <span class="feature-tag">✍️ 主动发起</span>
-                    <span class="feature-tag">🔔 圆桌会议</span>
+                    <span class="feature-tag">⚡ 交易服务</span>
+                    <span class="feature-tag">📊 研究服务</span>
+                    <span class="feature-tag">💼 产品销售</span>
+                    <span class="feature-tag">🛡️ 托管外包</span>
                 </div>
                 <div class="enter-btn">
                     进入工作台 →
                 </div>
             </a>
             
-            <!-- 业务组织者工作台 -->
-            <a href="workbench_organizer.html" class="workbench-card red">
+            <!-- 机构经纪业务组织者工作台 -->
+            <a href="institutional_brokerage_organizer.html" class="workbench-card red">
                 <div class="workbench-icon">🏛️</div>
-                <div class="workbench-title">业务组织者工作台</div>
-                <span class="workbench-role">业务支持中心 · 组织者</span>
+                <div class="workbench-title">机构经纪业务组织者工作台</div>
+                <span class="workbench-role">机构业务支持中心 · 组织者</span>
                 <div class="workbench-desc">
-                    统筹管理数字员工，调度前端任务，参与圆桌会议决策，AI驱动团队考核。连接底座与前端的双向枢纽。
+                    统筹机构经纪业务运营。管理交易/研究/销售/托管四大数字员工，调度机构客户服务任务，参与圆桌会议决策。
                 </div>
                 <div class="workbench-features">
                     <span class="feature-tag">📊 数字员工调度</span>
-                    <span class="feature-tag">📋 任务派发</span>
+                    <span class="feature-tag">📋 服务任务派发</span>
                     <span class="feature-tag">🔔 圆桌会议</span>
                     <span class="feature-tag">📈 AI考核</span>
                 </div>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构经纪业务工作台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+            line-height: 1.5;
+        }
+        
+        /* 顶部 */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e5e6eb;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 17px; font-weight: 600; color: #3370ff; }
+        .biz-badge {
+            background: linear-gradient(135deg, #3370ff, #7b9dff);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, #3370ff, #85a5ff);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px;
+        }
+        
+        /* 主内容 */
+        .main {
+            margin-top: 56px;
+            padding: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 架构指示 */
+        .arch-bar {
+            background: #fff;
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e6eb;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+        }
+        .arch-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #86909c;
+        }
+        .arch-step.active { color: #3370ff; font-weight: 500; }
+        .arch-arrow { color: #c9cdd4; }
+        
+        /* 今日任务 - 机构经纪专属 */
+        .today-section {
+            background: linear-gradient(135deg, #3370ff 0%, #7b9dff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .today-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .today-title { font-size: 16px; font-weight: 600; }
+        .today-meta { font-size: 12px; opacity: 0.9; }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .task-item:hover { background: rgba(255,255,255,0.25); }
+        .task-icon {
+            width: 40px; height: 40px; border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .task-content { flex: 1; }
+        .task-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .task-desc { font-size: 12px; opacity: 0.85; }
+        .task-tag {
+            background: rgba(255,255,255,0.25);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        /* 机构经纪核心服务 */
+        .core-services {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .service-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #e5e6eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .service-card:hover {
+            border-color: #3370ff;
+            box-shadow: 0 4px 12px rgba(51,112,255,0.1);
+        }
+        .service-icon {
+            width: 44px; height: 44px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .service-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .service-desc { font-size: 12px; color: #86909c; }
+        
+        /* 机构客户面板 */
+        .customer-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e6eb;
+            margin-bottom: 20px;
+        }
+        .customer-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #e5e6eb;
+            padding-bottom: 10px;
+        }
+        .customer-tab {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #4e5969;
+        }
+        .customer-tab.active {
+            background: #e8f0ff;
+            color: #3370ff;
+            font-weight: 500;
+        }
+        .customer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .customer-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            gap: 12px;
+        }
+        .customer-avatar {
+            width: 40px; height: 40px; border-radius: 8px;
+            background: linear-gradient(135deg, #3370ff, #7b9dff);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px; font-weight: 600;
+        }
+        .customer-info { flex: 1; }
+        .customer-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .customer-tags {
+            display: flex;
+            gap: 6px;
+        }
+        .tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #e5e6eb;
+            color: #4e5969;
+        }
+        .tag.premium { background: #fff3e0; color: #e67c00; }
+        .customer-alert {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+        
+        /* 快速发起 */
+        .quick-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e6eb;
+        }
+        .input-area {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .task-input {
+            flex: 1;
+            border: 1px solid #dcdfe6;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            outline: none;
+        }
+        .task-input:focus { border-color: #3370ff; }
+        .submit-btn {
+            background: #3370ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .quick-btn {
+            background: #f2f3f5;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 12px;
+            color: #4e5969;
+            cursor: pointer;
+        }
+        .quick-btn:hover { background: #e5e6eb; }
+        
+        /* 圆桌会议 */
+        .round-section {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #fff;
+            margin-top: 20px;
+        }
+        .round-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .round-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .round-desc {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .round-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部 -->
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div class="logo">💼 机构经纪业务工作台</div>
+            <span class="biz-badge">机构经纪业务线</span>
+        </div>
+        <div class="header-right">
+            <span style="font-size: 13px; color: #86909c;">机构客户经理 · 张经理</span>
+            <div class="avatar">张</div>
+        </div>
+    </div>
+    
+    <!-- 主内容 -->
+    <div class="main">
+        <!-- 架构指示 -->
+        <div class="arch-bar">
+            <div class="arch-step">
+                <span>🏢</span>
+                <span>公司底座</span>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-step">
+                <span>🏛️</span>
+                <span>机构经纪组织智能体</span>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-step active">
+                <span>🤖</span>
+                <span>超级数字员工</span>
+            </div>
+            <div style="margin-left: auto; font-size: 12px; color: #86909c;">
+                服务对象：公募/私募/保险/银行等机构投资者
+            </div>
+        </div>
+        
+        <!-- 今日任务 - 机构经纪专属 -->
+        <div class="today-section">
+            <div class="today-header">
+                <div class="today-title">📋 机构经纪今日重点任务</div>
+                <div class="today-meta">AI智能识别 · 机构客户专属</div>
+            </div>
+            
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-icon">⚡</div>
+                    <div class="task-content">
+                        <div class="task-title">【深圳XX私募】算法交易异常告警</div>
+                        <div class="task-desc">TWAP执行偏离度超阈值，交易能力数字员工已生成分析报告</div>
+                    </div>
+                    <span class="task-tag">交易服务</span>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-icon">📊</div>
+                    <div class="task-content">
+                        <div class="task-title">【易方达基金】季度路演安排</div>
+                        <div class="task-desc">研究数字员工已准备新能源行业深度报告，需确认路演时间</div>
+                    </div>
+                    <span class="task-tag">研究服务</span>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-icon">🎯</div>
+                    <div class="task-content">
+                        <div class="task-title">【24国开05】机构客户匹配推荐</div>
+                        <div class="task-desc">产品销售数字员工识别3家潜在认购机构，已准备定向推介材料</div>
+                    </div>
+                    <span class="task-tag">产品销售</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 机构经纪四大核心服务 -->
+        <div class="core-services">
+            <div class="section-title">
+                <span>🎯 机构经纪核心服务</span>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon" style="background: #e8f0ff;">⚡</div>
+                    <div class="service-name">交易服务</div>
+                    <div class="service-desc">算法交易 · 席位租赁 · 极速柜台</div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon" style="background: #e6f7e6;">📊</div>
+                    <div class="service-name">研究服务</div>
+                    <div class="service-desc">研报推送 · 路演服务 · 专家访谈</div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon" style="background: #fff3e0;">💼</div>
+                    <div class="service-name">产品销售</div>
+                    <div class="service-desc">资管产品 · 收益凭证 · 定制方案</div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon" style="background: #f3e5f5;">🛡️</div>
+                    <div class="service-name">托管外包</div>
+                    <div class="service-desc">资产托管 · 运营外包 · 估值核算</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 机构客户关注列表 -->
+        <div class="customer-section">
+            <div class="section-title">
+                <span>💼 机构客户关注</span>
+                <span style="font-size: 12px; color: #86909c; font-weight: normal;">公募/私募/保险/银行</span>
+            </div>
+            
+            <div class="customer-tabs">
+                <div class="customer-tab active">全部客户</div>
+                <div class="customer-tab">公募基金</div>
+                <div class="customer-tab">私募基金</div>
+                <div class="customer-tab">保险资管</div>
+                <div class="customer-tab">银行理财</div>
+            </div>
+            
+            <div class="customer-list">
+                <div class="customer-item">
+                    <div class="customer-avatar">易方达</div>
+                    <div class="customer-info">
+                        <div class="customer-name">易方达基金管理有限公司</div>
+                        <div class="customer-tags">
+                            <span class="tag premium">战略客户</span>
+                            <span class="tag">研究服务</span>
+                            <span class="tag">交易服务</span>
+                        </div>
+                    </div>
+                    <div class="customer-alert">
+                        <span>⚠️</span>
+                        <span>待路演确认</span>
+                    </div>
+                </div>
+                
+                <div class="customer-item">
+                    <div class="customer-avatar">高毅</div>
+                    <div class="customer-info">
+                        <div class="customer-name">高毅资产管理</div>
+                        <div class="customer-tags">
+                            <span class="tag premium">百亿私募</span>
+                            <span class="tag">算法交易</span>
+                            <span class="tag">两融业务</span>
+                        </div>
+                    </div>
+                    <div class="customer-alert">
+                        <span>⚡</span>
+                        <span>交易异常</span>
+                    </div>
+                </div>
+                
+                <div class="customer-item">
+                    <div class="customer-avatar">平安</div>
+                    <div class="customer-info">
+                        <div class="customer-name">平安资管</div>
+                        <div class="customer-tags">
+                            <span class="tag">保险资管</span>
+                            <span class="tag">产品定制</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; color: #86909c;">服务正常</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 快速发起 -->
+        <div class="quick-section">
+            <div class="section-title">
+                <span>✍️ 发起机构经纪服务</span>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" class="task-input" placeholder="描述机构客户服务需求，例如：为易方达安排新能源行业专家路演，时间下周三">
+                <button class="submit-btn">提交</button>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-btn">⚡ 算法交易配置</button>
+                <button class="quick-btn">📊 研究报告定制</button>
+                <button class="quick-btn">🎯 产品定向推介</button>
+                <button class="quick-btn">🛡️ 托管业务申请</button>
+                <button class="quick-btn">📋 机构开户办理</button>
+                <button class="quick-btn">🎧 投诉/舆情响应</button>
+            </div>
+        </div>
+        
+        <!-- 圆桌会议 -->
+        <div class="round-section">
+            <div class="round-header">
+                <div class="round-title">🔔 机构经纪圆桌会议</div>
+            </div>
+            <div class="round-desc">
+                跨部门协调、战略客户政策、创新业务申请等重大事项，可提交至机构经纪圆桌会议决策
+            </div>
+            <button class="round-btn">提交重点事项请示</button>
+        </div>
+    </div>
+</body>
+</html>
