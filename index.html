@@ -143,19 +143,25 @@
         function addBusinessNavCenter() {
             const navHtml = `
                 <div class="nav-center">
-                    <div class="nav-header">
-                        <div class="nav-title">🎯 业务目标分类导航</div>
-                        <div class="nav-subtitle">点击关键词进入对应业务工作台</div>
-                    </div>
                     <div class="biz-grid">
-                        ${Object.entries(businessNav).map(([keyword, data]) => `
+                        ${Object.entries(businessNav).map(([keyword, data]) => {
+                            // 获取该分类的第一个任务作为示例
+                            const firstTask = data.tasks && data.tasks[0] ? data.tasks[0].name : '';
+                            const secondTask = data.tasks && data.tasks[1] ? data.tasks[1].name : '';
+                            return `
                             <div class="biz-entry" onclick="enterCategory('${keyword}')" style="border-color:transparent;" onmouseover="this.style.borderColor='${data.color}40'" onmouseout="this.style.borderColor='transparent'">
                                 <div class="entry-icon">${data.icon}</div>
                                 <div class="entry-keyword">${keyword}</div>
                                 <div class="entry-desc">${data.desc}</div>
-                                <div class="entry-count ${data.count.urgent > 0 ? 'count-urgent' : 'count-normal'}">${data.count.urgent > 0 ? `🔴 ${data.count.urgent} 紧急 · ` : ''}${data.count.total} 项任务</div>
+                                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.05);text-align:left;">
+                                    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">
+                                        ${data.count.urgent > 0 ? `<span style="color:var(--danger);">🔴 ${data.count.urgent} 紧急</span> · ` : ''}${data.count.total} 项待办
+                                    </div>
+                                    ${firstTask ? `<div style="font-size:12px;color:var(--text-secondary);">• ${firstTask}</div>` : ''}
+                                    ${secondTask ? `<div style="font-size:12px;color:var(--text-secondary);">• ${secondTask}</div>` : ''}
+                                </div>
                             </div>
-                        `).join('')}
+                        `}).join('')}
                     </div>
                     <div class="quick-prompts">
                         <div class="quick-title">💡 常用提示词（可直接点击或输入）</div>
