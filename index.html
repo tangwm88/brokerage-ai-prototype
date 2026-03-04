@@ -16,7 +16,7 @@
             padding: 40px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             width: 100%;
         }
         .header {
@@ -25,18 +25,34 @@
             color: #fff;
         }
         .header h1 {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 700;
             margin-bottom: 12px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .header p {
-            font-size: 16px;
+            font-size: 15px;
             opacity: 0.9;
+        }
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        .arch-step {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .workbenches {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 24px;
         }
         .workbench-card {
@@ -55,24 +71,32 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
         }
         .workbench-icon {
-            width: 72px;
-            height: 72px;
+            width: 64px;
+            height: 64px;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 32px;
             margin-bottom: 20px;
         }
-        .workbench-card.blue .workbench-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .workbench-card.green .workbench-icon { background: linear-gradient(135deg, #11998e, #38ef7d); }
-        .workbench-card.orange .workbench-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .workbench-card.blue .workbench-icon { background: linear-gradient(135deg, #3370ff, #7b9dff); }
+        .workbench-card.red .workbench-icon { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
         
         .workbench-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: #1f2329;
+        }
+        .workbench-role {
+            display: inline-block;
+            background: #f2f3f5;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #4e5969;
+            margin-bottom: 12px;
         }
         .workbench-desc {
             font-size: 14px;
@@ -87,7 +111,7 @@
             margin-bottom: 24px;
         }
         .feature-tag {
-            background: #f2f3f5;
+            background: #f8f9fa;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 12px;
@@ -97,8 +121,6 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #1f2329;
-            color: #fff;
             padding: 12px 24px;
             border-radius: 8px;
             font-size: 14px;
@@ -106,17 +128,19 @@
             text-decoration: none;
             transition: all 0.2s;
         }
-        .workbench-card.blue .enter-btn { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .workbench-card.green .enter-btn { background: linear-gradient(135deg, #11998e, #38ef7d); }
-        .workbench-card.orange .enter-btn { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        
-        .enter-btn:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
+        .workbench-card.blue .enter-btn {
+            background: linear-gradient(135deg, #3370ff, #7b9dff);
+            color: #fff;
         }
+        .workbench-card.red .enter-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: #fff;
+        }
+        .enter-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        
         .footer {
             text-align: center;
-            margin-top: 48px;
+            margin-top: 40px;
             color: rgba(255,255,255,0.7);
             font-size: 13px;
         }
@@ -125,7 +149,7 @@
                 grid-template-columns: 1fr;
             }
             .header h1 {
-                font-size: 28px;
+                font-size: 26px;
             }
         }
     </style>
@@ -133,23 +157,41 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 机构经纪智能体工作台</h1>
-            <p>基于公司自动驾驶大模型底座的三层架构设计 · 选择适合您的工作台</p>
+            <h1>🏛️ 机构经纪智能体工作台</h1>
+            <p>基于公司自动驾驶大模型底座的三层架构设计</p>
+            
+            <div class="arch-flow">
+                <div class="arch-step">
+                    <span>🏢</span>
+                    <span>公司自动驾驶大模型</span>
+                </div>
+                <span>→</span>
+                <div class="arch-step">
+                    <span>🏛️</span>
+                    <span>业务组织智能体</span>
+                </div>
+                <span>→</span>
+                <div class="arch-step">
+                    <span>🤖</span>
+                    <span>超级数字员工</span>
+                </div>
+            </div>
         </div>
         
         <div class="workbenches">
             <!-- 超级数字员工工作台 -->
-            <a href="super_digital_worker_workbench.html" class="workbench-card blue">
+            <a href="workbench_employee.html" class="workbench-card blue">
                 <div class="workbench-icon">🤖</div>
                 <div class="workbench-title">超级数字员工工作台</div>
+                <span class="workbench-role">前端团队 · 客户经理</span>
                 <div class="workbench-desc">
-                    面向前端团队客户经理的展业工作台。AI自动推送今日任务，一键调用7大数字员工，3-4步完成业务目标。
+                    AI自动推送任务，一键调用7大数字员工，3-4步完成业务目标。支持主动发起任务并同步至圆桌会议。
                 </div>
                 <div class="workbench-features">
-                    <span class="feature-tag">🎯 角色：客户经理</span>
-                    <span class="feature-tag">🤖 7大数字员工</span>
                     <span class="feature-tag">📋 AI自动任务</span>
+                    <span class="feature-tag">🤖 7大数字员工</span>
                     <span class="feature-tag">✍️ 主动发起</span>
+                    <span class="feature-tag">🔔 圆桌会议</span>
                 </div>
                 <div class="enter-btn">
                     进入工作台 →
@@ -157,35 +199,18 @@
             </a>
             
             <!-- 业务组织者工作台 -->
-            <a href="organizer_workbench.html" class="workbench-card green">
+            <a href="workbench_organizer.html" class="workbench-card red">
                 <div class="workbench-icon">🏛️</div>
                 <div class="workbench-title">业务组织者工作台</div>
+                <span class="workbench-role">业务支持中心 · 组织者</span>
                 <div class="workbench-desc">
-                    面向业务支持中心组织者的统筹调度中心。管理数字员工、调度任务、圆桌会议、AI驱动考核。
+                    统筹管理数字员工，调度前端任务，参与圆桌会议决策，AI驱动团队考核。连接底座与前端的双向枢纽。
                 </div>
                 <div class="workbench-features">
-                    <span class="feature-tag">🎯 角色：组织者</span>
                     <span class="feature-tag">📊 数字员工调度</span>
+                    <span class="feature-tag">📋 任务派发</span>
                     <span class="feature-tag">🔔 圆桌会议</span>
                     <span class="feature-tag">📈 AI考核</span>
-                </div>
-                <div class="enter-btn">
-                    进入工作台 →
-                </div>
-            </a>
-            
-            <!-- 多任务空间工作台 -->
-            <a href="multi_space_workbench.html" class="workbench-card orange">
-                <div class="workbench-icon">🚀</div>
-                <div class="workbench-title">多任务空间工作台</div>
-                <div class="workbench-desc">
-                    升级版多空间并行工作台。每个客户/任务独立空间，数字员工跨空间复用，全局AI助手统一调度。
-                </div>
-                <div class="workbench-features">
-                    <span class="feature-tag">🚀 多空间并行</span>
-                    <span class="feature-tag">💼 客户专属空间</span>
-                    <span class="feature-tag">📊 任务专项空间</span>
-                    <span class="feature-tag">🔄 数字员工复用</span>
                 </div>
                 <div class="enter-btn">
                     进入工作台 →
@@ -194,8 +219,7 @@
         </div>
         
         <div class="footer">
-            <p>机构经纪业务智能体原型系统 · 基于公司自动驾驶大模型底座</p>
-            <p style="margin-top: 8px;">三层架构：公司自动驾驶大模型 → 业务组织智能体 → 超级数字员工</p>
+            <p>机构经纪业务智能体原型系统 · 响应公司AI战略与组织转型要求</p>
         </div>
     </div>
 </body>

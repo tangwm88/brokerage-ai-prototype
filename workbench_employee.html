@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超级数字员工工作台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+            line-height: 1.5;
+        }
+        
+        /* 顶部 */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e5e6eb;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 17px; font-weight: 600; color: #3370ff; }
+        .arch-badge {
+            background: linear-gradient(135deg, #3370ff, #7b9dff);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, #3370ff, #85a5ff);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px;
+        }
+        
+        /* 主内容 */
+        .main {
+            margin-top: 56px;
+            padding: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 架构指示条 */
+        .arch-bar {
+            background: #fff;
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e6eb;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+        }
+        .arch-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #86909c;
+        }
+        .arch-step.active { color: #3370ff; font-weight: 500; }
+        .arch-arrow { color: #c9cdd4; }
+        
+        /* 今日任务 - AI自动推送 */
+        .today-section {
+            background: linear-gradient(135deg, #3370ff 0%, #7b9dff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .today-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .today-title { font-size: 16px; font-weight: 600; }
+        .today-meta { font-size: 12px; opacity: 0.9; }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .task-item:hover { background: rgba(255,255,255,0.25); }
+        .task-icon {
+            width: 40px; height: 40px; border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .task-content { flex: 1; }
+        .task-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .task-desc { font-size: 12px; opacity: 0.85; }
+        .task-tag {
+            background: rgba(255,255,255,0.25);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        /* 超级数字员工 */
+        .workers-section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .workers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .worker-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #e5e6eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .worker-card:hover {
+            border-color: #3370ff;
+            box-shadow: 0 4px 12px rgba(51,112,255,0.1);
+        }
+        .worker-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .worker-avatar {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .worker-avatar.blue { background: #e8f0ff; }
+        .worker-avatar.green { background: #e6f7e6; }
+        .worker-avatar.orange { background: #fff3e0; }
+        .worker-avatar.purple { background: #f3e5f5; }
+        .worker-info h4 { font-size: 14px; margin-bottom: 2px; }
+        .worker-info p { font-size: 12px; color: #86909c; }
+        .worker-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #00b42a;
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #00b42a;
+        }
+        
+        /* 主动发起任务 */
+        .initiate-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e6eb;
+            margin-bottom: 20px;
+        }
+        .input-area {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .task-input {
+            flex: 1;
+            border: 1px solid #dcdfe6;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            outline: none;
+        }
+        .task-input:focus { border-color: #3370ff; }
+        .submit-btn {
+            background: #3370ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .quick-btn {
+            background: #f2f3f5;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 12px;
+            color: #4e5969;
+            cursor: pointer;
+        }
+        .quick-btn:hover { background: #e5e6eb; }
+        
+        /* 圆桌会议连接 */
+        .round-section {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .round-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .round-title {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .round-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        .round-desc {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .round-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .round-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .round-btn:hover { background: rgba(255,255,255,0.3); }
+        
+        /* 个人业绩 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #e5e6eb;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2329;
+        }
+        .stat-trend {
+            font-size: 11px;
+            color: #00b42a;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部 -->
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div class="logo">🤖 超级数字员工工作台</div>
+            <span class="arch-badge">三层架构 · 自动驾驶</span>
+        </div>
+        <div class="header-right">
+            <span style="font-size: 13px; color: #86909c;">前端团队 · 客户经理</span>
+            <div class="avatar">张</div>
+        </div>
+    </div>
+    
+    <!-- 主内容 -->
+    <div class="main">
+        <!-- 架构指示 -->
+        <div class="arch-bar">
+            <div class="arch-step">
+                <span>🏢</span>
+                <span>公司底座</span>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-step">
+                <span>🏛️</span>
+                <span>业务组织智能体</span>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-step active">
+                <span>🤖</span>
+                <span>超级数字员工</span>
+            </div>
+            <div style="margin-left: auto; font-size: 12px; color: #86909c;">
+                您当前位于：超级数字员工层
+            </div>
+        </div>
+        
+        <!-- 今日任务 - AI自动推送 -->
+        <div class="today-section">
+            <div class="today-header">
+                <div class="today-title">📋 今日重点任务（AI自动识别）</div>
+                <div class="today-meta">3 个业务支持中心智能体为您服务</div>
+            </div>
+            
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-icon">💰</div>
+                    <div class="task-content">
+                        <div class="task-title">客户资金盘活提醒</div>
+                        <div class="task-desc">【深圳某私募基金】账户闲置资金800万，建议推荐稳健理财产品</div>
+                    </div>
+                    <span class="task-tag">财富管理</span>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-icon">📊</div>
+                    <div class="task-content">
+                        <div class="task-title">尽调任务待完成</div>
+                        <div class="task-desc">【芯源电子并购项目】需补充财务尽调信息，投行机器人已生成清单</div>
+                    </div>
+                    <span class="task-tag">投资银行</span>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-icon">🎯</div>
+                    <div class="task-content">
+                        <div class="task-title">产品销售机会</div>
+                        <div class="task-desc">一级债【24国开05】匹配3家潜在客户，销售机器人已准备话术</div>
+                    </div>
+                    <span class="task-tag">销售交易</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 超级数字员工 -->
+        <div class="workers-section">
+            <div class="section-title">
+                <span>🚀 调用超级数字员工</span>
+                <span style="font-size: 12px; color: #86909c; font-weight: normal;">7大数字员工 · 按需调用</span>
+            </div>
+            
+            <div class="workers-grid">
+                <div class="worker-card">
+                    <div class="worker-header">
+                        <div class="worker-avatar blue">📈</div>
+                        <div class="worker-info">
+                            <h4>资产分析</h4>
+                            <p>信评 · 定价 · 风险</p>
+                        </div>
+                    </div>
+                    <div class="worker-status">
+                        <span class="status-dot"></span>
+                        <span>空闲</span>
+                    </div>
+                </div>
+                
+                <div class="worker-card">
+                    <div class="worker-header">
+                        <div class="worker-avatar green">🎧</div>
+                        <div class="worker-info">
+                            <h4>客户服务</h4>
+                            <p>舆情 · 回访 · 投诉</p>
+                        </div>
+                    </div>
+                    <div class="worker-status">
+                        <span class="status-dot"></span>
+                        <span>监控中(5)</span>
+                    </div>
+                </div>
+                
+                <div class="worker-card">
+                    <div class="worker-header">
+                        <div class="worker-avatar orange">⚡</div>
+                        <div class="worker-info">
+                            <h4>交易能力</h4>
+                            <p>算法 · 执行 · 分析</p>
+                        </div>
+                    </div>
+                    <div class="worker-status">
+                        <span class="status-dot"></span>
+                        <span>空闲</span>
+                    </div>
+                </div>
+                
+                <div class="worker-card">
+                    <div class="worker-header">
+                        <div class="worker-avatar purple">🔬</div>
+                        <div class="worker-info">
+                            <h4>研究</h4>
+                            <p>研报 · 数据 · 洞察</p>
+                        </div>
+                    </div>
+                    <div class="worker-status">
+                        <span class="status-dot"></span>
+                        <span>撰写中</span>
+                    </div>
+                </div>
+                
+                <div class="worker-card">
+                    <div class="worker-header">
+                        <div class="worker-avatar blue">💡</div>
+                        <div class="worker-info">
+                            <h4>产品创设</h4>
+                            <p>方案 · 材料 · 合规</p>
+                        </div>
+                    </div>
+                    <div class="worker-status">
+                        <span class="status-dot"></span>
+                        <span>空闲</span>
+                    </div>
+                </div>
+                
+                <div class="worker-card">
+                    <div class="worker-header">
+                        <div class="worker-avatar orange">🎯</div>
+                        <div class="worker-info">
+                            <h4>产品销售</h4>
+                            <p>匹配 · 话术 · 机会</p>
+                        </div>
+                    </div>
+                    <div class="worker-status">
+                        <span class="status-dot"></span>
+                        <span>分析中</span>
+                    </div>
+                </div>
+                
+                <div class="worker-card">
+                    <div class="worker-header">
+                        <div class="worker-avatar green">💼</div>
+                        <div class="worker-info">
+                            <h4>投资</h4>
+                            <p>组合 · 归因 · 策略</p>
+                        </div>
+                    </div>
+                    <div class="worker-status">
+                        <span class="status-dot"></span>
+                        <span>空闲</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主动发起任务 -->
+        <div class="initiate-section">
+            <div class="section-title">
+                <span>✍️ 主动发起任务</span>
+                <span style="font-size: 12px; color: #86909c; font-weight: normal;">描述需求 → AI分解 → 派发执行 → 同步圆桌</span>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" class="task-input" placeholder="描述您的业务需求，例如：帮我准备深圳某私募客户的季度资产配置方案，需要包含债券和权益类产品">
+                <button class="submit-btn">提交任务</button>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-btn">📋 高净值开户</button>
+                <button class="quick-btn">📊 生成尽调报告</button>
+                <button class="quick-btn">🎯 产品销售推荐</button>
+                <button class="quick-btn">⚠️ 舆情事件响应</button>
+                <button class="quick-btn">📈 客户账户分析</button>
+            </div>
+        </div>
+        
+        <!-- 圆桌会议连接 -->
+        <div class="round-section">
+            <div class="round-header">
+                <div class="round-title">
+                    🔔 圆桌会议
+                    <span class="round-badge">双向反馈</span>
+                </div>
+            </div>
+            
+            <div class="round-desc">
+                您发起的跨部门/重大任务将自动同步至圆桌会议。如需重点事项请示、资源协调、创新支持，可直接提交。
+            </div>
+            
+            <div class="round-actions">
+                <button class="round-btn">📤 提交请示</button>
+                <button class="round-btn">📋 我的请示(2)</button>
+                <button class="round-btn">📊 考核数据</button>
+            </div>
+        </div>
+        
+        <!-- 个人业绩 -->
+        <div class="section-title">
+            <span>📊 AI驱动个人业绩</span>
+            <span style="font-size: 12px; color: #86909c; font-weight: normal;">实时统计 · 自动归因 · 向前端倾斜</span>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">本月任务完成</div>
+                <div class="stat-value">28</div>
+                <div class="stat-trend">↑ 12% 较上月</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">AI辅助次数</div>
+                <div class="stat-value">156</div>
+                <div class="stat-trend">↑ 35% 较上月</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">客户转化数</div>
+                <div class="stat-value">6</div>
+                <div class="stat-trend">↑ 20% 较上月</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">业绩贡献(万)</div>
+                <div class="stat-value">45.8</div>
+                <div class="stat-trend">↑ 18% 较上月</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
