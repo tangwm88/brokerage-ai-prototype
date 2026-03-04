@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投资银行智能体数字员工机器人 · 人机交互版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #1a3a6c 0%, #2d5aa0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            color: #fff;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .version-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 16px;
+        }
+        .workbenches {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+        .workbench-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .workbench-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+        }
+        .workbench-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 24px;
+        }
+        .workbench-card.blue .workbench-icon { background: linear-gradient(135deg, #1a3a6c, #2d5aa0); }
+        .workbench-card.red .workbench-icon { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
+        
+        .workbench-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1f2329;
+        }
+        .workbench-role {
+            display: inline-block;
+            background: #f2f3f5;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #4e5969;
+            margin-bottom: 16px;
+        }
+        .workbench-desc {
+            font-size: 15px;
+            color: #86909c;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        .workbench-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .feature-tag {
+            background: #f8f9fa;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #4e5969;
+        }
+        .enter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .workbench-card.blue .enter-btn {
+            background: linear-gradient(135deg, #1a3a6c, #2d5aa0);
+            color: #fff;
+        }
+        .workbench-card.red .enter-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: #fff;
+        }
+        .enter-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+        .arch-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        .arch-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        @media (max-width: 768px) {
+            .workbenches {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 投资银行智能体数字员工机器人</h1>
+            <p>人机交互式工作台 · 产品创设能力AI化</p>
+            <div class="version-tag">🚀 V2.0 优化版 · 多角色审议后升级</div>
+            
+            <div class="arch-info">
+                <div class="arch-flow">
+                    <div class="arch-step">
+                        <span>🏢</span>
+                        <span>公司自动驾驶大模型底座</span>
+                    </div>
+                    <span>→</span>
+                    <div class="arch-step">
+                        <span>🏛️</span>
+                        <span>投行业务支持中心</span>
+                    </div>
+                    <span>→</span>
+                    <div class="arch-step">
+                        <span>🤖</span>
+                        <span>超级数字员工</span>
+                    </div>
+                </div>
+                <div>业务聚焦：股权业务 · 债权业务 · 并购业务</div>
+            </div>
+        </div>
+        
+        <div class="workbenches">
+            <!-- 投行员工端 -->
+            <a href="employee.html" class="workbench-card blue">
+                <div class="workbench-icon">💼</div>
+                <div class="workbench-title">投行员工工作台</div>
+                <span class="workbench-role">投行员工 · 产品创设专用</span>
+                <div class="workbench-desc">
+                    3-4步完成股权/债权/并购产品创设，AI自动生成申报文件章节，合规自动校验，专家在线协作。
+                </div>
+                <div class="workbench-features">
+                    <span class="feature-tag">📊 股权业务</span>
+                    <span class="feature-tag">📈 债权业务</span>
+                    <span class="feature-tag">🏢 并购业务</span>
+                    <span class="feature-tag">✓ 合规校验</span>
+                </div>
+                <div class="enter-btn">
+                    进入工作台 →
+                </div>
+            </a>
+            
+            <!-- 业务支持中心 -->
+            <a href="organizer.html" class="workbench-card red">
+                <div class="workbench-icon">🏛️</div>
+                <div class="workbench-title">业务支持中心工作台</div>
+                <span class="workbench-role">组织者 · 统筹调度中心</span>
+                <div class="workbench-desc">
+                    统筹承揽/承做/承销三大环节，项目进度监控，风险预警，合规审核，团队调度，知识沉淀。
+                </div>
+                <div class="workbench-features">
+                    <span class="feature-tag">📊 项目看板</span>
+                    <span class="feature-tag">⚠️ 风险监控</span>
+                    <span class="feature-tag">✓ 合规审核</span>
+                    <span class="feature-tag">👥 团队管理</span>
+                </div>
+                <div class="enter-btn">
+                    进入工作台 →
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>投资银行智能体原型系统 · 响应公司AI战略与组织转型要求</p>
+            <p style="margin-top: 8px; font-size: 12px;">审议角色：前端员工 · 业务经理 · 中台 · 高管 · 董事长 | V2.0优化版</p>
+        </div>
+    </div>
+</body>
+</html>

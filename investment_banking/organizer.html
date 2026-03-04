@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投行业务支持中心 - 组织者工作台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* 顶部 */
+        .header {
+            background: linear-gradient(135deg, #1a3a6c 0%, #2d5aa0 100%);
+            padding: 0 20px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            color: #fff;
+        }
+        .logo { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .header-center { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .status-dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .header-btn { background: rgba(255,255,255,0.2); border: none; padding: 6px 14px; border-radius: 6px; color: #fff; font-size: 13px; cursor: pointer; }
+        
+        /* 主体 */
+        .main { display: flex; height: 100vh; padding-top: 56px; }
+        
+        /* 左侧栏 */
+        .sidebar {
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid #e5e6eb;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+        .nav-title { font-size: 12px; color: #86909c; margin-bottom: 12px; padding-left: 8px; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #4e5969;
+            margin-bottom: 4px;
+        }
+        .nav-item:hover, .nav-item.active { background: #f2f3f5; }
+        .nav-item.active { color: #1a3a6c; font-weight: 500; background: #e8f3ff; }
+        .badge { background: #ff6b6b; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 10px; margin-left: auto; }
+        
+        /* 主内容区 */
+        .content { flex: 1; overflow-y: auto; padding: 20px; }
+        
+        /* 统计卡片 */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .stat-value { font-size: 28px; font-weight: 700; color: #1a3a6c; }
+        .stat-label { font-size: 13px; color: #86909c; margin-top: 4px; }
+        .stat-change { font-size: 12px; margin-top: 8px; }
+        .stat-up { color: #00b42a; }
+        .stat-down { color: #ff6b6b; }
+        
+        /* 面板 */
+        .panel {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .panel-title { font-size: 16px; font-weight: 600; }
+        .panel-action { font-size: 13px; color: #1a3a6c; cursor: pointer; }
+        
+        /* 项目列表 */
+        .project-list { display: flex; flex-direction: column; gap: 12px; }
+        .project-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: #fafbfc;
+            border-radius: 10px;
+            border-left: 4px solid #1a3a6c;
+        }
+        .project-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 18px; }
+        .project-info { flex: 1; }
+        .project-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .project-meta { font-size: 12px; color: #86909c; }
+        .project-status {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 12px;
+        }
+        .status-progress { background: #e8f3ff; color: #1a3a6c; }
+        .status-review { background: #fff7e6; color: #ffaa00; }
+        .status-urgent { background: #ffe6e6; color: #ff6b6b; }
+        .project-progress { width: 120px; }
+        .progress-bar { height: 6px; background: #e5e6eb; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #1a3a6c; border-radius: 3px; }
+        .progress-text { font-size: 11px; color: #86909c; margin-top: 4px; text-align: right; }
+        
+        /* 风险预警 */
+        .risk-list { display: flex; flex-direction: column; gap: 10px; }
+        .risk-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #fafbfc;
+            border-radius: 8px;
+        }
+        .risk-icon { margin-right: 10px; font-size: 16px; }
+        .risk-high { color: #ff6b6b; }
+        .risk-medium { color: #ffaa00; }
+        .risk-low { color: #00b42a; }
+        .risk-info { flex: 1; }
+        .risk-title { font-size: 13px; font-weight: 500; }
+        .risk-desc { font-size: 11px; color: #86909c; margin-top: 2px; }
+        .risk-action { font-size: 12px; color: #1a3a6c; cursor: pointer; }
+        
+        /* 团队状态 */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .team-card {
+            padding: 16px;
+            background: #fafbfc;
+            border-radius: 10px;
+        }
+        .team-name { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+        .team-stats { display: flex; justify-content: space-between; font-size: 12px; color: #86909c; }
+        .team-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-top: 8px; display: inline-block; }
+        .status-normal { background: #e6f7e6; color: #00b42a; }
+        .status-busy { background: #fff7e6; color: #ffaa00; }
+        .status-warning { background: #ffe6e6; color: #ff6b6b; }
+        
+        /* 快捷操作 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .quick-card {
+            padding: 16px;
+            background: linear-gradient(135deg, #1a3a6c, #2d5aa0);
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .quick-card:hover { transform: translateY(-2px); }
+        .quick-icon { font-size: 24px; margin-bottom: 8px; }
+        .quick-name { font-size: 14px; font-weight: 600; }
+        .quick-desc { font-size: 11px; opacity: 0.9; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span>🏛️</span>
+            <span>投行业务支持中心</span>
+        </div>
+        <div class="header-center">
+            <span class="status-dot"></span>
+            <span>组织者工作台 · 全业务统筹</span>
+        </div>
+        <div class="header-right">
+            <button class="header-btn">📊 数据看板</button>
+            <button class="header-btn">⚙️ 设置</button>
+        </div>
+    </div>
+    
+    <div class="main">
+        <!-- 左侧栏 -->
+        <div class="sidebar">
+            <div class="nav-title">工作台</div>
+            <div class="nav-item active">
+                <span>📊</span>
+                <span>项目总览</span>
+            </div>
+            <div class="nav-item">
+                <span>📋</span>
+                <span>承揽管理</span>
+                <span class="badge">3</span>
+            </div>
+            <div class="nav-item">
+                <span>🔧</span>
+                <span>承做管理</span>
+                <span class="badge">5</span>
+            </div>
+            <div class="nav-item">
+                <span>📈</span>
+                <span>承销管理</span>
+            </div>
+            
+            <div class="nav-title" style="margin-top: 24px;">风控合规</div>
+            <div class="nav-item">
+                <span>⚠️</span>
+                <span>风险预警</span>
+                <span class="badge">2</span>
+            </div>
+            <div class="nav-item">
+                <span>✓</span>
+                <span>合规审核</span>
+            </div>
+            
+            <div class="nav-title" style="margin-top: 24px;">团队管理</div>
+            <div class="nav-item">
+                <span>👥</span>
+                <span>人员调度</span>
+            </div>
+            <div class="nav-item">
+                <span>📚</span>
+                <span>知识管理</span>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="content">
+            <!-- 统计卡片 -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">42</div>
+                    <div class="stat-label">进行中项目</div>
+                    <div class="stat-change stat-up">↑ 12% 较上月</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">待审核方案</div>
+                    <div class="stat-change stat-up">↑ 3 个新增</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">本月产品创设</div>
+                    <div class="stat-change stat-up">↑ 28% 较上月</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">风险预警</div>
+                    <div class="stat-change stat-down">↓ 50% 较上周</div>
+                </div>
+            </div>
+            
+            <!-- 快捷操作 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">🚀 快捷操作</div>
+                </div>
+                <div class="quick-actions">
+                    <div class="quick-card">
+                        <div class="quick-icon">📊</div>
+                        <div class="quick-name">新建项目</div>
+                        <div class="quick-desc">启动新产品创设</div>
+                    </div>
+                    <div class="quick-card">
+                        <div class="quick-icon">⚠️</div>
+                        <div class="quick-name">风险处置</div>
+                        <div class="quick-desc">处理预警事项</div>
+                    </div>
+                    <div class="quick-card">
+                        <div class="quick-icon">📋</div>
+                        <div class="quick-name">合规审核</div>
+                        <div class="quick-desc">方案合规检查</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 重点项目 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">📊 重点项目跟踪</div>
+                    <div class="panel-action">查看全部 →</div>
+                </div>
+                <div class="project-list">
+                    <div class="project-item">
+                        <div class="project-icon" style="background: #e8f3ff;">📈</div>
+                        <div class="project-info">
+                            <div class="project-name">XX科技科创板IPO</div>
+                            <div class="project-meta">股权业务 · 承做阶段 · 承做人：张三</div>
+                        </div>
+                        <div class="project-status status-progress">进行中</div>
+                        <div class="project-progress">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
+                            <div class="progress-text">步骤3/4</div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-item">
+                        <div class="project-icon" style="background: #fff7e6;">📉</div>
+                        <div class="project-info">
+                            <div class="project-name">XX集团可转债发行</div>
+                            <div class="project-meta">债权业务 · 审核阶段 · 承做人：李四</div>
+                        </div>
+                        <div class="project-status status-review">待审核</div>
+                        <div class="project-progress">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 90%;"></div></div>
+                            <div class="progress-text">待合规审核</div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-item" style="border-left-color: #ff6b6b;">
+                        <div class="project-icon" style="background: #ffe6e6;">🏢</div>
+                        <div class="project-info">
+                            <div class="project-name">XX并购交易方案</div>
+                            <div class="project-meta">并购业务 · 承揽阶段 · 复杂交易需专家</div>
+                        </div>
+                        <div class="project-status status-urgent">高风险</div>
+                        <div class="project-progress">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 25%;"></div></div>
+                            <div class="progress-text">需人工介入</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 风险预警 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">⚠️ 风险预警</div>
+                    <div class="panel-action">查看全部 →</div>
+                </div>
+                <div class="risk-list">
+                    <div class="risk-item">
+                        <div class="risk-icon risk-high">🔴</div>
+                        <div class="risk-info">
+                            <div class="risk-title">XX并购项目触发反垄断申报</div>
+                            <div class="risk-desc">交易规模超过申报门槛，需提交反垄断审查</div>
+                        </div>
+                        <div class="risk-action">立即处理 →</div>
+                    </div>
+                    
+                    <div class="risk-item">
+                        <div class="risk-icon risk-medium">🟡</div>
+                        <div class="risk-info">
+                            <div class="risk-title">XX发债项目偿债保障措施需补充</div>
+                            <div class="risk-desc">募集说明书偿债保障章节内容不完整</div>
+                        </div>
+                        <div class="risk-action">查看详情 →</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 团队状态 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">👥 团队工作状态</div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-name">📊 承揽团队</div>
+                        <div class="team-stats">
+                            <span>8人在线</span>
+                            <span>线索：12个</span>
+                        </div>
+                        <span class="team-status status-normal">正常</span>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-name">🔧 承做团队</div>
+                        <div class="team-stats">
+                            <span>15人在线</span>
+                            <span>项目：28个</span>
+                        </div>
+                        <span class="team-status status-busy">繁忙</span>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-name">📈 承销团队</div>
+                        <div class="team-stats">
+                            <span>6人在线</span>
+                            <span>发行：3个</span>
+                        </div>
+                        <span class="team-status status-normal">正常</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
