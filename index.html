@@ -103,17 +103,75 @@
         const suggestions = document.getElementById('suggestions');
 
         const businessNav = {
-            '引入客户': { icon: '👤', color: '#3b82f6', desc: '线索管理、资质评估、客户开发', count: { total: 4, urgent: 1 }, subcategories: [{ name: '线索收集', desc: '从邮件、活动识别客户线索', icon: '📧', color: '#3b82f6' }, { name: '资质初筛', desc: 'AI自动评估客户资质', icon: '⚡', color: '#8b5cf6' }, { name: '客户画像', desc: '完善信息、分析需求', icon: '🎨', color: '#ec4899' }, { name: '分配跟进', desc: '智能分配、设置提醒', icon: '📋', color: '#10b981' }], tasks: [{ name: '华泰资管', status: 'urgent', desc: '准入审核，资料待补充' }, { name: '华夏理财', status: 'normal', desc: '新客户评估中' }] },
-            '账户开立': { icon: '📝', color: '#8b5cf6', desc: '准入审核、协议签署、权限配置', count: { total: 3, urgent: 0 }, subcategories: [{ name: '准入审核', desc: '资料完整性、合规性审核', icon: '✓', color: '#8b5cf6' }, { name: '协议生成', desc: '自动生成开户协议', icon: '📄', color: '#3b82f6' }, { name: '权限配置', desc: '交易权限、风控规则', icon: '🔐', color: '#f59e0b' }, { name: '账户激活', desc: '开通通知、使用指导', icon: '▶️', color: '#10b981' }], tasks: [{ name: '嘉实基金', status: 'normal', desc: '资料审核中' }] },
-            '交易服务': { icon: '💰', color: '#10b981', desc: '算法配置、订单执行、成交反馈', count: { total: 5, urgent: 0 }, subcategories: [{ name: '算法配置', desc: 'TWAP/VWAP参数设置', icon: '⚙️', color: '#10b981' }, { name: '订单执行', desc: '实时监控、智能拆单', icon: '📊', color: '#3b82f6' }, { name: '异常预警', desc: '价格异动、风控预警', icon: '🚨', color: '#ef4444' }, { name: '成交分析', desc: '交易成本分析', icon: '📈', color: '#8b5cf6' }], tasks: [{ name: '广发基金', status: 'normal', desc: '算法交易配置' }] },
-            '客户服务': { icon: '🎧', color: '#f59e0b', desc: '咨询响应、舆情监控、风险预警', count: { total: 6, urgent: 1 }, subcategories: [{ name: '咨询响应', desc: '业务咨询、知识库支持', icon: '💬', color: '#3b82f6' }, { name: '对账服务', desc: '自动生成对账单', icon: '📑', color: '#8b5cf6' }, { name: '舆情跟踪', desc: '监控客户主体舆情', icon: '📰', color: '#f59e0b' }, { name: '监管关联', desc: '监管问询跟踪', icon: '🏛️', color: '#ef4444' }, { name: '风险预警', desc: '综合风险评分', icon: '⚠️', color: '#f97316' }, { name: '满意度管理', desc: '定期调研、服务优化', icon: '😊', color: '#10b981' }], tasks: [{ name: '中银基金', status: 'urgent', desc: '舆情预警待处理' }, { name: '鹏华基金', status: 'normal', desc: '定期回访' }] }
+            '引入客户': {
+                color: '#3b82f6',
+                desc: '线索收集、资质评估、分配跟进',
+                count: { total: 4, urgent: 1 },
+                subcategories: [
+                    { name: '线索收集', desc: '从邮件、活动识别客户线索', color: '#3b82f6' },
+                    { name: '资质初筛', desc: 'AI自动评估客户资质', color: '#8b5cf6' },
+                    { name: '客户画像', desc: '完善信息、分析需求', color: '#ec4899' },
+                    { name: '分配跟进', desc: '智能分配、设置提醒', color: '#10b981' }
+                ],
+                cases: [
+                    { title: '华泰资管 - 资料待补充', desc: '准入审核中，2小时截止', urgent: true },
+                    { title: '华夏理财 - AI评估完成', desc: '92分高价值客户，建议跟进', urgent: false }
+                ]
+            },
+            '账户开立': {
+                color: '#8b5cf6',
+                desc: '准入审核、协议签署、权限配置',
+                count: { total: 3, urgent: 0 },
+                subcategories: [
+                    { name: '准入审核', desc: '资料完整性、合规性审核', color: '#8b5cf6' },
+                    { name: '协议生成', desc: '自动生成开户协议', color: '#3b82f6' },
+                    { name: '权限配置', desc: '交易权限、风控规则', color: '#f59e0b' },
+                    { name: '账户激活', desc: '开通通知、使用指导', color: '#10b981' }
+                ],
+                cases: [
+                    { title: '嘉实基金 - 资料审核中', desc: '授权书待补充，预计今日完成', urgent: false },
+                    { title: '南方基金 - 协议待签署', desc: '电子协议已发送，等待回复', urgent: false }
+                ]
+            },
+            '交易服务': {
+                color: '#10b981',
+                desc: '算法配置、订单执行、成交分析',
+                count: { total: 5, urgent: 0 },
+                subcategories: [
+                    { name: '算法配置', desc: 'TWAP/VWAP参数设置', color: '#10b981' },
+                    { name: '订单执行', desc: '实时监控、智能拆单', color: '#3b82f6' },
+                    { name: '异常预警', desc: '价格异动、风控预警', color: '#ef4444' },
+                    { name: '成交分析', desc: '交易成本分析', color: '#8b5cf6' }
+                ],
+                cases: [
+                    { title: '广发基金 - 算法配置申请', desc: 'TWAP算法，5000万/日规模', urgent: false },
+                    { title: '博时基金 - 成交异常提醒', desc: '昨日大单成交滑点超阈值', urgent: false }
+                ]
+            },
+            '客户服务': {
+                color: '#f59e0b',
+                desc: '咨询响应、舆情监控、风险预警',
+                count: { total: 6, urgent: 1 },
+                subcategories: [
+                    { name: '咨询响应', desc: '业务咨询、知识库支持', color: '#3b82f6' },
+                    { name: '对账服务', desc: '自动生成对账单', color: '#8b5cf6' },
+                    { name: '舆情跟踪', desc: '监控客户主体舆情', color: '#f59e0b' },
+                    { name: '监管关联', desc: '监管问询跟踪', color: '#ef4444' },
+                    { name: '风险预警', desc: '综合风险评分', color: '#f97316' },
+                    { name: '满意度管理', desc: '定期调研、服务优化', color: '#10b981' }
+                ],
+                cases: [
+                    { title: '中银基金 - 舆情预警', desc: '负面报道，需主动沟通', urgent: true },
+                    { title: '鹏华基金 - 定期回访', desc: '30天未回访，建议今日联系', urgent: false }
+                ]
+            }
         };
 
         window.onload = () => {
             setTimeout(() => {
                 typeWriter(`📋 今日重点工作：`, () => {
                     addBusinessNavCenter();
-                    updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
+                    updateSuggestions(['引入客户', '账户开立', '交易服务', '客户服务']);
                 });
             }, 200);
         };
@@ -145,20 +203,28 @@
                 <div class="nav-center">
                     <div class="biz-grid">
                         ${Object.entries(businessNav).map(([keyword, data]) => {
-                            // 获取该分类的第一个任务作为示例
-                            const firstTask = data.tasks && data.tasks[0] ? data.tasks[0].name : '';
-                            const secondTask = data.tasks && data.tasks[1] ? data.tasks[1].name : '';
+                            const firstCase = data.cases && data.cases[0] ? data.cases[0] : null;
+                            const secondCase = data.cases && data.cases[1] ? data.cases[1] : null;
                             return `
-                            <div class="biz-entry" onclick="enterCategory('${keyword}')" style="border-color:transparent;" onmouseover="this.style.borderColor='${data.color}40'" onmouseout="this.style.borderColor='transparent'">
-                                <div class="entry-icon">${data.icon}</div>
-                                <div class="entry-keyword">${keyword}</div>
-                                <div class="entry-desc">${data.desc}</div>
-                                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.05);text-align:left;">
-                                    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">
-                                        ${data.count.urgent > 0 ? `<span style="color:var(--danger);">🔴 ${data.count.urgent} 紧急</span> · ` : ''}${data.count.total} 项待办
+                            <div class="biz-entry" onclick="enterCategory('${keyword}')" style="border-color:transparent;text-align:left;" onmouseover="this.style.borderColor='${data.color}40'" onmouseout="this.style.borderColor='transparent'">
+                                <div class="entry-keyword" style="font-size:18px;margin-bottom:6px;">${keyword}</div>
+                                <div class="entry-desc" style="font-size:13px;margin-bottom:12px;">${data.desc}</div>
+                                <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.05);">
+                                    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">
+                                        ${data.count.urgent > 0 ? `<span style="color:var(--danger);font-weight:500;">🔴 ${data.count.urgent} 紧急</span> · ` : ''}<span style="font-weight:500;">${data.count.total} 项待办</span>
                                     </div>
-                                    ${firstTask ? `<div style="font-size:12px;color:var(--text-secondary);">• ${firstTask}</div>` : ''}
-                                    ${secondTask ? `<div style="font-size:12px;color:var(--text-secondary);">• ${secondTask}</div>` : ''}
+                                    ${firstCase ? `
+                                    <div style="font-size:12px;margin-bottom:8px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;${firstCase.urgent ? 'border-left:2px solid var(--danger);' : ''}">
+                                        <div style="font-weight:500;color:${firstCase.urgent ? 'var(--danger)' : 'var(--text)'};margin-bottom:2px;">${firstCase.title}</div>
+                                        <div style="color:var(--text-secondary);">${firstCase.desc}</div>
+                                    </div>
+                                    ` : ''}
+                                    ${secondCase ? `
+                                    <div style="font-size:12px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;${secondCase.urgent ? 'border-left:2px solid var(--danger);' : ''}">
+                                        <div style="font-weight:500;color:${secondCase.urgent ? 'var(--danger)' : 'var(--text)'};margin-bottom:2px;">${secondCase.title}</div>
+                                        <div style="color:var(--text-secondary);">${secondCase.desc}</div>
+                                    </div>
+                                    ` : ''}
                                 </div>
                             </div>
                         `}).join('')}
@@ -211,7 +277,7 @@
 • "账户开立" → 开户审核任务  
 • "交易服务" → 算法交易服务
 • "客户服务" → 舆情监控与回访`, () => { addBusinessNavCenter(); });
-                    updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
+                    updateSuggestions(['引入客户', '账户开立', '交易服务', '客户服务']);
                 }, 500);
             }
         }
@@ -368,7 +434,7 @@
                         if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', summaryHtml);
                     });
                     chat.scrollTop = chat.scrollHeight;
-                    updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
+                    updateSuggestions(['引入客户', '账户开立', '交易服务', '客户服务']);
                 });
             }, 500);
         }
