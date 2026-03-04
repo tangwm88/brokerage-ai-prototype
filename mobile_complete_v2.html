@@ -2470,5 +2470,551 @@
                 <button class="btn btn-primary" onclick="completeLeadEntry()">完成录入 ✓</button>
             </div>
         </div>
-</body>
-</html>
+
+        <!-- ==========================================
+             页面 6: 账户开立 - 准入审核
+        ========================================== -->
+        <div class="page" id="page-account-review">
+            <div class="status-bar"><span>9:41</span><span>📶 5G 🔋</span></div>
+            
+            <div class="nav-header">
+                <div class="nav-back" onclick="showPage('home')">‹</div>
+                <div class="nav-title">准入审核</div>
+            </div>
+            
+            <div class="main-content">
+                <!-- 客户信息摘要 -->
+                <div class="card" style="background:linear-gradient(135deg,rgba(102,126,234,0.1)0%,rgba(118,75,162,0.05)100%);border-color:rgba(102,126,234,0.2);">
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <div style="width:56px;height:56px;border-radius:16px;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;">华</div>
+                        <div>
+                            <div style="font-size:18px;font-weight:600;margin-bottom:4px;">华夏基金管理有限公司</div>
+                            <div style="font-size:13px;color:var(--text-tertiary);">申请时间：2025-03-04</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 审核进度 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">审核进度</div>
+                        <span class="tag tag-warning">审核中</span>
+                    </div>
+                    
+                    <div class="progress-bar" style="margin-bottom:20px;">
+                        <div class="progress-fill" style="width:60%;"></div>
+                    </div>
+                    
+                    <div style="display:flex;justify-content:space-between;text-align:center;">
+                        <div>
+                            <div style="width:40px;height:40px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px;">✓</div>
+                            <div style="font-size:12px;color:var(--text-secondary);">提交申请</div>
+                        </div>
+                        <div>
+                            <div style="width:40px;height:40px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px;">✓</div>
+                            <div style="font-size:12px;color:var(--text-secondary);">资料初审</div>
+                        </div>
+                        <div>
+                            <div style="width:40px;height:40px;border-radius:50%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px;animation:pulse 2s infinite;">●</div>
+                            <div style="font-size:12px;color:var(--text-primary);font-weight:600;">合规审核</div>
+                        </div>
+                        <div>
+                            <div style="width:40px;height:40px;border-radius:50%;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px;">○</div>
+                            <div style="font-size:12px;color:var(--text-muted);">开户完成</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 资料清单 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">资料清单</div>
+                            <div class="card-subtitle">已提交 8/10 项</div>
+                        </div>
+                        <span style="font-size:14px;color:var(--primary);font-weight:600;">80%</span>
+                    </div>
+                    
+                    <div class="checklist-item checked">
+                        <div class="checklist-checkbox">✓</div>
+                        <div class="checklist-content">
+                            <div class="checklist-title">营业执照</div>
+                            <div class="checklist-status">已上传 · 审核通过</div>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist-item checked">
+                        <div class="checklist-checkbox">✓</div>
+                        <div class="checklist-content">
+                            <div class="checklist-title">金融许可证</div>
+                            <div class="checklist-status">已上传 · 审核通过</div>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist-item checked">
+                        <div class="checklist-checkbox">✓</div>
+                        <div class="checklist-content">
+                            <div class="checklist-title">法人身份证</div>
+                            <div class="checklist-status">已上传 · 审核通过</div>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox"></div>
+                        <div class="checklist-content">
+                            <div class="checklist-title">授权委托书</div>
+                            <div class="checklist-status" style="color:var(--warning);">待补充 · 2小时前提醒</div>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="showToast('已发送催办')">催办</button>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-checkbox"></div>
+                        <div class="checklist-content">
+                            <div class="checklist-title">风险测评问卷</div>
+                            <div class="checklist-status" style="color:var(--warning);">待补充</div>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="showToast('已发送催办')">催办</button>
+                    </div>
+                </div>
+                
+                <!-- 审核日志 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">审核日志</div>
+                    </div>
+                    
+                    <div class="timeline" style="padding-left:24px;">
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="left:-24px;width:12px;height:12px;"></div>
+                            <div class="timeline-content" style="padding:12px;">
+                                <div class="timeline-time">今天 09:30</div>
+                                <div class="timeline-title">合规审核中</div>
+                                <div class="timeline-desc">风控部门正在审核客户资质</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot success" style="left:-24px;width:12px;height:12px;"></div>
+                            <div class="timeline-content" style="padding:12px;">
+                                <div class="timeline-time">昨天 14:20</div>
+                                <div class="timeline-title">资料初审通过</div>
+                                <div class="timeline-desc">运营部审核通过，需补充2项材料</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot success" style="left:-24px;width:12px;height:12px;"></div>
+                            <div class="timeline-content" style="padding:12px;">
+                                <div class="timeline-time">3天前</div>
+                                <div class="timeline-title">提交开户申请</div>
+                                <div class="timeline-desc">客户经理张经理提交申请</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-actions">
+                <button class="btn btn-secondary" onclick="showToast('联系客户')">📞 联系客户</button>
+                <button class="btn btn-primary" onclick="showPage('agreement')">下一步：协议生成 →</button>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             页面 7: 账户开立 - 协议生成
+        ========================================== -->
+        <div class="page" id="page-agreement">
+            <div class="status-bar"><span>9:41</span><span>📶 5G 🔋</span></div>
+            
+            <div class="nav-header">
+                <div class="nav-back" onclick="showPage('account-review')">‹</div>
+                <div class="nav-title">协议生成</div>
+            </div>
+            
+            <div class="main-content">
+                <!-- 协议预览卡片 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">证券交易服务协议</div>
+                            <div class="card-subtitle">华夏基金管理有限公司</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:20px;margin-bottom:16px;height:300px;overflow-y:auto;font-size:13px;line-height:1.8;color:var(--text-secondary);">
+                        <h3 style="font-size:16px;color:var(--text-primary);margin-bottom:16px;text-align:center;">证券交易服务协议</h3>
+                        <p style="margin-bottom:12px;"><strong>甲方（客户）：</strong>华夏基金管理有限公司</p>
+                        <p style="margin-bottom:12px;"><strong>乙方（券商）：</strong>XX证券股份有限公司</p>
+                        <p style="margin-bottom:16px;">鉴于甲方拟通过乙方提供的证券经纪服务进行证券交易，双方经友好协商，达成如下协议：</p>
+                        <p style="margin-bottom:12px;"><strong>第一条 服务内容</strong></p>
+                        <p style="margin-bottom:12px;padding-left:16px;">1.1 乙方为甲方提供证券买卖、资金存取、信息查询等服务。</p>
+                        <p style="margin-bottom:12px;padding-left:16px;">1.2 乙方向甲方提供研究咨询、投资顾问等增值服务。</p>
+                        <p style="margin-bottom:12px;"><strong>第二条 交易佣金</strong></p>
+                        <p style="margin-bottom:12px;padding-left:16px;">2.1 股票交易佣金率为万分之2.5。</p>
+                        <p style="margin-bottom:12px;padding-left:16px;">2.2 债券交易佣金率为万分之1。</p>
+                        <p style="margin-bottom:12px;"><strong>第三条 双方权利义务</strong></p>
+                        <p style="margin-bottom:12px;padding-left:16px;">3.1 甲方应当如实提供开户资料，保证资金来源合法。</p>
+                        <p style="margin-bottom:12px;padding-left:16px;">3.2 乙方应当为甲方提供安全、准确、及时的交易服务。</p>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn btn-secondary" style="flex:1;" onclick="showToast('正在下载PDF')">📥 下载PDF</button>
+                        <button class="btn btn-primary" style="flex:1;" onclick="showToast('已发送到邮箱')">📧 发送邮件</button>
+                    </div>
+                </div>
+                
+                <!-- 电子签章 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">电子签章</div>
+                        <span class="tag tag-success">已签署</span>
+                    </div>
+                    
+                    <div style="background:rgba(52,199,89,0.05);border:1px solid rgba(52,199,89,0.15);border-radius:12px;padding:20px;text-align:center;">
+                        <div style="width:80px;height:80px;border-radius:50%;background:rgba(52,199,89,0.1);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;">✅</div>
+                        <div style="font-size:18px;font-weight:600;margin-bottom:8px;color:var(--success);">签署成功</div>
+                        <div style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">签署时间：2025-03-04 10:30:25</div>
+                        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;font-family:monospace;">
+                            签署Hash: 0x7f8a9b2c3d4e5f6a7b8c9d0e1f2a3b4c
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 签章记录 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">签章记录</div>
+                    </div>
+                    
+                    <div class="list-item">
+                        <div class="list-icon" style="background:rgba(52,199,89,0.15);">✓</div>
+                        <div class="list-content">
+                            <div class="list-title">甲方签署</div>
+                            <div class="list-desc">华夏基金 · 2025-03-04 10:30</div>
+                        </div>
+                        <span class="tag tag-success">已完成</span>
+                    </div>
+                    
+                    <div class="list-item">
+                        <div class="list-icon" style="background:rgba(52,199,89,0.15);">✓</div>
+                        <div class="list-content">
+                            <div class="list-title">乙方签署</div>
+                            <div class="list-desc">XX证券 · 2025-03-04 10:35</div>
+                        </div>
+                        <span class="tag tag-success">已完成</span>
+                    </div>
+                    
+                    <div class="list-item">
+                        <div class="list-icon" style="background:rgba(0,122,255,0.15);">📋</div>
+                        <div class="list-content">
+                            <div class="list-title">CA认证</div>
+                            <div class="list-desc">第三方认证机构 · 2025-03-04 10:36</div>
+                        </div>
+                        <span class="tag tag-info">已认证</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-actions">
+                <button class="btn btn-secondary" onclick="showPage('account-review')">← 上一步</button>
+                <button class="btn btn-primary" onclick="showPage('permission')">下一步：权限配置 →</button>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             页面 8: 账户开立 - 权限配置
+        ========================================== -->
+        <div class="page" id="page-permission">
+            <div class="status-bar"><span>9:41</span><span>📶 5G 🔋</span></div>
+            
+            <div class="nav-header">
+                <div class="nav-back" onclick="showPage('agreement')">‹</div>
+                <div class="nav-title">权限配置</div>
+            </div>
+            
+            <div class="main-content">
+                <!-- 交易权限 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">交易权限</div>
+                            <div class="card-subtitle">配置客户可交易的产品类型</div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-item" style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="list-icon">📈</div>
+                            <div class="list-content">
+                                <div class="list-title">股票交易</div>
+                                <div class="list-desc">沪深A股、科创板、创业板</div>
+                            </div>
+                        </div>
+                        <label class="switch" onclick="toggleSwitch(this)">
+                            <input type="checkbox" checked style="display:none;">
+                            <div style="width:50px;height:28px;background:var(--success);border-radius:14px;position:relative;transition:all 0.3s;">
+                                <div style="width:24px;height:24px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:all 0.3s;"></div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="list-item" style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="list-icon" style="background:rgba(52,199,89,0.15);">📊</div>
+                            <div class="list-content">
+                                <div class="list-title">债券交易</div>
+                                <div class="list-desc">国债、企业债、可转债</div>
+                            </div>
+                        </div>
+                        <label class="switch" onclick="toggleSwitch(this)">
+                            <input type="checkbox" checked style="display:none;">
+                            <div style="width:50px;height:28px;background:var(--success);border-radius:14px;position:relative;transition:all 0.3s;">
+                                <div style="width:24px;height:24px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:all 0.3s;"></div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="list-item" style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="list-icon" style="background:rgba(255,149,0,0.15);">💹</div>
+                            <div class="list-content">
+                                <div class="list-title">衍生品交易</div>
+                                <div class="list-desc">期权、期货、股指期货</div>
+                            </div>
+                        </div>
+                        <label class="switch" onclick="toggleSwitch(this)">
+                            <input type="checkbox" style="display:none;">
+                            <div style="width:50px;height:28px;background:var(--bg-tertiary);border-radius:14px;position:relative;transition:all 0.3s;">
+                                <div style="width:24px;height:24px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:all 0.3s;"></div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div class="list-item" style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="list-icon" style="background:rgba(175,82,222,0.15);">🏦</div>
+                            <div class="list-content">
+                                <div class="list-title">融资融券</div>
+                                <div class="list-desc">融资买入、融券卖出</div>
+                            </div>
+                        </div>
+                        <label class="switch" onclick="toggleSwitch(this)">
+                            <input type="checkbox" checked style="display:none;">
+                            <div style="width:50px;height:28px;background:var(--success);border-radius:14px;position:relative;transition:all 0.3s;">
+                                <div style="width:24px;height:24px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:all 0.3s;"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 风控规则 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">风控规则</div>
+                            <div class="card-subtitle">设置交易限制和风控参数</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">单日交易限额</label>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <input type="range" style="flex:1;" min="0" max="100" value="50" oninput="this.nextElementSibling.value = this.value + '亿'">
+                            <output style="width:60px;text-align:right;font-weight:600;">50亿</output>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">单票持仓比例上限</label>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <input type="range" style="flex:1;" min="0" max="100" value="30" oninput="this.nextElementSibling.value = this.value + '%'">
+                            <output style="width:60px;text-align:right;font-weight:600;">30%</output>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">预警线设置</label>
+                        <div class="radio-group">
+                            <div class="radio-item selected">80%</div>
+                            <div class="radio-item">85%</div>
+                            <div class="radio-item">90%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">平仓线设置</label>
+                        <div class="radio-group">
+                            <div class="radio-item">70%</div>
+                            <div class="radio-item selected">75%</div>
+                            <div class="radio-item">80%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 操作员权限 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">操作员权限</div>
+                        <button class="btn btn-sm btn-primary" onclick="showToast('添加操作员')">+ 添加</button>
+                    </div>
+                    
+                    <div class="list-item">
+                        <div class="user-avatar" style="width:40px;height:40px;font-size:16px;">张</div>
+                        <div class="list-content">
+                            <div class="list-title">张三（投资经理）</div>
+                            <div class="list-desc">交易权限 · 查询权限</div>
+                        </div>
+                        <span class="tag tag-success">已启用</span>
+                    </div>
+                    
+                    <div class="list-item">
+                        <div class="user-avatar" style="width:40px;height:40px;font-size:16px;background:linear-gradient(135deg,#ff6b6b,#ee5a6f);">李</div>
+                        <div class="list-content">
+                            <div class="list-title">李四（风控专员）</div>
+                            <div class="list-desc">查询权限 · 风控审批</div>
+                        </div>
+                        <span class="tag tag-success">已启用</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-actions">
+                <button class="btn btn-secondary" onclick="showPage('agreement')">← 上一步</button>
+                <button class="btn btn-primary" onclick="completeAccountOpening()">完成开户 ✓</button>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             页面 9: 交易服务 - 算法配置
+        ========================================== -->
+        <div class="page" id="page-algo-config">
+            <div class="status-bar"><span>9:41</span><span>📶 5G 🔋</span></div>
+            
+            <div class="nav-header">
+                <div class="nav-back" onclick="showPage('home')">‹</div>
+                <div class="nav-title">算法配置</div>
+            </div>
+            
+            <div class="main-content">
+                <!-- 策略选择 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">选择算法策略</div>
+                            <div class="card-subtitle">根据交易需求选择合适的算法</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display:grid;gap:12px;">
+                        <div class="card" style="margin:0;border-color:var(--primary);background:rgba(102,126,234,0.08);" onclick="selectAlgo(this)">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:48px;height:48px;border-radius:12px;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;font-size:24px;">📊</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:16px;font-weight:600;margin-bottom:4px;">TWAP 时间加权</div>
+                                    <div style="font-size:13px;color:var(--text-tertiary);">按时间均匀拆分订单，降低市场冲击</div>
+                                </div>
+                                <div style="width:24px;height:24px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;">✓</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="margin:0;" onclick="selectAlgo(this)">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:48px;height:48px;border-radius:12px;background:rgba(52,199,89,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;">📈</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:16px;font-weight:600;margin-bottom:4px;">VWAP 成交量加权</div>
+                                    <div style="font-size:13px;color:var(--text-tertiary);">跟踪市场成交量分布，优化成交价格</div>
+                                </div>
+                                <div style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="margin:0;" onclick="selectAlgo(this)">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,149,0,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;">⚡</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:16px;font-weight:600;margin-bottom:4px;">冰山订单</div>
+                                    <div style="font-size:13px;color:var(--text-tertiary);">隐藏大单数量，仅显示部分委托</div>
+                                </div>
+                                <div style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="margin:0;" onclick="selectAlgo(this)">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:48px;height:48px;border-radius:12px;background:rgba(175,82,222,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;">🎯</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:16px;font-weight:600;margin-bottom:4px;">POV 参与率</div>
+                                    <div style="font-size:13px;color:var(--text-tertiary);">按市场成交量比例参与交易</div>
+                                </div>
+                                <div style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 参数设置 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">参数设置</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">执行时长</label>
+                        <div class="radio-group">
+                            <div class="radio-item selected">15分钟</div>
+                            <div class="radio-item">30分钟</div>
+                            <div class="radio-item">1小时</div>
+                            <div class="radio-item">收盘前</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">委托间隔</label>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <input type="range" style="flex:1;" min="1" max="60" value="30" oninput="this.nextElementSibling.value = this.value + '秒'">
+                            <output style="width:60px;text-align:right;font-weight:600;">30秒</output>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">价格限制</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div>
+                                <input type="text" class="form-input" placeholder="最低价" value="-2%">
+                            </div>
+                            <div>
+                                <input type="text" class="form-input" placeholder="最高价" value="+2%">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label"> urgency（紧急程度）</label>
+                        <div class="radio-group">
+                            <div class="radio-item">保守</div>
+                            <div class="radio-item selected">平衡</div>
+                            <div class="radio-item">激进</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 预期效果 -->
+                <div class="card" style="background:linear-gradient(135deg,rgba(102,126,234,0.08)0%,rgba(118,75,162,0.03)100%);border-color:rgba(102,126,234,0.15);">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;font-size:18px;">💡</div>
+                        <span style="font-size:16px;font-weight:600;">AI 效果预测</span>
+                    </div>
+                    
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+                        <div style="padding:14px;background:rgba(0,0,0,0.2);border-radius:12px;">
+                            <div style="font-size:20px;font-weight:700;color:var(--success);margin-bottom:4px;">-35%</div>
+                            <div style="font-size:11px;color:var(--text-muted);">市场冲击</div>
+                        </div>
+                        <div style="padding:14px;background:rgba(0,0,0,0.2);border-radius:12px;">
+                            <div style="font-size:20px;font-weight:700;color:var(--info);margin-bottom:4px;">99.2%</div>
+                            <div style="font-size:11px;color:var(--text-muted);">成交率</div>
+                        </div>
+                        <div style="padding:14px;background:rgba(0,0,0,0.2);border-radius:12px;">
+                            <div style="font-size:20px;font-weight:700;color:var(--warning);margin-bottom:4px;">0.8bp</div>
+                            <div
