@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体设计师 - 人机交互式工作台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* 顶部 */
+        .header {
+            background: linear-gradient(135deg, #3370ff 0%, #7b9dff 100%);
+            padding: 0 20px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            color: #fff;
+        }
+        .logo { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .header-center { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .status-dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .header-btn { background: rgba(255,255,255,0.2); border: none; padding: 6px 14px; border-radius: 6px; color: #fff; font-size: 13px; cursor: pointer; }
+        
+        /* 主体 */
+        .main { display: flex; height: 100vh; padding-top: 56px; }
+        
+        /* 左侧栏 */
+        .sidebar {
+            width: 280px;
+            background: #fff;
+            border-right: 1px solid #e5e6eb;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+        .new-chat-btn {
+            background: linear-gradient(135deg, #3370ff, #7b9dff);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .sidebar-section { margin-top: 20px; }
+        .sidebar-title { font-size: 12px; color: #86909c; margin-bottom: 8px; padding-left: 8px; }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #4e5969;
+            margin-bottom: 4px;
+        }
+        .chat-item:hover, .chat-item.active { background: #f2f3f5; }
+        .chat-item.active { color: #3370ff; font-weight: 500; }
+        
+        /* 中间聊天区 */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        .chat-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e6eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-title { font-size: 16px; font-weight: 600; }
+        .chat-subtitle { font-size: 13px; color: #86909c; margin-top: 4px; }
+        
+        .messages { flex: 1; overflow-y: auto; padding: 20px; }
+        .message { display: flex; gap: 12px; margin-bottom: 20px; }
+        .message-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .message.ai .message-avatar { background: linear-gradient(135deg, #3370ff, #7b9dff); }
+        .message-content { max-width: 70%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+        .message.ai .message-content { background: #f2f3f5; color: #1f2329; }
+        
+        .input-area {
+            padding: 16px 20px;
+            border-top: 1px solid #e5e6eb;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .input-box {
+            flex: 1;
+            background: #f2f3f5;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+        .send-btn { background: #3370ff; color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        /* 右侧信息栏 */
+        .info-panel {
+            width: 320px;
+            background: #fafbfc;
+            border-left: 1px solid #e5e6eb;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .info-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .design-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .design-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .design-desc { font-size: 13px; color: #86909c; line-height: 1.5; }
+        .design-tools { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .tool-btn { background: #e8f3ff; color: #3370ff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span>🎨</span>
+            <span>智能体设计师</span>
+        </div>
+        <div class="header-center">
+            <span class="status-dot"></span>
+            <span>设计师在线 · Agent设计专家</span>
+        </div>
+        <div class="header-right">
+            <button class="header-btn">📚 设计模板</button>
+            <button class="header-btn">⚙️ 设置</button>
+        </div>
+    </div>
+    
+    <div class="main">
+        <!-- 左侧栏 -->
+        <div class="sidebar">
+            <button class="new-chat-btn">
+                <span>+</span>
+                <span>新建设计会话</span>
+            </button>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">当前设计</div>
+                <div class="chat-item active">
+                    <span>🎭</span>
+                    <span>客户服务Agent设计</span>
+                </div>
+                <div class="chat-item">
+                    <span>💬</span>
+                    <span>提示词优化</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">设计历史</div>
+                <div class="chat-item">
+                    <span>✓</span>
+                    <span>销售助手Agent</span>
+                </div>
+                <div class="chat-item">
+                    <span>✓</span>
+                    <span>数据分析Agent</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 中间聊天区 -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div>
+                    <div class="chat-title">🎭 客户服务Agent设计</div>
+                    <div class="chat-subtitle">角色定义 · 提示词工程 · 工具配置</div>
+                </div>
+            </div>
+            
+            <div class="messages">
+                <!-- AI消息 -->
+                <div class="message ai">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        你好！我是智能体设计师，专注于Agent架构设计和提示词工程。我可以帮你：<br><br>
+                        🎭 <strong>角色设计</strong> - 定义Agent的身份、目标、能力边界<br>
+                        💬 <strong>提示词工程</strong> - 编写系统提示词，优化输出质量<br>
+                        🔧 <strong>工具配置</strong> - 设计工具调用策略和参数规范<br>
+                        🔄 <strong>工作流编排</strong> - 设计多Agent协作流程<br><br>
+                        你想设计什么样的智能体？
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" class="input-box" placeholder="描述你想设计的智能体...">
+                <button class="send-btn">➤</button>
+            </div>
+        </div>
+        
+        <!-- 右侧信息栏 -->
+        <div class="info-panel">
+            <div class="info-title">🛠️ 设计工具箱</div>
+            
+            <div class="design-card">
+                <div class="design-title">🎭 角色定义模板</div>
+                <div class="design-desc">基于Role-Goal-Backstory框架定义Agent角色</div>
+                <div class="design-tools">
+                    <button class="tool-btn">角色模板</button>
+                    <button class="tool-btn">示例库</button>
+                </div>
+            </div>
+            
+            <div class="design-card">
+                <div class="design-title">💬 提示词优化器</div>
+                <div class="design-desc">分析和优化提示词，提升Agent表现</div>
+                <div class="design-tools">
+                    <button class="tool-btn">提示词检查</button>
+                    <button class="tool-btn">优化建议</button>
+                </div>
+            </div>
+            
+            <div class="design-card">
+                <div class="design-title">🔧 工具设计器</div>
+                <div class="design-desc">设计工具调用接口和参数规范</div>
+                <div class="design-tools">
+                    <button class="tool-btn">工具模板</button>
+                    <button class="tool-btn">参数设计</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
