@@ -16,12 +16,12 @@
             padding: 40px 20px;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             width: 100%;
         }
         .header {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 40px;
             color: #fff;
         }
         .header h1 {
@@ -49,6 +49,26 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+        .version-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .version-tab {
+            padding: 10px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .version-tab:hover, .version-tab.active {
+            background: #fff;
+            color: #667eea;
         }
         .workbenches {
             display: grid;
@@ -189,42 +209,47 @@
             </div>
         </div>
         
+        <div class="version-tabs">
+            <div class="version-tab">传统面板版</div>
+            <div class="version-tab active">AI人机交互版（推荐）</div>
+        </div>
+        
         <div class="workbenches">
-            <!-- 机构经纪业务工作台 -->
-            <a href="institutional_brokerage_employee.html" class="workbench-card blue">
-                <div class="workbench-icon">💼</div>
-                <div class="workbench-title">机构经纪业务工作台</div>
-                <span class="workbench-role">机构客户经理</span>
+            <!-- 机构经纪AI助手 - 员工版 -->
+            <a href="institutional_brokerage_employee_chat.html" class="workbench-card blue">
+                <div class="workbench-icon">💬</div>
+                <div class="workbench-title">机构经纪AI助手</div>
+                <span class="workbench-role">机构客户经理 · 人机交互版</span>
                 <div class="workbench-desc">
-                    专注机构经纪业务展业。AI自动识别机构客户服务机会，一键调用交易/研究/销售/托管四大核心服务数字员工。
+                    对话式AI交互工作台。通过自然语言与AI助手协作，自动识别机构客户服务机会，调用交易/研究/销售/托管服务。
                 </div>
                 <div class="workbench-features">
+                    <span class="feature-tag">💬 对话交互</span>
+                    <span class="feature-tag">🤖 AI智能识别</span>
                     <span class="feature-tag">⚡ 交易服务</span>
                     <span class="feature-tag">📊 研究服务</span>
-                    <span class="feature-tag">💼 产品销售</span>
-                    <span class="feature-tag">🛡️ 托管外包</span>
                 </div>
                 <div class="enter-btn">
-                    进入工作台 →
+                    进入AI助手 →
                 </div>
             </a>
             
-            <!-- 机构经纪业务组织者工作台 -->
-            <a href="institutional_brokerage_organizer.html" class="workbench-card red">
+            <!-- 机构经纪业务组织者AI助手 -->
+            <a href="institutional_brokerage_organizer_chat.html" class="workbench-card red">
                 <div class="workbench-icon">🏛️</div>
-                <div class="workbench-title">机构经纪业务组织者工作台</div>
-                <span class="workbench-role">机构业务支持中心 · 组织者</span>
+                <div class="workbench-title">机构经纪业务组织者AI助手</div>
+                <span class="workbench-role">机构业务负责人 · 人机交互版</span>
                 <div class="workbench-desc">
-                    统筹机构经纪业务运营。管理交易/研究/销售/托管四大数字员工，调度机构客户服务任务，参与圆桌会议决策。
+                    对话式统筹调度中心。通过AI助手协调四大数字员工，处理异常事件，管理圆桌会议，AI驱动团队考核。
                 </div>
                 <div class="workbench-features">
-                    <span class="feature-tag">📊 数字员工调度</span>
-                    <span class="feature-tag">📋 服务任务派发</span>
+                    <span class="feature-tag">💬 对话调度</span>
+                    <span class="feature-tag">🚀 数字员工统筹</span>
                     <span class="feature-tag">🔔 圆桌会议</span>
-                    <span class="feature-tag">📈 AI考核</span>
+                    <span class="feature-tag">⚡ 异常处理</span>
                 </div>
                 <div class="enter-btn">
-                    进入工作台 →
+                    进入AI助手 →
                 </div>
             </a>
         </div>
