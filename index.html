@@ -171,7 +171,7 @@
             setTimeout(() => {
                 typeWriter(`📋 今日重点工作：`, () => {
                     addBusinessNavCenter();
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '⚙️ 算法申请', '📞 客户回访']);
+                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
                 });
             }, 200);
         };
@@ -276,11 +276,11 @@
             else if (msg.includes('快速开户')) {
                 showQuickOpenAccount();
             }
-            else if (msg.includes('算法申请')) {
-                showAlgoApply();
+            else if (msg.includes('申请事项')) {
+                showApplyMenu();
             }
-            else if (msg.includes('客户回访')) {
-                showCustomerVisit();
+            else if (msg.includes('业绩看板')) {
+                showPerformanceDashboard();
             }
             else if (msg.includes('紧急')) {
                 showUrgentTasks();
@@ -292,13 +292,13 @@
             else if (msg.includes('华夏')) showTaskDetail('华夏理财');
             else {
                 setTimeout(() => {
-                    typeWriter(`收到。请从上方选择今日重点工作，或使用底部快捷入口发起新业务：
+                    typeWriter(`收到。请从上方选择今日重点工作，或使用底部快捷入口：
 
 • 🔍 潜客挖掘 → 发现新客户线索
 • ⚡ 快速开户 → 新客户准入办理  
-• ⚙️ 算法申请 → 交易服务开通
-• 📞 客户回访 → 主动服务触达`, () => { addBusinessNavCenter(); });
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '⚙️ 算法申请', '📞 客户回访']);
+• 📋 申请事项 → 业务申请、服务开通
+• 📊 业绩看板 → 查看业绩数据`, () => { addBusinessNavCenter(); });
+                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
                 }, 500);
             }
         }
@@ -557,100 +557,109 @@ AI正在扫描以下渠道：
             }, 500);
         }
 
-        function showAlgoApply() {
+        function showApplyMenu() {
             setTimeout(() => {
-                typeWriter(`⚙️ **算法交易申请** - 交易服务开通
+                typeWriter(`📋 **申请事项** - 业务申请中心
 
-选择算法类型：`, () => {
-                    const algoHtml = `
+请选择申请类型：`, () => {
+                    const applyHtml = `
                         <div class="category-panel">
                             <div class="sub-list">
-                                <div class="sub-card" onclick="send('申请TWAP')">
-                                    <div class="sub-icon" style="background:#10b98115;color:#10b981;">T</div>
+                                <div class="sub-card" onclick="send('申请算法交易')">
+                                    <div class="sub-icon" style="background:#3b82f615;color:#3b82f6;">算</div>
                                     <div class="sub-info">
-                                        <div class="sub-name">TWAP 时间加权</div>
-                                        <div class="sub-desc">按时间均匀拆单，降低冲击成本</div>
+                                        <div class="sub-name">算法交易申请</div>
+                                        <div class="sub-desc">TWAP/VWAP/POV等算法服务</div>
                                     </div>
                                     <div class="sub-arrow">›</div>
                                 </div>
-                                <div class="sub-card" onclick="send('申请VWAP')">
-                                    <div class="sub-icon" style="background:#3b82f615;color:#3b82f6;">V</div>
+                                <div class="sub-card" onclick="send('申请两融业务')">
+                                    <div class="sub-icon" style="background:#8b5cf615;color:#8b5cf6;">融</div>
                                     <div class="sub-info">
-                                        <div class="sub-name">VWAP 成交量加权</div>
-                                        <div class="sub-desc">跟踪市场成交量分布执行</div>
+                                        <div class="sub-name">融资融券申请</div>
+                                        <div class="sub-desc">开通融资融券交易权限</div>
                                     </div>
                                     <div class="sub-arrow">›</div>
                                 </div>
-                                <div class="sub-card" onclick="send('申请POV')">
-                                    <div class="sub-icon" style="background:#f59e0b15;color:#f59e0b;">P</div>
+                                <div class="sub-card" onclick="send('申请衍生品')">
+                                    <div class="sub-icon" style="background:#f59e0b15;color:#f59e0b;">衍</div>
                                     <div class="sub-info">
-                                        <div class="sub-name">POV 百分比成交量</div>
-                                        <div class="sub-desc">按市场成交量比例参与</div>
+                                        <div class="sub-name">衍生品业务申请</div>
+                                        <div class="sub-desc">期权、期货等衍生品交易</div>
                                     </div>
                                     <div class="sub-arrow">›</div>
+                                </div>
+                                <div class="sub-card" onclick="send('申请研究服务')">
+                                    <div class="sub-icon" style="background:#10b98115;color:#10b981;">研</div>
+                                    <div class="sub-info">
+                                        <div class="sub-name">研究服务申请</div>
+                                        <div class="sub-desc">研报推送、路演、专家会议</div>
+                                    </div>
+                                    <div class="sub-arrow">›</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', applyHtml);
+                    chat.scrollTop = chat.scrollHeight;
+                    updateSuggestions(['申请算法交易', '申请两融业务', '申请研究服务']);
+                });
+            }, 500);
+        }
+
+        function showPerformanceDashboard() {
+            setTimeout(() => {
+                typeWriter(`📊 **业绩看板** - 今日数据概览
+
+📈 **关键指标**`, () => {
+                    const dashboardHtml = `
+                        <div class="category-panel">
+                            <div class="sub-list">
+                                <div class="sub-card" style="background:linear-gradient(135deg, #10b98115, transparent);">
+                                    <div class="sub-info" style="flex:1;">
+                                        <div style="font-size:24px;font-weight:700;color:#10b981;margin-bottom:4px;">2.3亿</div>
+                                        <div style="font-size:13px;color:var(--text-secondary);">今日成交额</div>
+                                    </div>
+                                    <div style="font-size:12px;color:#10b981;">↑ 15%</div>
+                                </div>
+                                <div class="sub-card" style="background:linear-gradient(135deg, #3b82f615, transparent);">
+                                    <div class="sub-info" style="flex:1;">
+                                        <div style="font-size:24px;font-weight:700;color:#3b82f6;margin-bottom:4px;">18</div>
+                                        <div style="font-size:13px;color:var(--text-secondary);">在办任务</div>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-secondary);">2紧急</div>
+                                </div>
+                                <div class="sub-card" style="background:linear-gradient(135deg, #8b5cf615, transparent);">
+                                    <div class="sub-info" style="flex:1;">
+                                        <div style="font-size:24px;font-weight:700;color:#8b5cf6;margin-bottom:4px;">4</div>
+                                        <div style="font-size:13px;color:var(--text-secondary);">本月新客</div>
+                                    </div>
+                                    <div style="font-size:12px;color:#10b981;">↑ 2</div>
+                                </div>
+                                <div class="sub-card" style="background:linear-gradient(135deg, #f59e0b15, transparent);">
+                                    <div class="sub-info" style="flex:1;">
+                                        <div style="font-size:24px;font-weight:700;color:#f59e0b;margin-bottom:4px;">96%</div>
+                                        <div style="font-size:13px;color:var(--text-secondary);">客户满意度</div>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text-secondary);">目标95%</div>
                                 </div>
                             </div>
                         </div>
                         <div class="task-card">
                             <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
-                                💡 AI推荐：根据客户交易习惯，建议开通 TWAP + VWAP 组合
+                                💡 AI洞察：今日成交额超目标，建议重点跟进华泰资管开户，预计可增加5000万
                             </div>
                             <div class="task-actions">
-                                <button class="btn btn-primary" onclick="send('一键开通TWAP+VWAP')">一键开通组合</button>
+                                <button class="btn btn-primary" onclick="send('查看华泰资管')">查看详情</button>
+                                <button class="btn btn-secondary" onclick="send('导出报表')">导出报表</button>
                             </div>
                         </div>
                     `;
                     const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', algoHtml);
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', dashboardHtml);
                     chat.scrollTop = chat.scrollHeight;
-                    updateSuggestions(['申请TWAP', '申请VWAP', '查看费率']);
-                });
-            }, 500);
-        }
-
-        function showCustomerVisit() {
-            setTimeout(() => {
-                typeWriter(`📞 **客户回访** - 主动服务触达
-
-AI建议今日回访客户（按优先级排序）：`, () => {
-                    const visitHtml = `
-                        <div class="task-card">
-                            <div class="task-header">
-                                <div class="task-avatar" style="background:#f59e0b20;color:#f59e0b;">鹏</div>
-                                <div>
-                                    <div class="task-title">鹏华基金</div>
-                                    <div class="task-subtitle">⏰ 30天未回访 · 上次满意度4.5</div>
-                                </div>
-                            </div>
-                            <div class="task-body" style="font-size:13px;color:var(--text-secondary);">
-                                💡 AI建议：近期交易活跃度下降，建议了解是否有服务不满
-                            </div>
-                            <div class="task-actions">
-                                <button class="btn btn-primary" onclick="completeAction('预约回访')">预约回访</button>
-                                <button class="btn btn-secondary" onclick="completeAction('发送调研')">发送调研</button>
-                            </div>
-                        </div>
-                        <div class="task-card">
-                            <div class="task-header">
-                                <div class="task-avatar" style="background:#10b98120;color:#10b981;">兴</div>
-                                <div>
-                                    <div class="task-title">兴业基金</div>
-                                    <div class="task-subtitle">🎂 开户满1年 · 纪念回访</div>
-                                </div>
-                            </div>
-                            <div class="task-body" style="font-size:13px;color:var(--text-secondary);">
-                                开户周年，AI建议发送感谢信+新产品推荐
-                            </div>
-                            <div class="task-actions">
-                                <button class="btn btn-primary" onclick="completeAction('发送周年信')">发送周年信</button>
-                                <button class="btn btn-secondary" onclick="completeAction('电话回访')">电话回访</button>
-                            </div>
-                        </div>
-                    `;
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', visitHtml);
-                    chat.scrollTop = chat.scrollHeight;
-                    updateSuggestions(['预约鹏华回访', '发送周年信', '查看回访计划']);
+                    updateSuggestions(['查看详细数据', '导出日报', '查看趋势分析']);
                 });
             }, 500);
         }
