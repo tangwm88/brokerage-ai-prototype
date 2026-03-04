@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构经纪智能体 - 客户经理工作台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+        }
+        
+        /* 顶部导航 */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e5e6eb;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: #3370ff;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .nav-item {
+            font-size: 14px;
+            color: #4e5969;
+            cursor: pointer;
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover {
+            color: #3370ff;
+        }
+        
+        .nav-item.active {
+            color: #3370ff;
+            border-bottom-color: #3370ff;
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3370ff, #85a5ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        /* 主内容区 */
+        .main {
+            margin-top: 56px;
+            padding: 24px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 智能体欢迎区 */
+        .agent-welcome {
+            background: linear-gradient(135deg, #3370ff 0%, #7b9dff 100%);
+            border-radius: 12px;
+            padding: 24px;
+            color: #fff;
+            margin-bottom: 24px;
+        }
+        
+        .agent-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .agent-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .agent-info h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .agent-info p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .agent-input {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+        }
+        
+        .agent-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* 快捷入口 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .action-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e5e6eb;
+        }
+        
+        .action-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 12px;
+        }
+        
+        .action-card:nth-child(1) .action-icon { background: #e8f3ff; }
+        .action-card:nth-child(2) .action-icon { background: #e8ffea; }
+        .action-card:nth-child(3) .action-icon { background: #fff7e6; }
+        .action-card:nth-child(4) .action-icon { background: #f0e8ff; }
+        
+        .action-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .action-desc {
+            font-size: 12px;
+            color: #86909c;
+        }
+        
+        /* 两栏布局 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e5e6eb;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e6eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .panel-more {
+            font-size: 13px;
+            color: #3370ff;
+            cursor: pointer;
+        }
+        
+        /* 待办列表 */
+        .todo-list {
+            padding: 12px 0;
+        }
+        
+        .todo-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .todo-item:hover {
+            background: #f7f8fa;
+        }
+        
+        .todo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        
+        .todo-dot.urgent { background: #f53f3f; }
+        .todo-dot.warning { background: #ff7d00; }
+        .todo-dot.normal { background: #3370ff; }
+        
+        .todo-content {
+            flex: 1;
+        }
+        
+        .todo-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+        
+        .todo-meta {
+            font-size: 12px;
+            color: #86909c;
+        }
+        
+        /* 客户列表 */
+        .customer-list {
+            padding: 12px 0;
+        }
+        
+        .search-bar {
+            padding: 0 20px 12px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: #3370ff;
+        }
+        
+        .filter-btn {
+            padding: 8px 12px;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #4e5969;
+            background: #fff;
+            cursor: pointer;
+        }
+        
+        .customer-item {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f2f3f5;
+        }
+        
+        .customer-item:last-child {
+            border-bottom: none;
+        }
+        
+        .customer-item:hover {
+            background: #f7f8fa;
+        }
+        
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9c6e, #ff7a45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .customer-details h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .customer-details p {
+            font-size: 12px;
+            color: #86909c;
+        }
+        
+        .customer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .status-tag.pending {
+            background: #e8f3ff;
+            color: #3370ff;
+        }
+        
+        .status-tag.active {
+            background: #e8ffea;
+            color: #00b42a;
+        }
+        
+        .status-tag.warning {
+            background: #fff7e6;
+            color: #ff7d00;
+        }
+        
+        .status-alert {
+            font-size: 12px;
+            color: #f53f3f;
+        }
+        
+        /* 引入客户弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e6eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: #86909c;
+        }
+        
+        .modal-close:hover {
+            background: #f2f3f5;
+        }
+        
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(80vh - 140px);
+        }
+        
+        /* 步骤条 */
+        .steps {
+            display: flex;
+            margin-bottom: 32px;
+        }
+        
+        .step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #e5e6eb;
+            z-index: 0;
+        }
+        
+        .step:last-child::after {
+            display: none;
+        }
+        
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e6eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #86909c;
+            z-index: 1;
+        }
+        
+        .step.active .step-circle {
+            background: #3370ff;
+            color: #fff;
+        }
+        
+        .step.completed .step-circle {
+            background: #00b42a;
+            color: #fff;
+        }
+        
+        .step-label {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #86909c;
+        }
+        
+        .step.active .step-label {
+            color: #3370ff;
+            font-weight: 500;
+        }
+        
+        /* 表单 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .form-input:focus {
+            border-color: #3370ff;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .checkbox-item {
+            padding: 8px 16px;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .checkbox-item:hover {
+            border-color: #3370ff;
+            color: #3370ff;
+        }
+        
+        .checkbox-item.selected {
+            background: #e8f3ff;
+            border-color: #3370ff;
+            color: #3370ff;
+        }
+        
+        /* AI 建议卡片 */
+        .ai-suggestion {
+            background: #f7f8fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-left: 3px solid #3370ff;
+        }
+        
+        .ai-suggestion-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #3370ff;
+            margin-bottom: 8px;
+        }
+        
+        .ai-suggestion-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e6eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-default {
+            background: #f2f3f5;
+            color: #4e5969;
+        }
+        
+        .btn-default:hover {
+            background: #e5e6eb;
+        }
+        
+        .btn-primary {
+            background: #3370ff;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #2860df;
+        }
+        
+        /* 客户服务详情 */
+        .service-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 0 20px;
+            border-bottom: 1px solid #e5e6eb;
+        }
+        
+        .service-tab {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #86909c;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .service-tab:hover {
+            color: #3370ff;
+        }
+        
+        .service-tab.active {
+            color: #3370ff;
+            border-bottom-color: #3370ff;
+            font-weight: 500;
+        }
+        
+        .service-content {
+            padding: 20px;
+        }
+        
+        .alert-card {
+            background: #fff7e6;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+        }
+        
+        .alert-content h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .alert-content p {
+            font-size: 13px;
+            color: #86909c;
+        }
+        
+        .alert-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        /* 舆情监控 */
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .news-item {
+            padding: 16px;
+            background: #f7f8fa;
+            border-radius: 8px;
+        }
+        
+        .news-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .news-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .news-tag.negative {
+            background: #ffe4e4;
+            color: #f53f3f;
+        }
+        
+        .news-tag.neutral {
+            background: #e8f3ff;
+            color: #3370ff;
+        }
+        
+        .news-tag.positive {
+            background: #e8ffea;
+            color: #00b42a;
+        }
+        
+        .news-time {
+            font-size: 12px;
+            color: #86909c;
+        }
+        
+        .news-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .news-source {
+            font-size: 12px;
+            color: #86909c;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="nav-left">
+            <div class="logo">🦁 券商 AI 工作台</div>
+            <nav class="nav-menu">
+                <div class="nav-item active">🏠 首页</div>
+                <div class="nav-item">📋 我的工作台</div>
+                <div class="nav-item">📊 业绩看板</div>
+                <div class="nav-item">🔔 消息中心</div>
+            </nav>
+        </div>
+        <div class="nav-right">
+            <div class="user-avatar">张</div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main">
+        <!-- 智能体欢迎区 -->
+        <div class="agent-welcome">
+            <div class="agent-header">
+                <div class="agent-avatar">🤖</div>
+                <div class="agent-info">
+                    <h2>机构经纪智能体 - 客户开发员</h2>
+                    <p>今天已帮你跟进 3 位客户，发现 1 条舆情预警</p>
+                </div>
+            </div>
+            <input type="text" class="agent-input" placeholder="今天想帮哪位客户？输入客户名称或直接说需求...">
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="quick-actions">
+            <div class="action-card" onclick="openModal('acquire')">
+                <div class="action-icon">🎯</div>
+                <div class="action-title">引入客户</div>
+                <div class="action-desc">线索录入 · 资质筛选 · 分配跟进</div>
+            </div>
+            <div class="action-card" onclick="openModal('account')">
+                <div class="action-icon">📋</div>
+                <div class="action-title">账户开立</div>
+                <div class="action-desc">准入审核 · 协议生成 · 权限配置</div>
+            </div>
+            <div class="action-card" onclick="openModal('trade')">
+                <div class="action-icon">⚡</div>
+                <div class="action-title">交易服务</div>
+                <div class="action-desc">算法配置 · 订单执行 · 成交反馈</div>
+            </div>
+            <div class="action-card" onclick="openModal('service')">
+                <div class="action-icon">💬</div>
+                <div class="action-title">客户服务</div>
+                <div class="action-desc">咨询响应 · 对账服务 · 风险预警</div>
+            </div>
+        </div>
+
+        <!-- 两栏内容 -->
+        <div class="content-grid">
+            <!-- 待办事项 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">📌 待办事项</span>
+                    <span class="panel-more">查看全部</span>
+                </div>
+                <div class="todo-list">
+                    <div class="todo-item">
+                        <div class="todo-dot urgent"></div>
+                        <div class="todo-content">
+                            <div class="todo-text">客户 <strong>华泰资管</strong> 开户资料待补充</div>
+                            <div class="todo-meta">剩余 2 小时 · 客户开发员提醒</div>
+                        </div>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-dot warning"></div>
+                        <div class="todo-content">
+                            <div class="todo-text">客户 <strong>中银基金</strong> 舆情预警待处理</div>
+                            <div class="todo-meta">负面新闻：投资业绩波动 · 客户关怀员提醒</div>
+                        </div>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-dot normal"></div>
+                        <div class="todo-content">
+                            <div class="todo-text"><strong>客户关怀员</strong> 提醒你跟进 <strong>易方达</strong> 需求</div>
+                            <div class="todo-meta">明天约访 · 需准备产品介绍材料</div>
+                        </div>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-dot normal"></div>
+                        <div class="todo-content">
+                            <div class="todo-text"><strong>开户专员</strong> 已完成 <strong>嘉实基金</strong> 准入审核</div>
+                            <div class="todo-meta">等待客户签署协议 · 预计耗时 1 天</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 我的客户 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">👥 我的客户</span>
+                    <span class="panel-more">+ 新增客户</span>
+                </div>
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="搜索客户名称...">
+                    <button class="filter-btn">筛选 ▼</button>
+                </div>
+                <div class="customer-list">
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-avatar">华</div>
+                            <div class="customer-details">
+                                <h4>华泰资管</h4>
+                                <p>准入审核中 · 最后跟进: 3小时前</p>
+                            </div>
+                        </div>
+                        <div class="customer-status">
+                            <span class="status-tag pending">审核中</span>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background: linear-gradient(135deg, #7cb305, #5b8c00);">中</div>
+                            <div class="customer-details">
+                                <h4>中银基金</h4>
+                                <p>已开户 · 持仓规模: 2.3亿</p>
+                            </div>
+                        </div>
+                        <div class="customer-status">
+                            <span class="status-tag active">已开户</span>
+                            <span class="status-alert">⚠️ 舆情预警</span>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background: linear-gradient(135deg, #13c2c2, #08979c);">易</div>
+                            <div class="customer-details">
+                                <h4>易方达投资</h4>
+                                <p>潜在客户 · 明天约访</p>
+                            </div>
+                        </div>
+                        <div class="customer-status">
+                            <span class="status-tag warning">跟进中</span>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background: linear-gradient(135deg, #722ed1, #531dab);">嘉</div>
+                            <div class="customer-details">
+                                <h4>嘉实基金</h4>
+                                <p>待签署协议 · 客户关怀员处理中</p>
+                            </div>
+                        </div>
+                        <div class="customer-status">
+                            <span class="status-tag pending">协议待签</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 引入客户弹窗 -->
+    <div class="modal-overlay" id="acquireModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">🎯 引入客户</span>
+                <div class="modal-close" onclick="closeModal('acquire')">×</div>
+            </div>
+            <div class="modal-body">
+                <!-- 步骤条 -->
+                <div class="steps">
+                    <div class="step active">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">录入线索</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">资质初筛</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">客户画像</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-circle">4</div>
+                        <span class="step-label">分配跟进</span>
+                    </div>
+                </div>
+
+                <!-- AI 建议 -->
+                <div class="ai-suggestion">
+                    <div class="ai-suggestion-title">🤖 智能提示</div>
+                    <div class="ai-suggestion-content">
+                        系统已自动识别你最近的邮件往来，发现 2 条潜在客户线索：「华夏理财」和「南方基金」，是否需要一键导入？
+                    </div>
+                </div>
+
+                <!-- 表单 -->
+                <div class="form-group">
+                    <label class="form-label">客户名称</label>
+                    <input type="text" class="form-input" placeholder="请输入机构客户全称">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">客户类型</label>
+                        <div class="checkbox-group">
+                            <span class="checkbox-item selected">公募基金</span>
+                            <span class="checkbox-item">私募基金</span>
+                            <span class="checkbox-item">保险资管</span>
+                            <span class="checkbox-item">银行理财</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">联系人</label>
+                        <input type="text" class="form-input" placeholder="姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系电话</label>
+                        <input type="text" class="form-input" placeholder="手机号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">预计资产规模</label>
+                    <div class="checkbox-group">
+                        <span class="checkbox-item">&lt; 5000万</span>
+                        <span class="checkbox-item selected">5000万 - 1亿</span>
+                        <span class="checkbox-item">1亿 - 5亿</span>
+                        <span class="checkbox-item">&gt; 5亿</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">业务需求（可多选）</label>
+                    <div class="checkbox-group">
+                        <span class="checkbox-item selected">股票交易</span>
+                        <span class="checkbox-item">债券交易</span>
+                        <span class="checkbox-item">融资融券</span>
+                        <span class="checkbox-item">研究服务</span>
+                        <span class="checkbox-item">算法交易</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal('acquire')">取消</button>
+                <button class="btn btn-primary">下一步：资质初筛 →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 客户服务弹窗 -->
+    <div class="modal-overlay" id="serviceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">💬 客户服务 - 中银基金</span>
+                <div class="modal-close" onclick="closeModal('service')">×</div>
+            </div>
+            <div class="service-tabs">
+                <div class="service-tab active">舆情监控</div>
+                <div class="service-tab">风险预警</div>
+                <div class="service-tab">对账服务</div>
+                <div class="service-tab">咨询记录</div>
+                <div class="service-tab">监管关联</div>
+            </div>
+            <div class="modal-body">
+                <!-- 风险预警卡片 -->
+                <div class="alert-card">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h4>检测到 1 条负面舆情</h4>
+                        <p>来源：财经网 · 1小时前 · 涉及客户持仓标的</p>
+                        <div class="alert-actions">
+                            <button class="btn btn-primary btn-small">生成简报</button>
+                            <button class="btn btn-default btn-small">标记已读</button>
+                            <button class="btn btn-default btn-small">转发给客户</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 舆情列表 -->
+                <div class="news-list">
+                    <div class="news-item">
+                        <div class="news-header">
+                            <span class="news-tag negative">负面</span>
+                            <span class="news-time">1小时前</span>
+                        </div>
+                        <div class="news-title">某基金公司投资业绩大幅波动，投资者关注赎回风险</div>
+                        <div class="news-source">来源：财经网 · 阅读 1.2万</div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-header">
+                            <span class="news-tag neutral">中性</span>
+                            <span class="news-time">3小时前</span>
+                        </div>
+                        <div class="news-title">基金业协会发布最新私募备案新规</div>
+                        <div class="news-source">来源：中国证券报 · 阅读 3.5万</div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-header">
+                            <span class="news-tag positive">正面</span>
+                            <span class="news-time">昨天</span>
+                        </div>
+                        <div class="news-title">中银基金荣获金牛奖 2025 年度优秀固收团队</div>
+                        <div class="news-source">来源：中国证券报 · 阅读 8.7万</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(type) {
+            if (type === 'acquire') {
+                document.getElementById('acquireModal').classList.add('active');
+            } else if (type === 'service') {
+                document.getElementById('serviceModal').classList.add('active');
+            }
+        }
+
+        function closeModal(type) {
+            if (type === 'acquire') {
+                document.getElementById('acquireModal').classList.remove('active');
+            } else if (type === 'service') {
+                document.getElementById('serviceModal').classList.remove('active');
+            }
+        }
+
+        // 复选框交互
+        document.querySelectorAll('.checkbox-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+
+        // 标签切换
+        document.querySelectorAll('.service-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

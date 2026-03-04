@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构经纪智能体 - 新型交互范式</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #0a0a0f;
+            color: #e8e8ec;
+            overflow: hidden;
+        }
+        
+        /* 顶层容器 */
+        .app {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            height: 100vh;
+        }
+        
+        /* 左侧：AI 协作区 */
+        .ai-sidebar {
+            background: linear-gradient(180deg, #111118 0%, #0d0d12 100%);
+            border-right: 1px solid #1e1e28;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ai-header {
+            padding: 20px;
+            border-bottom: 1px solid #1e1e28;
+        }
+        
+        .ai-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .ai-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .ai-role {
+            font-size: 12px;
+            color: #6b6b7b;
+        }
+        
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #4ade80;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .ai-chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .chat-welcome {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .chat-welcome-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #a5b4fc;
+            margin-bottom: 8px;
+        }
+        
+        .chat-welcome-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #9ca3af;
+        }
+        
+        .chat-suggestion {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .suggestion-chip {
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #d1d5db;
+        }
+        
+        .suggestion-chip:hover {
+            background: rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+            color: #fff;
+        }
+        
+        .chat-message {
+            margin-bottom: 16px;
+        }
+        
+        .chat-message.ai {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-avatar-small {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .chat-bubble {
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 220px;
+        }
+        
+        .chat-input-area {
+            padding: 16px;
+            border-top: 1px solid #1e1e28;
+        }
+        
+        .chat-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            font-size: 13px;
+            color: #e8e8ec;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .chat-input:focus {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.08);
+        }
+        
+        .chat-input::placeholder {
+            color: #6b7280;
+        }
+        
+        /* 中间：客户空间 */
+        .main-space {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .space-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #1e1e28;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .space-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .space-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: #fff;
+        }
+        
+        .action-btn.primary:hover {
+            opacity: 0.9;
+        }
+        
+        /* 客户卡片网格 */
+        .customer-grid {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+        }
+        
+        .grid-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .grid-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #9ca3af;
+        }
+        
+        .grid-filters {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .filter-tag {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            font-size: 12px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-tag:hover, .filter-tag.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #a5b4fc;
+        }
+        
+        .customer-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+        
+        .customer-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .customer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: transparent;
+            transition: all 0.3s;
+        }
+        
+        .customer-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .customer-card.active {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+        }
+        
+        .customer-card.active::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .card-alert {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .card-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .card-avatar.green {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+        }
+        
+        .card-avatar.blue {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        }
+        
+        .card-avatar.purple {
+            background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+        }
+        
+        .card-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .card-info p {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .card-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .metric {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-pill.active {
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+        }
+        
+        .status-pill.pending {
+            background: rgba(250, 204, 21, 0.15);
+            color: #facc15;
+        }
+        
+        .status-pill.new {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+        }
+        
+        /* 右侧：动态工作区 */
+        .workspace {
+            background: #0d0d12;
+            border-left: 1px solid #1e1e28;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .workspace-header {
+            padding: 20px;
+            border-bottom: 1px solid #1e1e28;
+        }
+        
+        .selected-customer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .selected-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .selected-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .selected-info p {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .workspace-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 0 20px;
+            border-bottom: 1px solid #1e1e28;
+        }
+        
+        .workspace-tab {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .workspace-tab:hover {
+            color: #d1d5db;
+        }
+        
+        .workspace-tab.active {
+            color: #a5b4fc;
+            border-bottom-color: #667eea;
+        }
+        
+        .workspace-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        /* 可执行卡片 */
+        .actionable-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+        
+        .actionable-card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            background: rgba(255,255,255,0.06);
+        }
+        
+        .card-action-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .card-action-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .card-action-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .card-action-badge {
+            padding: 2px 8px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .card-action-desc {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .card-action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .card-btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .card-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        
+        .card-btn.secondary {
+            background: rgba(255,255,255,0.08);
+            color: #d1d5db;
+        }
+        
+        .card-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 8px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #667eea 0%, transparent 100%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1e1e28;
+            border: 2px solid #667eea;
+        }
+        
+        .timeline-content {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 14px;
+        }
+        
+        .timeline-time {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+        
+        .timeline-title {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .timeline-desc {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        /* 快速操作面板 */
+        .quick-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-action {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-action:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .quick-action-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .quick-action-label {
+            font-size: 12px;
+            color: #d1d5db;
+        }
+        
+        /* AI 实时建议 */
+        .ai-suggestion-bar {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .suggestion-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .suggestion-text {
+            flex: 1;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .suggestion-action {
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            color: #a5b4fc;
+            cursor: pointer;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-text {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 左侧：AI 协作区 -->
+        <aside class="ai-sidebar">
+            <div class="ai-header">
+                <div class="ai-avatar">🦁</div>
+                <div class="ai-name">Kimi</div>
+                <div class="ai-role">机构经纪智能体 · 客户开发员</div>
+                <div class="ai-status">
+                    <span class="status-dot"></span>
+                    <span>在线，正在监控 12 位客户</span>
+                </div>
+            </div>
+            
+            <div class="ai-chat">
+                <div class="chat-welcome">
+                    <div class="chat-welcome-title">👋 早上好，张经理</div>
+                    <div class="chat-welcome-text">
+                        今天有 3 件事需要关注：1 个舆情预警、2 个待办跟进。需要我帮你处理哪个？
+                    </div>
+                    <div class="chat-suggestion">
+                        <div class="suggestion-chip">📊 查看今日工作重点</div>
+                        <div class="suggestion-chip">⚠️ 处理中银基金舆情</div>
+                        <div class="suggestion-chip">📝 录入新客户线索</div>
+                    </div>
+                </div>
+                
+                <div class="chat-message ai">
+                    <div class="chat-avatar-small">🦁</div>
+                    <div class="chat-bubble">
+                        刚发现「华夏理财」的联系人回复了你的邮件，建议趁热打铁，需要我帮你准备一份定制方案吗？
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" placeholder="输入指令或问题...">
+            </div>
+        </aside>
+
+        <!-- 中间：客户空间 -->
+        <main class="main-space">
+            <header class="space-header">
+                <h1 class="space-title">我的客户</h1>
+                <div class="space-actions">
+                    <button class="action-btn">🔍 搜索</button>
+                    <button class="action-btn primary">+ 新增客户</button>
+                </div>
+            </header>
+            
+            <div class="customer-grid">
+                <div class="grid-header">
+                    <span class="grid-title">共 12 位客户 · 4 位需要关注</span>
+                    <div class="grid-filters">
+                        <span class="filter-tag active">全部</span>
+                        <span class="filter-tag">待跟进</span>
+                        <span class="filter-tag">预警</span>
+                        <span class="filter-tag">已开户</span>
+                    </div>
+                </div>
+                
+                <div class="customer-cards">
+                    <!-- 客户卡片 1 -->
+                    <div class="customer-card active" onclick="selectCustomer(this)">
+                        <div class="card-alert"></div>
+                        <div class="card-header">
+                            <div class="card-avatar">华</div>
+                            <div class="card-info">
+                                <h4>华泰资管</h4>
+                                <p>公募基金 · 准入审核中</p>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div class="metric">
+                                <div class="metric-value" style="color: #facc15;">审核中</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #4ade80;">5.2亿</div>
+                                <div class="metric-label">预计规模</div>
+                            </div>
+                        </div>
+                        <div class="card-status">
+                            <span class="status-pill pending">待补充资料</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 客户卡片 2 -->
+                    <div class="customer-card" onclick="selectCustomer(this)">
+                        <div class="card-alert"></div>
+                        <div class="card-header">
+                            <div class="card-avatar green">中</div>
+                            <div class="card-info">
+                                <h4>中银基金</h4>
+                                <p>公募基金 · 已开户</p>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div class="metric">
+                                <div class="metric-value" style="color: #4ade80;">已开户</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #60a5fa;">2.3亿</div>
+                                <div class="metric-label">持仓规模</div>
+                            </div>
+                        </div>
+                        <div class="card-status">
+                            <span class="status-pill active">正常</span>
+                            <span style="font-size: 11px; color: #ef4444;">⚠️ 舆情预警</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 客户卡片 3 -->
+                    <div class="customer-card" onclick="selectCustomer(this)">
+                        <div class="card-header">
+                            <div class="card-avatar blue">易</div>
+                            <div class="card-info">
+                                <h4>易方达投资</h4>
+                                <p>公募基金 · 潜在客户</p>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div class="metric">
+                                <div class="metric-value" style="color: #60a5fa;">跟进中</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #9ca3af;">-</div>
+                                <div class="metric-label">预计规模</div>
+                            </div>
+                        </div>
+                        <div class="card-status">
+                            <span class="status-pill new">明天约访</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 客户卡片 4 -->
+                    <div class="customer-card" onclick="selectCustomer(this)">
+                        <div class="card-header">
+                            <div class="card-avatar purple">嘉</div>
+                            <div class="card-info">
+                                <h4>嘉实基金</h4>
+                                <p>公募基金 · 协议待签</p>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div class="metric">
+                                <div class="metric-value" style="color: #c084fc;">待签署</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #4ade80;">8.5亿</div>
+                                <div class="metric-label">预计规模</div>
+                            </div>
+                        </div>
+                        <div class="card-status">
+                            <span class="status-pill pending">客户关怀员处理中</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 客户卡片 5 -->
+                    <div class="customer-card" onclick="selectCustomer(this)">
+                        <div class="card-header">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">华</div>
+                            <div class="card-info">
+                                <h4>华夏理财</h4>
+                                <p>银行理财 · 潜在客户</p>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div class="metric">
+                                <div class="metric-value" style="color: #fbbf24;">新线索</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #9ca3af;">3-5亿</div>
+                                <div class="metric-label">预计规模</div>
+                            </div>
+                        </div>
+                        <div class="card-status">
+                            <span class="status-pill new">邮件已回复</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 客户卡片 6 -->
+                    <div class="customer-card" onclick="selectCustomer(this)">
+                        <div class="card-header">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #34d399, #10b981);">南</div>
+                            <div class="card-info">
+                                <h4>南方基金</h4>
+                                <p>公募基金 · 已开户</p>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div class="metric">
+                                <div class="metric-value" style="color: #34d399;">活跃</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #60a5fa;">6.8亿</div>
+                                <div class="metric-label">持仓规模</div>
+                            </div>
+                        </div>
+                        <div class="card-status">
+                            <span class="status-pill active">正常</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧：动态工作区 -->
+        <aside class="workspace">
+            <div class="workspace-header">
+                <div class="selected-customer">
+                    <div class="selected-avatar">华</div>
+                    <div class="selected-info">
+                        <h3>华泰资管</h3>
+                        <p>准入审核中 · 最后跟进 3 小时前</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="workspace-tabs">
+                <div class="workspace-tab active">概览</div>
+                <div class="workspace-tab">流程</div>
+                <div class="workspace-tab">舆情</div>
+                <div class="workspace-tab">资料</div>
+            </div>
+            
+            <div class="workspace-content">
+                <!-- AI 实时建议 -->
+                <div class="ai-suggestion-bar">
+                    <div class="suggestion-icon">🦁</div>
+                    <div class="suggestion-text">
+                        距离资料补充截止时间还有 2 小时，建议立即联系客户
+                    </div>
+                    <div class="suggestion-action">一键催办</div>
+                </div>
+                
+                <!-- 快速操作 -->
+                <div class="quick-panel">
+                    <div class="quick-action">
+                        <div class="quick-action-icon">📋</div>
+                        <div class="quick-action-label">补充资料</div>
+                    </div>
+                    <div class="quick-action">
+                        <div class="quick-action-icon">📞</div>
+                        <div class="quick-action-label">联系客户</div>
+                    </div>
+                    <div class="quick-action">
+                        <div class="quick-action-icon">📊</div>
+                        <div class="quick-action-label">查看画像</div>
+                    </div>
+                    <div class="quick-action">
+                        <div class="quick-action-icon">⏰</div>
+                        <div class="quick-action-label">设置提醒</div>
+                    </div>
+                </div>
+                
+                <!-- 可执行卡片：待办 -->
+                <div class="actionable-card">
+                    <div class="card-action-header">
+                        <div class="card-action-icon">⚠️</div>
+                        <div class="card-action-title">开户资料待补充</div>
+                        <div class="card-action-badge">紧急</div>
+                    </div>
+                    <div class="card-action-desc">
+                        客户需补充：法人身份证复印件、授权委托书、风险测评问卷
+                    </div>
+                    <div class="card-action-buttons">
+                        <button class="card-btn primary">发送提醒</button>
+                        <button class="card-btn secondary">查看清单</button>
+                    </div>
+                </div>
+                
+                <!-- 时间线 -->
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">今天 09:30</div>
+                            <div class="timeline-title">AI 发送资料补充提醒</div>
+                            <div class="timeline-desc">客户尚未查看邮件</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">昨天 14:20</div>
+                            <div class="timeline-title">客户提交开户申请</div>
+                            <div class="timeline-desc">资料初审通过，需补充3项材料</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">3天前</div>
+                            <div class="timeline-title">首次接触客户</div>
+                            <div class="timeline-desc">通过行业会议认识，表达开户意向</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        function selectCustomer(element) {
+            document.querySelectorAll('.customer-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>机构经纪智能体 - 移动端UI效果版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #34c759;
+            --warning: #ff9500;
+            --danger: #ff3b30;
+            --info: #007aff;
+            --bg: #000;
+            --card-bg: rgba(255,255,255,0.06);
+            --card-border: rgba(255,255,255,0.08);
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; 
+            background: var(--bg); 
+            color: #fff; 
+            overflow: hidden; 
+            height: 100vh;
+        }
+        
+        .app { height: 100vh; display: flex; flex-direction: column; position: relative; }
+        
+        /* ===== 入场动画 ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        
+        /* ===== 顶部 ===== */
+        .status-bar { 
+            height: 44px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 20px; 
+            font-size: 14px; 
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .header { 
+            padding: 8px 16px 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            animation: fadeInUp 0.4s ease;
+        }
+        
+        .header-title { 
+            font-size: 28px; 
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-actions { display: flex; gap: 12px; }
+        
+        .header-btn { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background: var(--card-bg); 
+            border: 1px solid var(--card-border);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 18px; 
+            position: relative;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .header-btn:active { 
+            transform: scale(0.92); 
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .header-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.15);
+        }
+        
+        .header-badge { 
+            position: absolute; 
+            top: -4px; 
+            right: -4px; 
+            width: 20px; 
+            height: 20px; 
+            background: var(--danger); 
+            border-radius: 50%; 
+            font-size: 11px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(255,59,48,0.4);
+            animation: bounce 0.5s ease;
+        }
+        
+        /* ===== 主内容区 ===== */
+        .main-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            padding: 0 16px 100px; 
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* ===== AI 入口卡片 - 带光效 ===== */
+        .ai-quick-card { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            border-radius: 24px; 
+            padding: 24px; 
+            margin-bottom: 24px; 
+            position: relative; 
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(102,126,234,0.3);
+            animation: fadeInUp 0.5s ease 0.1s both;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .ai-quick-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .ai-quick-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        .ai-quick-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 16px rgba(102,126,234,0.2);
+        }
+        
+        .ai-card-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            margin-bottom: 20px; 
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ai-avatar { 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 50%; 
+            background: rgba(255,255,255,0.15); 
+            backdrop-filter: blur(10px);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 28px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .ai-status-dot { 
+            position: absolute; 
+            bottom: 2px; 
+            right: 2px; 
+            width: 14px; 
+            height: 14px; 
+            background: var(--success); 
+            border-radius: 50%; 
+            border: 2px solid var(--primary);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 8px var(--success);
+        }
+        
+        .ai-card-info h3 { 
+            font-size: 18px; 
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .ai-card-info p { 
+            font-size: 13px; 
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        
+        .ai-card-input { 
+            background: rgba(0,0,0,0.25); 
+            border-radius: 14px; 
+            padding: 16px 18px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .ai-card-input:hover {
+            background: rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.15);
+        }
+        
+        .ai-card-input-text { 
+            flex: 1; 
+            font-size: 15px; 
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .ai-card-input-icon { 
+            width: 36px; 
+            height: 36px; 
+            background: rgba(255,255,255,0.15); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .ai-card-input-icon:active {
+            transform: scale(0.9);
+            background: rgba(255,255,255,0.25);
+        }
+        
+        /* ===== 快捷操作 - 3D按压效果 ===== */
+        .quick-actions { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 16px; 
+            margin-bottom: 28px;
+            animation: fadeInUp 0.5s ease 0.15s both;
+        }
+        
+        .quick-action-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .quick-action-item:active {
+            transform: scale(0.92);
+        }
+        
+        .quick-action-icon { 
+            width: 64px; 
+            height: 64px; 
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 28px; 
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-action-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .quick-action-item:hover .quick-action-icon::before {
+            opacity: 1;
+        }
+        
+        .quick-action-icon.blue { 
+            background: linear-gradient(135deg, rgba(0,122,255,0.2) 0%, rgba(0,122,255,0.05) 100%);
+            border-color: rgba(0,122,255,0.3);
+            box-shadow: 0 4px 16px rgba(0,122,255,0.15);
+        }
+        
+        .quick-action-icon.green { 
+            background: linear-gradient(135deg, rgba(52,199,89,0.2) 0%, rgba(52,199,89,0.05) 100%);
+            border-color: rgba(52,199,89,0.3);
+            box-shadow: 0 4px 16px rgba(52,199,89,0.15);
+        }
+        
+        .quick-action-icon.orange { 
+            background: linear-gradient(135deg, rgba(255,149,0,0.2) 0%, rgba(255,149,0,0.05) 100%);
+            border-color: rgba(255,149,0,0.3);
+            box-shadow: 0 4px 16px rgba(255,149,0,0.15);
+        }
+        
+        .quick-action-icon.purple { 
+            background: linear-gradient(135deg, rgba(175,82,222,0.2) 0%, rgba(175,82,222,0.05) 100%);
+            border-color: rgba(175,82,222,0.3);
+            box-shadow: 0 4px 16px rgba(175,82,222,0.15);
+        }
+        
+        .quick-action-label { 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+        
+        /* ===== 分组标题 ===== */
+        .section-header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 16px; 
+            margin-top: 8px;
+            animation: fadeInUp 0.5s ease 0.2s both;
+        }
+        
+        .section-title { 
+            font-size: 22px; 
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        
+        .section-more { 
+            font-size: 14px; 
+            color: var(--info);
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .section-more:hover {
+            background: rgba(0,122,255,0.1);
+        }
+        
+        .section-more:active {
+            transform: scale(0.95);
+        }
+        
+        /* ===== 横向滑动卡片组 ===== */
+        .card-scroll { 
+            display: flex; 
+            gap: 14px; 
+            overflow-x: auto; 
+            padding: 4px 4px 16px; 
+            margin-bottom: 16px; 
+            margin-left: -4px;
+            margin-right: -4px;
+            padding-left: 4px;
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none;
+            animation: fadeInUp 0.5s ease 0.25s both;
+        }
+        
+        .card-scroll::-webkit-scrollbar { display: none; }
+        
+        /* ===== 待办卡片 - 玻璃拟态 ===== */
+        .todo-card-wrapper { 
+            min-width: 300px; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 20px;
+        }
+        
+        .todo-card-actions { 
+            position: absolute; 
+            right: 0; 
+            top: 0; 
+            bottom: 0; 
+            display: flex;
+            border-radius: 0 20px 20px 0;
+            overflow: hidden;
+        }
+        
+        .todo-action-btn { 
+            width: 80px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 13px; 
+            gap: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .todo-action-btn:active {
+            filter: brightness(0.9);
+        }
+        
+        .todo-action-btn.done { 
+            background: var(--success);
+            box-shadow: inset -2px 0 8px rgba(0,0,0,0.1);
+        }
+        
+        .todo-action-btn.remind { 
+            background: var(--warning);
+            box-shadow: inset -2px 0 8px rgba(0,0,0,0.1);
+        }
+        
+        .todo-card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(20px);
+            border-radius: 20px; 
+            padding: 20px; 
+            border: 1px solid var(--card-border); 
+            position: relative; 
+            z-index: 2; 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .todo-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        
+        .todo-card.urgent { 
+            background: linear-gradient(135deg, rgba(255,59,48,0.12) 0%, rgba(255,59,48,0.04) 100%); 
+            border-color: rgba(255,59,48,0.25);
+            box-shadow: 0 4px 20px rgba(255,59,48,0.1);
+        }
+        
+        .todo-card.warning { 
+            background: linear-gradient(135deg, rgba(255,149,0,0.12) 0%, rgba(255,149,0,0.04) 100%); 
+            border-color: rgba(255,149,0,0.25);
+            box-shadow: 0 4px 20px rgba(255,149,0,0.1);
+        }
+        
+        .todo-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 14px;
+        }
+        
+        .todo-badge { 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        
+        .todo-badge.urgent { 
+            background: rgba(255,59,48,0.2); 
+            color: var(--danger);
+            box-shadow: 0 2px 8px rgba(255,59,48,0.15);
+        }
+        
+        .todo-badge.warning { 
+            background: rgba(255,149,0,0.2); 
+            color: var(--warning);
+            box-shadow: 0 2px 8px rgba(255,149,0,0.15);
+        }
+        
+        .todo-time { 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.45);
+            font-weight: 500;
+        }
+        
+        .todo-title { 
+            font-size: 17px; 
+            font-weight: 600; 
+            margin-bottom: 10px; 
+            line-height: 1.4;
+            letter-spacing: -0.2px;
+        }
+        
+        .todo-desc { 
+            font-size: 14px; 
+            color: rgba(255,255,255,0.55); 
+            margin-bottom: 16px; 
+            line-height: 1.6;
+        }
+        
+        .todo-meta { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.35); 
+            margin-bottom: 12px;
+        }
+        
+        .todo-hint { 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.3); 
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .todo-swipe-hint { 
+            font-size: 24px; 
+            opacity: 0.2;
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        /* ===== 客户卡片 ===== */
+        .customer-card { 
+            min-width: 280px; 
+            background: var(--card-bg); 
+            backdrop-filter: blur(20px);
+            border-radius: 20px; 
+            padding: 20px; 
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .customer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: transparent;
+            transition: background 0.3s ease;
+        }
+        
+        .customer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.12);
+        }
+        
+        .customer-card:hover::before {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+        }
+        
+        .customer-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+        
+        .customer-card-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            margin-bottom: 18px;
+        }
+        
+        .customer-avatar { 
+            width: 56px; 
+            height: 56px; 
+            border-radius: 16px; 
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px; 
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(255,107,107,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .customer-card:hover .customer-avatar {
+            transform: scale(1.05);
+        }
+        
+        .customer-avatar.green { 
+            background: linear-gradient(135deg, #34d399, #10b981);
+            box-shadow: 0 4px 16px rgba(52,211,153,0.3);
+        }
+        
+        .customer-avatar.blue { 
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            box-shadow: 0 4px 16px rgba(96,165,250,0.3);
+        }
+        
+        .customer-info h4 { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-bottom: 5px;
+            letter-spacing: -0.2px;
+        }
+        
+        .customer-info p { 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.45);
+            font-weight: 500;
+        }
+        
+        .customer-metrics { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 14px; 
+            margin-bottom: 18px;
+        }
+        
+        .metric-box { 
+            background: rgba(0,0,0,0.25); 
+            border-radius: 14px; 
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .customer-card:hover .metric-box {
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .metric-value { 
+            font-size: 20px; 
+            font-weight: 700; 
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        
+        .metric-value.green { color: var(--success); text-shadow: 0 0 20px rgba(52,199,89,0.3); }
+        .metric-value.yellow { color: #ffcc00; text-shadow: 0 0 20px rgba(255,204,0,0.3); }
+        .metric-value.blue { color: var(--info); text-shadow: 0 0 20px rgba(0,122,255,0.3); }
+        
+        .metric-label { 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.4);
+            font-weight: 500;
+        }
+        
+        .customer-status-row { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+        }
+        
+        .status-tag { 
+            padding: 8px 14px; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .status-tag.active { 
+            background: rgba(52,199,89,0.15); 
+            color: var(--success);
+            border: 1px solid rgba(52,199,89,0.2);
+        }
+        
+        .status-tag.pending { 
+            background: rgba(255,204,0,0.15); 
+            color: #ffcc00;
+            border: 1px solid rgba(255,204,0,0.2);
+        }
+        
+        .status-alert { 
+            font-size: 13px; 
+            color: var(--danger);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            animation: pulse 2s infinite;
+        }
+        
+        /* ===== AI 洞察卡片 ===== */
+        .insight-card { 
+            background: linear-gradient(135deg, rgba(102,126,234,0.12) 0%, rgba(118,75,162,0.04) 100%); 
+            border: 1px solid rgba(102,126,234,0.2); 
+            border-radius: 20px; 
+            padding: 20px; 
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease 0.3s both;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(102,126,234,0.1) 0%, transparent 70%);
+        }
+        
+        .insight-card:hover {
+            border-color: rgba(102,126,234,0.35);
+            box-shadow: 0 8px 24px rgba(102,126,234,0.15);
+        }
+        
+        .insight-card:active {
+            transform: scale(0.98);
+        }
+        
+        .insight-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .insight-icon { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 20px;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .insight-title { 
+            font-size: 16px; 
+            font-weight: 600;
+        }
+        
+        .insight-content { 
+            font-size: 15px; 
+            line-height: 1.7; 
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .insight-action { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            padding: 10px 18px; 
+            background: rgba(102,126,234,0.15); 
+            border-radius: 12px; 
+            font-size: 14px; 
+            color: #a5b4fc; 
+            font-weight: 600;
+            border: 1px solid rgba(102,126,234,0.2);
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 1;
+            cursor: pointer;
+        }
+        
+        .insight-action:hover {
+            background: rgba(102,126,234,0.25);
+            border-color: rgba(102,126,234,0.35);
+        }
+        
+        .insight-action:active {
+            transform: scale(0.95);
+        }
+        
+        /* ===== 底部导航 ===== */
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(30px) saturate(180%);
+            border-top: 1px solid rgba(255,255,255,0.08); 
+            padding: 12px 24px 34px; 
+            display: flex; 
+            justify-content: space-around; 
+            z-index: 100;
+            animation: fadeInUp 0.5s ease 0.4s both;
+        }
+        
+        .nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 6px; 
+            color: rgba(255,255,255,0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+        
+        .nav-item:hover {
+            color: rgba(255,255,255,0.7);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+        
+        .nav-item.active { 
+            color: var(--info);
+        }
+        
+        .nav-item.active .nav-icon {
+            animation: bounce 0.5s ease;
+        }
+        
+        .nav-icon { 
+            font-size: 26px;
+            transition: transform 0.2s ease;
+        }
+        
+        .nav-label { 
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        /* ===== 浮动 AI 按钮 ===== */
+        .fab-ai { 
+            position: fixed; 
+            bottom: 100px; 
+            right: 20px; 
+            width: 64px; 
+            height: 64px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 32px; 
+            box-shadow: 0 6px 24px rgba(102,126,234,0.4), 0 0 0 4px rgba(102,126,234,0.1); 
+            z-index: 99; 
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .fab-ai:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 32px rgba(102,126,234,0.5), 0 0 0 6px rgba(102,126,234,0.15);
+        }
+        
+        .fab-ai:active {
+            transform: scale(0.95);
+        }
+        
+        .fab-badge { 
+            position: absolute; 
+            top: -4px; 
+            right: -4px; 
+            width: 24px; 
+            height: 24px; 
+            background: var(--danger); 
+            border-radius: 50%; 
+            font-size: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(255,59,48,0.4);
+            animation: bounce 0.5s ease;
+            border: 2px solid #000;
+        }
+        
+        /* ===== AI 对话浮层 ===== */
+        .ai-sheet-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(5px);
+            z-index: 200; 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: all 0.3s ease;
+        }
+        
+        .ai-sheet-overlay.active { 
+            opacity: 1; 
+            visibility: visible;
+        }
+        
+        .ai-sheet { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: linear-gradient(180deg, #1c1c1e 0%, #000 100%); 
+            border-radius: 32px 32px 0 0; 
+            padding: 24px; 
+            z-index: 201; 
+            transform: translateY(100%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            max-height: 85vh; 
+            display: flex; 
+            flex-direction: column;
+            box-shadow: 0 -8px 48px rgba(0,0,0,0.5);
+        }
+        
+        .ai-sheet.active { 
+            transform: translateY(0);
+        }
+        
+        .sheet-handle { 
+            width: 40px; 
+            height: 5px; 
+            background: rgba(255,255,255,0.2); 
+            border-radius: 3px; 
+            margin: 0 auto 20px;
+            transition: background 0.2s ease;
+        }
+        
+        .ai-sheet:hover .sheet-handle {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .sheet-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            margin-bottom: 20px; 
+            padding-bottom: 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .sheet-avatar { 
+            width: 48px; 
+            height: 48px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.3);
+            position: relative;
+        }
+        
+        .sheet-status { 
+            position: absolute; 
+            bottom: 0; 
+            right: 0; 
+            width: 14px; 
+            height: 14px; 
+            background: var(--success); 
+            border-radius: 50%; 
+            border: 2px solid #1c1c1e;
+            animation: pulse 2s infinite;
+        }
+        
+        .sheet-title-box { 
+            flex: 1; 
+        }
+        
+        .sheet-title { 
+            font-size: 18px; 
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .sheet-subtitle { 
+            font-size: 14px; 
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .sheet-close { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            background: rgba(255,255,255,0.08); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .sheet-close:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .sheet-close:active {
+            transform: scale(0.9);
+        }
+        
+        /* 快捷指令标签 */
+        .quick-chips { 
+            display: flex; 
+            gap: 10px; 
+            overflow-x: auto; 
+            padding-bottom: 16px; 
+            margin-bottom: 16px; 
+            scrollbar-width: none;
+            animation: fadeInUp 0.4s ease 0.1s both;
+        }
+        
+        .quick-chips::-webkit-scrollbar { display: none; }
+        
+        .quick-chip { 
+            padding: 10px 18px; 
+            background: rgba(255,255,255,0.06); 
+            border-radius: 20px; 
+            font-size: 14px; 
+            white-space: nowrap; 
+            border: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .quick-chip:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.12);
+        }
+        
+        .quick-chip:active {
+            transform: scale(0.95);
+        }
+        
+        .quick-chip.primary { 
+            background: rgba(102,126,234,0.15); 
+            border-color: rgba(102,126,234,0.3); 
+            color: #a5b4fc;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.1);
+        }
+        
+        .quick-chip.primary:hover {
+            background: rgba(102,126,234,0.25);
+        }
+        
+        /* 消息列表 */
+        .sheet-messages { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 8px 0;
+        }
+        
+        .message { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 20px;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        .message.user { 
+            flex-direction: row-reverse; 
+        }
+        
+        .message-avatar { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 16px; 
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.2);
+        }
+        
+        .message-avatar.user { 
+            background: var(--info);
+            box-shadow: 0 2px 8px rgba(0,122,255,0.2);
+        }
+        
+        .message-content { 
+            max-width: 78%;
+        }
+        
+        .message-bubble { 
+            padding: 14px 18px; 
+            border-radius: 20px; 
+            font-size: 15px; 
+            line-height: 1.6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .message.ai .message-bubble { 
+            background: rgba(255,255,255,0.08); 
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .message.user .message-bubble { 
+            background: var(--info);
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-time { 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.35); 
+            margin-top: 6px;
+            font-weight: 500;
+        }
+        
+        .message.user .message-time { 
+            text-align: right; 
+        }
+        
+        /* AI 建议卡片 */
+        .suggestion-card { 
+            background: rgba(102,126,234,0.1); 
+            border: 1px solid rgba(102,126,234,0.2); 
+            border-radius: 16px; 
+            padding: 16px; 
+            margin-top: 12px;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .suggestion-card-title { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: #a5b4fc; 
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .suggestion-card-text { 
+            font-size: 14px; 
+            color: rgba(255,255,255,0.75); 
+            line-height: 1.6; 
+            margin-bottom: 14px;
+        }
+        
+        .suggestion-card-actions { 
+            display: flex; 
+            gap: 10px; 
+        }
+        
+        .suggestion-btn { 
+            flex: 1; 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            text-align: center; 
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .suggestion-btn.primary { 
+            background: var(--info); 
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,122,255,0.3);
+        }
+        
+        .suggestion-btn.primary:hover {
+            background: #0066d4;
+            transform: translateY(-1px);
+        }
+        
+        .suggestion-btn.secondary { 
+            background: rgba(255,255,255,0.08); 
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .suggestion-btn.secondary:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .suggestion-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* 输入区 */
+        .sheet-input-area { 
+            padding-top: 16px; 
+            border-top: 1px solid rgba(255,255,255,0.08);
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        .input-box { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: rgba(255,255,255,0.06); 
+            border-radius: 28px; 
+            padding: 10px 10px 10px 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.2s ease;
+        }
+        
+        .input-box:focus-within {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(102,126,234,0.3);
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .input-field { 
+            flex: 1; 
+            font-size: 16px; 
+            color: #fff; 
+            background: transparent; 
+            border: none; 
+            outline: none;
+        }
+        
+        .input-field::placeholder { 
+            color: rgba(255,255,255,0.35);
+        }
+        
+        .input-actions { 
+            display: flex; 
+            gap: 8px; 
+        }
+        
+        .input-btn { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .input-btn.voice { 
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .input-btn.voice:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .input-btn.voice:active {
+            transform: scale(0.9);
+        }
+        
+        .input-btn.send { 
+            background: var(--info);
+            box-shadow: 0 2px 8px rgba(0,122,255,0.3);
+        }
+        
+        .input-btn.send:hover {
+            background: #0066d4;
+            transform: scale(1.05);
+        }
+        
+        .input-btn.send:active {
+            transform: scale(0.95);
+        }
+        
+        /* ===== 客户详情页 ===== */
+        .customer-detail-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: #000; 
+            z-index: 300; 
+            transform: translateX(100%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .customer-detail-overlay.active { 
+            transform: translateX(0);
+        }
+        
+        .customer-detail { 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .detail-header { 
+            padding: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+        }
+        
+        .detail-back { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background: rgba(255,255,255,0.08); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .detail-back:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .detail-back:active {
+            transform: scale(0.9);
+        }
+        
+        .detail-title { 
+            flex: 1; 
+            font-size: 18px; 
+            font-weight: 600; 
+            text-align: center; 
+            margin-right: 48px;
+        }
+        
+        .detail-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 20px 16px;
+        }
+        
+        /* 客户详情头部卡片 */
+        .detail-hero { 
+            background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.08) 100%); 
+            border: 1px solid rgba(102,126,234,0.2); 
+            border-radius: 24px; 
+            padding: 24px; 
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.4s ease;
+        }
+        
+        .detail-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(102,126,234,0.1) 0%, transparent 70%);
+        }
+        
+        .detail-hero-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 18px; 
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .detail-hero-avatar { 
+            width: 72px; 
+            height: 72px; 
+            border-radius: 20px; 
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 32px; 
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(255,107,107,0.3);
+        }
+        
+        .detail-hero-info h2 { 
+            font-size: 26px; 
+            font-weight: 700; 
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+        
+        .detail-hero-info p { 
+            font-size: 15px; 
+            color: rgba(255,255,255,0.5);
+            font-weight: 500;
+        }
+        
+        .detail-hero-actions { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-action { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .hero-action:active {
+            transform: scale(0.9);
+        }
+        
+        .hero-action-icon { 
+            width: 56px; 
+            height: 56px; 
+            border-radius: 16px; 
+            background: rgba(255,255,255,0.08); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .hero-action:hover .hero-action-icon {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.15);
+        }
+        
+        .hero-action-label { 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.6);
+            font-weight: 500;
+        }
+        
+        /* 详情数据卡片 */
+        .detail-stats { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 14px; 
+            margin-bottom: 24px;
+            animation: fadeInUp 0.4s ease 0.1s both;
+        }
+        
+        .stat-card { 
+            background: var(--card-bg); 
+            border-radius: 20px; 
+            padding: 20px;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+        
+        .stat-label { 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.4); 
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .stat-value { 
+            font-size: 28px; 
+            font-weight: 700; 
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        
+        .stat-change { 
+            font-size: 13px; 
+            color: var(--success);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .stat-change.down { 
+            color: var(--danger);
+        }
+        
+        /* 详情标签页 */
+        .detail-tabs { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            animation: fadeInUp 0.4s ease 0.15s both;
+        }
+        
+        .detail-tab { 
+            padding: 14px 20px; 
+            font-size: 15px; 
+            color: rgba(255,255,255,0.4);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .detail-tab:hover {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .detail-tab.active { 
+            color: #fff; 
+            border-bottom-color: var(--info);
+            font-weight: 600;
+        }
+        
+        /* 时间线 */
+        .timeline { 
+            position: relative; 
+            padding-left: 32px;
+            animation: fadeInUp 0.4s ease 0.2s both;
+        }
+        
+        .timeline::before { 
+            content: ''; 
+            position: absolute; 
+            left: 10px; 
+            top: 8px; 
+            bottom: 0; 
+            width: 2px; 
+            background: linear-gradient(180deg, var(--info) 0%, rgba(255,255,255,0.1) 100%);
+        }
+        
+        .timeline-item { 
+            position: relative; 
+            padding-bottom: 24px;
+        }
+        
+        .timeline-dot { 
+            position: absolute; 
+            left: -32px; 
+            top: 4px; 
+            width: 16px; 
+            height: 16px; 
+            border-radius: 50%; 
+            background: #1c1c1e; 
+            border: 2px solid var(--info);
+            box-shadow: 0 0 0 4px rgba(0,122,255,0.1);
+        }
+        
+        .timeline-dot.green { 
+            border-color: var(--success);
+            box-shadow: 0 0 0 4px rgba(52,199,89,0.1);
+        }
+        
+        .timeline-dot.orange { 
+            border-color: var(--warning);
+            box-shadow: 0 0 0 4px rgba(255,149,0,0.1);
+        }
+        
+        .timeline-content { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 18px;
+            border: 1px solid var(--card-border);
+            transition: all 0.2s ease;
+        }
+        
+        .timeline-content:hover {
+            border-color: rgba(255,255,255,0.12);
+        }
+        
+        .timeline-time { 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.35); 
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .timeline-title { 
+            font-size: 15px; 
+            font-weight: 600; 
+            margin-bottom: 6px;
+        }
+        
+        .timeline-desc { 
+            font-size: 14px; 
+            color: rgba(255,255,255,0.5); 
+            line-height: 1.6;
+        }
+        
+        /* 舆情卡片 */
+        .news-card { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 18px; 
+            margin-bottom: 14px; 
+            border-left: 3px solid var(--danger);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .news-card:hover {
+            transform: translateX(4px);
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .news-card.neutral { 
+            border-left-color: var(--info);
+        }
+        
+        .news-card.positive { 
+            border-left-color: var(--success);
+        }
+        
+        .news-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 10px;
+        }
+        
+        .news-tag { 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            font-weight: 700;
+        }
+        
+        .news-tag.negative { 
+            background: rgba(255,59,48,0.15); 
+            color: var(--danger);
+        }
+        
+        .news-tag.neutral { 
+            background: rgba(0,122,255,0.15); 
+            color: var(--info);
+        }
+        
+        .news-tag.positive { 
+            background: rgba(52,199,89,0.15); 
+            color: var(--success);
+        }
+        
+        .news-time { 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.35);
+            font-weight: 500;
+        }
+        
+        .news-title { 
+            font-size: 15px; 
+            font-weight: 500; 
+            line-height: 1.6; 
+            margin-bottom: 6px;
+        }
+        
+        .news-source { 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.35);
+            font-weight: 500;
+        }
+        
+        /* ===== 加载动画 ===== */
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+        }
+        
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            animation: typing 1.4s ease-in-out infinite;
+        }
+        
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        /* ===== 骨架屏 ===== */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 首页内容 -->
+        <div id="homeView">
+            <div class="status-bar"><span>9:41</span><span>📶 5G 🔋</span></div>
+            
+            <header class="header">
+                <h1 class="header-title">工作台</h1>
+                <div class="header-actions">
+                    <div class="header-btn" onclick="showToast('搜索功能')")>🔍</div>
+                    <div class="header-btn" onclick="showToast('通知中心')")>
+                        🔔
+                        <span class="header-badge">3</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="main-content">
+                <!-- AI 入口卡片 -->
+                <div class="ai-quick-card" onclick="openAISheet()">
+                    <div class="ai-card-header">
+                        <div class="ai-avatar">
+                            🦁
+                            <div class="ai-status-dot"></div>
+                        </div>
+                        <div class="ai-card-info">
+                            <h3>Kimi</h3>
+                            <p>正在监控 12 位客户</p>
+                        </div>
+                    </div>
+                    <div class="ai-card-input">
+                        <span class="ai-card-input-text">输入指令或询问客户状态...</span>
+                        <div class="ai-card-input-icon">🎤</div>
+                    </div>
+                </div>
+                
+                <!-- 快捷操作 -->
+                <div class="quick-actions">
+                    <div class="quick-action-item" onclick="showToast('引入客户')")>
+                        <div class="quick-action-icon blue">🎯</div>
+                        <span class="quick-action-label">引入客户</span>
+                    </div>
+                    <div class="quick-action-item" onclick="showToast('账户开立')")>
+                        <div class="quick-action-icon green">📋</div>
+                        <span class="quick-action-label">账户开立</span>
+                    </div>
+                    <div class="quick-action-item" onclick="showToast('交易服务')")>
+                        <div class="quick-action-icon orange">⚡</div>
+                        <span class="quick-action-label">交易服务</span>
+                    </div>
+                    <div class="quick-action-item" onclick="showToast('客户服务')")>
+                        <div class="quick-action-icon purple">💬</div>
+                        <span class="quick-action-label">客户服务</span>
+                    </div>
+                </div>
+                
+                <!-- AI 洞察 -->
+                <div class="insight-card" onclick="showToast('智能洞察详情')")>
+                    <div class="insight-header">
+                        <div class="insight-icon">💡</div>
+                        <span class="insight-title">智能洞察</span>
+                    </div>
+                    <div class="insight-content">
+                        检测到「华泰资管」资料补充即将超时（剩余2小时），建议立即联系客户
+                    </div>
+                    <div class="insight-action">
+                        一键催办 →
+                    </div>
+                </div>
+                
+                <!-- 待办事项 - 左滑操作演示 -->
+                <div class="section-header">
+                    <span class="section-title">待办事项</span>
+                    <span class="section-more" onclick="showToast('查看全部待办')")>查看全部 3</span>
+                </div>
+                
+                <div class="card-scroll">
+                    <div class="todo-card-wrapper">
+                        <div class="todo-card-actions">
+                            <div class="todo-action-btn remind" onclick="handleAction('remind')">⏰<br/>提醒</div>
+                            <div class="todo-action-btn done" onclick="handleAction('done')">✓<br/>完成</div>
+                        </div>
+                        <div class="todo-card urgent" id="todoCard1" style="transform: translateX(0);"
+                             ontouchstart="handleTouchStart(event, 'todoCard1')" 
+                             ontouchmove="handleTouchMove(event, 'todoCard1')" 
+                             ontouchend="handleTouchEnd(event, 'todoCard1')"
+                             onclick="if(!isSwiping) openTodoDetail()">
+                            <div class="todo-swipe-hint">‹</div>
+                            <div class="todo-header">
+                                <span class="todo-badge urgent">紧急</span>
+                                <span class="todo-time">剩余2小时</span>
+                            </div>
+                            <div class="todo-title">华泰资管开户资料待补充</div>
+                            <div class="todo-desc">需补充：法人身份证、授权委托书</div>
+                            <div class="todo-meta">
+                                <span>👤 客户开发员</span><span>·</span><span>审核中</span>
+                            </div>
+                            <div class="todo-hint">👈 左滑快速操作</div>
+                        </div>
+                    </div>
+                    
+                    <div class="todo-card warning">
+                        <div class="todo-header">
+                            <span class="todo-badge warning">预警</span>
+                            <span class="todo-time">1小时前</span>
+                        </div>
+                        <div class="todo-title">中银基金舆情监控</div>
+                        <div class="todo-desc">检测到1条负面舆情，涉及持仓标的</div>
+                    </div>
+                    
+                    <div class="todo-card">
+                        <div class="todo-header">
+                            <span class="todo-badge" style="background:rgba(0,122,255,0.15);color:#007aff;">跟进</span>
+                            <span class="todo-time">今天</span>
+                        </div>
+                        <div class="todo-title">易方达投资约访准备</div>
+                        <div class="todo-desc">明天14:00约访，需准备产品介绍材料</div>
+                    </div>
+                </div>
+                
+                <!-- 我的客户 -->
+                <div class="section-header">
+                    <span class="section-title">我的客户</span>
+                    <span class="section-more" onclick="showToast('客户列表')")>全部 12</span>
+                </div>
+                
+                <div class="card-scroll">
+                    <div class="customer-card" onclick="openCustomerDetail()">
+                        <div class="customer-card-header">
+                            <div class="customer-avatar">华</div>
+                            <div class="customer-info">
+                                <h4>华泰资管</h4>
+                                <p>公募基金 · 准入审核中</p>
+                            </div>
+                        </div>
+                        <div class="customer-metrics">
+                            <div class="metric-box">
+                                <div class="metric-value yellow">审核中</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-value green">5.2亿</div>
+                                <div class="metric-label">预计规模</div>
+                            </div>
+                        </div>
+                        <div class="customer-status-row">
+                            <span class="status-tag pending">待补充资料</span>
+                            <span style="font-size:11px;color:#ff3b30;">⚠️ 即将超时</span>
+                        </div>
+                    </div>
+                    
+                    <div class="customer-card">
+                        <div class="customer-card-header">
+                            <div class="customer-avatar green">中</div>
+                            <div class="customer-info">
+                                <h4>中银基金</h4>
+                                <p>公募基金 · 已开户</p>
+                            </div>
+                        </div>
+                        <div class="customer-metrics">
+                            <div class="metric-box">
+                                <div class="metric-value green">已开户</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-value blue">2.3亿</div>
+                                <div class="metric-label">持仓规模</div>
+                            </div>
+                        </div>
+                        <div class="customer-status-row">
+                            <span class="status-tag active">正常</span>
+                            <span class="status-alert">⚠️ 舆情预警</span>
+                        </div>
+                    </div>
+                    
+                    <div class="customer-card">
+                        <div class="customer-card-header">
+                            <div class="customer-avatar blue">易</div>
+                            <div class="customer-info">
+                                <h4>易方达投资</h4>
+                                <p>公募基金 · 潜在客户</p>
+                            </div>
+                        </div>
+                        <div class="customer-metrics">
+                            <div class="metric-box">
+                                <div class="metric-value blue">跟进中</div>
+                                <div class="metric-label">当前状态</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-value" style="color:#9ca3af;">-</div>
+                                <div class="metric-label">预计规模</div>
+                            </div>
+                        </div>
+                        <div class="customer-status-row">
+                            <span class="status-tag pending">明天约访</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="bottom-nav">
+                <div class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">首页</span>
+                </div>
+                <div class="nav-item" onclick="showToast('待办页面')")>
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">待办</span>
+                </div>
+                <div class="nav-item" onclick="showToast('客户页面')")>
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">客户</span>
+                </div>
+                <div class="nav-item" onclick="showToast('业绩页面')")>
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">业绩</span>
+                </div>
+                <div class="nav-item" onclick="showToast('我的页面')")>
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">我的</span>
+                </div>
+            </nav>
+            
+            <div class="fab-ai" onclick="openAISheet()">
+                🦁
+                <div class="fab-badge">2</div>
+            </div>
+        </div>
+        
+        <!-- AI 对话浮层 -->
+        <div class="ai-sheet-overlay" id="aiOverlay" onclick="closeAISheet()"></div>
+        
+        <div class="ai-sheet" id="aiSheet">
+            <div class="sheet-handle"></div>
+            
+            <div class="sheet-header">
+                <div class="sheet-avatar">
+                    🦁
+                    <div class="sheet-status"></div>
+                </div>
+                <div class="sheet-title-box">
+                    <div class="sheet-title">Kimi</div>
+                    <div class="sheet-subtitle">机构经纪智能体 · 在线</div>
+                </div>
+                <div class="sheet-close" onclick="closeAISheet()">✕</div>
+            </div>
+            
+            <div class="quick-chips">
+                <div class="quick-chip primary" onclick="sendQuickMessage('今日工作重点')">📊 今日工作重点</div>
+                <div class="quick-chip" onclick="sendQuickMessage('处理舆情预警')">⚠️ 处理舆情预警</div>
+                <div class="quick-chip" onclick="sendQuickMessage('录入新线索')">📝 录入新线索</div>
+                <div class="quick-chip" onclick="sendQuickMessage('联系华泰资管')">📞 联系华泰资管</div>
+            </div>
+            
+            <div class="sheet-messages" id="messageList">
+                <div class="message ai">
+                    <div class="message-avatar">🦁</div>
+                    <div class="message-content">
+                        <div class="message-bubble">早上好，张经理！今天有 3 件事需要关注，需要我帮你梳理一下吗？</div>
+                        <div class="message-time">9:30</div>
+                    </div>
+                </div>
+                
+                <div class="message user">
+                    <div class="message-avatar user">张</div>
+                    <div class="message-content">
+                        <div class="message-bubble">华泰资管什么情况？</div>
+                        <div class="message-time">9:32</div>
+                    </div>
+                </div>
+                
+                <div class="message ai">
+                    <div class="message-avatar">🦁</div>
+                    <div class="message-content">
+                        <div class="message-bubble">华泰资管目前处于准入审核阶段，距离资料补充截止时间还有 2 小时。</div>
+                        <div class="suggestion-card">
+                            <div class="suggestion-card-title">💡 建议操作</div>
+                            <div class="suggestion-card-text">客户需补充：法人身份证复印件、授权委托书、风险测评问卷</div>
+                            <div class="suggestion-card-actions">
+                                <button class="suggestion-btn primary" onclick="handleAction('催办')">一键催办</button>
+                                <button class="suggestion-btn secondary" onclick="handleAction('详情')">查看详情</button>
+                            </div>
+                        </div>
+                        <div class="message-time">9:32</div>
+                    </div>
+                </div>
+                
+                <div class="message user">
+                    <div class="message-avatar user">张</div>
+                    <div class="message-content">
+                        <div class="message-bubble">帮我催一下</div>
+                        <div class="message-time">刚刚</div>
+                    </div>
+                </div>
+                
+                <div class="message ai">
+                    <div class="message-avatar">🦁</div>
+                    <div class="message-content">
+                        <div class="message-bubble">✅ 已发送催办通知给华泰资管联系人，预计 10 分钟内送达。我会在对方查看后提醒你。</div>
+                        <div class="message-time">刚刚</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sheet-input-area">
+                <div class="input-box">
+                    <input type="text" class="input-field" id="messageInput" placeholder="输入消息..." onkeypress="handleKeyPress(event)">
+                    <div class="input-actions">
+                        <div class="input-btn voice" onclick="startVoiceInput()">🎤</div>
+                        <div class="input-btn send" onclick="sendMessage()">➤</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 客户详情页 -->
+        <div class="customer-detail-overlay" id="customerDetail">
+            <div class="customer-detail">
+                <div class="detail-header">
+                    <div class="detail-back" onclick="closeCustomerDetail()">‹</div>
+                    <div class="detail-title">客户详情</div>
+                </div>
+                
+                <div class="detail-content">
+                    <div class="detail-hero">
+                        <div class="detail-hero-header">
+                            <div class="detail-hero-avatar">华</div>
+                            <div class="detail-hero-info">
+                                <h2>华泰资管</h2>
+                                <p>公募基金 · 准入审核中</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-hero-actions">
+                            <div class="hero-action" onclick="showToast('拨打电话')">
+                                <div class="hero-action-icon">📞</div>
+                                <div class="hero-action-label">电话</div>
+                            </div>
+                            <div class="hero-action" onclick="showToast('发送消息')">
+                                <div class="hero-action-icon">💬</div>
+                                <div class="hero-action-label">消息</div>
+                            </div>
+                            <div class="hero-action" onclick="showToast('发送邮件')">
+                                <div class="hero-action-icon">📧</div>
+                                <div class="hero-action-label">邮件</div>
+                            </div>
+                            <div class="hero-action" onclick="showToast('更多操作')">
+                                <div class="hero-action-icon">📋</div>
+                                <div class="hero-action-label">更多</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">预计资产规模</div>
+                            <div class="stat-value">5.2亿</div>
+                            <div class="stat-change">↑ 较初判 +12%</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-label">合作进度</div>
+                            <div class="stat-value" style="color:#ffcc00;">60%</div>
+                            <div class="stat-change down">资料待补充</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-tabs">
+                        <div class="detail-tab active" onclick="switchTab(this, 'timeline')">动态</div>
+                        <div class="detail-tab" onclick="switchTab(this, 'news')">舆情</div>
+                        <div class="detail-tab" onclick="switchTab(this, 'docs')">资料</div>
+                        <div class="detail-tab" onclick="switchTab(this, 'contacts')">联系人</div>
+                    </div>
+                    
+                    <div id="timeline">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-time">今天 09:30</div>
+                                    <div class="timeline-title">AI 发送催办通知</div>
+                                    <div class="timeline-desc">客户尚未查看邮件，建议电话跟进</div>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-dot orange"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-time">昨天 14:20</div>
+                                    <div class="timeline-title">客户提交开户申请</div>
+                                    <div class="timeline-desc">资料初审通过，需补充3项材料</div>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-dot green"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-time">3天前</div>
+                                    <div class="timeline-title">首次接触客户</div>
+                                    <div class="timeline-desc">通过行业会议认识，表达开户意向</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:24px;">
+                        <div class="section-header">
+                            <span class="section-title" style="font-size:17px;">最新舆情</span>
+                            <span class="section-more" onclick="showToast('全部舆情')">查看全部</span>
+                        </div>
+                        
+                        <div class="news-card neutral" onclick="showToast('舆情详情')">
+                            <div class="news-header">
+                                <span class="news-tag neutral">中性</span>
+                                <span class="news-time">2小时前</span>
+                            </div>
+                            <div class="news-title">华泰资管发布2025年投资策略：看好科技成长板块</div>
+                            <div class="news-source">来源：中国证券报 · 阅读 1.2万</div>
+                        </div>
+                        
+                        <div class="news-card positive" onclick="showToast('舆情详情')">
+                            <div class="news-header">
+                                <span class="news-tag positive">正面</span>
+                                <span class="news-time">昨天</span>
+                            </div>
+                            <div class="news-title">华泰资管荣获金牛奖 2024 年度优秀权益团队</div>
+                            <div class="news-source">来源：中国证券报 · 阅读 8.7万</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast 提示 -->
+        <div id="toast" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(0,0,0,0.9);color:#fff;padding:16px 32px;border-radius:12px;font-size:15px;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);"></div>
+    </div>
+    
+    <script>
+        // 全局变量
+        let touchStartX = 0;
+        let currentTranslate = 0;
+        let isSwiping = false;
+        let currentCardId = null;
+        
+        // AI 对话浮层
+        function openAISheet() {
+            document.getElementById('aiOverlay').classList.add('active');
+            document.getElementById('aiSheet').classList.add('active');
+        }
+        
+        function closeAISheet() {
+            document.getElementById('aiOverlay').classList.remove('active');
+            document.getElementById('aiSheet').classList.remove('active');
+        }
+        
+        // 客户详情页
+        function openCustomerDetail() {
+            document.getElementById('customerDetail').classList.add('active');
+        }
+        
+        function closeCustomerDetail() {
+            document.getElementById('customerDetail').classList.remove('active');
+        }
+        
+        // 左滑操作
+        function handleTouchStart(event, cardId) {
+            touchStartX = event.touches[0].clientX;
+            currentCardId = cardId;
+            isSwiping = false;
+        }
+        
+        function handleTouchMove(event, cardId) {
+            const touchX = event.touches[0].clientX;
+            const diff = touchStartX - touchX;
+            
+            if (diff > 10) {
+                isSwiping = true;
+            }
+            
+            if (diff > 0 && diff < 160) {
+                currentTranslate = diff;
+                document.getElementById(cardId).style.transform = `translateX(-${diff}px)`;
+            }
+        }
+        
+        function handleTouchEnd(event, cardId) {
+            const card = document.getElementById(cardId);
+            
+            if (currentTranslate > 80) {
+                card.style.transform = 'translateX(-140px)';
+            } else {
+                card.style.transform = 'translateX(0)';
+            }
+            
+            currentTranslate = 0;
+            setTimeout(() => { isSwiping = false; }, 100);
+        }
+        
+        // 操作处理
+        function handleAction(action) {
+            showToast(action + '成功');
+            if (document.getElementById('todoCard1')) {
+                document.getElementById('todoCard1').style.transform = 'translateX(0)';
+            }
+        }
+        
+        function openTodoDetail() {
+            if (!isSwiping) {
+                showToast('待办详情');
+            }
+        }
+        
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                addMessage(text, 'user');
+                input.value = '';
+                
+                // 模拟 AI 回复
+                setTimeout(() => {
+                    addMessage('收到，我来帮您处理「' + text + '」相关事宜。', 'ai');
+                }, 1000);
+            }
+        }
+        
+        function sendQuickMessage(text) {
+            addMessage(text, 'user');
+            setTimeout(() => {
+                addMessage('已为您安排「' + text + '」相关操作，请稍候...', 'ai');
+            }, 800);
+        }
+        
+        function addMessage(text, type) {
+            const messageList = document.getElementById('messageList');
+            const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + type;
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${type === 'user' ? 'user' : ''}">${type === 'user' ? '张' : '🦁'}</div>
+                <div class="message-content">
+                    <div class="message-bubble">${text}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messageList.appendChild(messageDiv);
+            messageList.scrollTop = messageList.scrollHeight;
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function startVoiceInput() {
+            showToast('语音识别中...');
+        }
+        
+        // 标签切换
+        function switchTab(tabElement, tabId) {
+            document.querySelectorAll('.detail-tab').forEach(tab => tab.classList.remove('active'));
+            tabElement.classList.add('active');
+            showToast('切换到：' + tabElement.textContent);
+        }
+        
+        // Toast 提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.transform = 'translate(-50%, -50%) scale(1)';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -50%) scale(0)';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>机构经纪智能体 - 移动端</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #000; color: #fff; overflow: hidden; height: 100vh;
+        }
+        .app { height: 100vh; display: flex; flex-direction: column; position: relative; }
+        
+        /* 顶部 */
+        .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 14px; font-weight: 600; }
+        .header { padding: 8px 16px 16px; display: flex; align-items: center; justify-content: space-between; }
+        .header-title { font-size: 28px; font-weight: 700; }
+        .header-actions { display: flex; gap: 12px; }
+        .header-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 18px; position: relative; }
+        .header-badge { position: absolute; top: -2px; right: -2px; width: 18px; height: 18px; background: #ff3b30; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        
+        /* 主内容 */
+        .main-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 16px 100px; -webkit-overflow-scrolling: touch; }
+        
+        /* AI 入口卡片 */
+        .ai-quick-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .ai-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .ai-avatar { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; }
+        .ai-status-dot { position: absolute; bottom: 2px; right: 2px; width: 12px; height: 12px; background: #34c759; border-radius: 50%; border: 2px solid #667eea; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .ai-card-info h3 { font-size: 16px; font-weight: 600; }
+        .ai-card-info p { font-size: 12px; opacity: 0.8; }
+        .ai-card-input { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+        .ai-card-input-text { flex: 1; font-size: 14px; color: rgba(255,255,255,0.8); }
+        .ai-card-input-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        
+        /* 快捷操作 */
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+        .quick-action-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .quick-action-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(255,255,255,0.08); }
+        .quick-action-icon.blue { background: rgba(0,122,255,0.15); }
+        .quick-action-icon.green { background: rgba(52,199,89,0.15); }
+        .quick-action-icon.orange { background: rgba(255,149,0,0.15); }
+        .quick-action-icon.purple { background: rgba(175,82,222,0.15); }
+        .quick-action-label { font-size: 12px; color: rgba(255,255,255,0.7); }
+        
+        /* 分组标题 */
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; margin-top: 8px; }
+        .section-title { font-size: 20px; font-weight: 700; }
+        .section-more { font-size: 14px; color: #007aff; }
+        
+        /* 横向滑动卡片组 */
+        .card-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .card-scroll::-webkit-scrollbar { display: none; }
+        
+        /* 待办卡片 */
+        .todo-card { min-width: 280px; background: rgba(255,255,255,0.06); border-radius: 16px; padding: 16px; border: 1px solid rgba(255,255,255,0.08); }
+        .todo-card.urgent { background: linear-gradient(135deg, rgba(255,59,48,0.15) 0%, rgba(255,59,48,0.05) 100%); border-color: rgba(255,59,48,0.3); }
+        .todo-card.warning { background: linear-gradient(135deg, rgba(255,149,0,0.15) 0%, rgba(255,149,0,0.05) 100%); border-color: rgba(255,149,0,0.3); }
+        .todo-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .todo-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .todo-badge.urgent { background: rgba(255,59,48,0.2); color: #ff3b30; }
+        .todo-badge.warning { background: rgba(255,149,0,0.2); color: #ff9500; }
+        .todo-time { font-size: 12px; color: rgba(255,255,255,0.5); }
+        .todo-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+        .todo-desc { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 16px; line-height: 1.5; }
+        .todo-actions { display: flex; gap: 8px; }
+        .todo-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; text-align: center; border: none; }
+        .todo-btn.primary { background: #007aff; color: #fff; }
+        .todo-btn.secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+        
+        /* 客户卡片 */
+        .customer-card { min-width: 260px; background: rgba(255,255,255,0.06); border-radius: 16px; padding: 16px; border: 1px solid rgba(255,255,255,0.08); }
+        .customer-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .customer-avatar { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; }
+        .customer-avatar.green { background: linear-gradient(135deg, #34d399, #10b981); }
+        .customer-avatar.blue { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+        .customer-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .customer-info p { font-size: 12px; color: rgba(255,255,255,0.5); }
+        .customer-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .metric-box { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 12px; }
+        .metric-value { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .metric-value.green { color: #34c759; }
+        .metric-value.yellow { color: #ffcc00; }
+        .metric-value.blue { color: #007aff; }
+        .metric-label { font-size: 11px; color: rgba(255,255,255,0.5); }
+        .customer-status-row { display: flex; align-items: center; justify-content: space-between; }
+        .status-tag { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .status-tag.active { background: rgba(52,199,89,0.15); color: #34c759; }
+        .status-tag.pending { background: rgba(255,204,0,0.15); color: #ffcc00; }
+        .status-alert { font-size: 12px; color: #ff3b30; }
+        
+        /* AI 洞察卡片 */
+        .insight-card { background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.05) 100%); border: 1px solid rgba(102,126,234,0.2); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+        .insight-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .insight-icon { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .insight-title { font-size: 14px; font-weight: 600; }
+        .insight-content { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.8); margin-bottom: 12px; }
+        .insight-action { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(102,126,234,0.2); border-radius: 8px; font-size: 13px; color: #a5b4fc; font-weight: 500; }
+        
+        /* 底部导航 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); padding: 12px 24px 34px; display: flex; justify-content: space-around; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: rgba(255,255,255,0.5); }
+        .nav-item.active { color: #007aff; }
+        .nav-icon { font-size: 24px; }
+        .nav-label { font-size: 10px; }
+        
+        /* 浮动 AI 按钮 */
+        .fab-ai { position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 20px rgba(102,126,234,0.4); z-index: 99; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .fab-badge { position: absolute; top: -2px; right: -2px; width: 20px; height: 20px; background: #ff3b30; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="status-bar"><span>9:41</span><span>📶 5G 🔋</span></div>
+        <header class="header">
+            <h1 class="header-title">工作台</h1>
+            <div class="header-actions">
+                <div class="header-btn">🔍</div>
+                <div class="header-btn">🔔<span class="header-badge">3</span></div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <!-- AI 快速入口卡片 -->
+            <div class="ai-quick-card">
+                <div class="ai-card-header">
+                    <div class="ai-avatar">🦁<div class="ai-status-dot"></div></div>
+                    <div class="ai-card-info"><h3>Kimi</h3><p>正在监控 12 位客户</p></div>
+                </div>
+                <div class="ai-card-input"><span class="ai-card-input-text">输入指令或询问客户状态...</span><div class="ai-card-input-icon">🎤</div></div>
+            </div>
+            
+            <!-- 快捷操作 -->
+            <div class="quick-actions">
+                <div class="quick-action-item"><div class="quick-action-icon blue">🎯</div><span class="quick-action-label">引入客户</span></div>
+                <div class="quick-action-item"><div class="quick-action-icon green">📋</div><span class="quick-action-label">账户开立</span></div>
+                <div class="quick-action-item"><div class="quick-action-icon orange">⚡</div><span class="quick-action-label">交易服务</span></div>
+                <div class="quick-action-item"><div class="quick-action-icon purple">💬</div><span class="quick-action-label">客户服务</span></div>
+            </div>
+            
+            <!-- AI 洞察 -->
+            <div class="insight-card">
+                <div class="insight-header"><div class="insight-icon">💡</div><span class="insight-title">智能洞察</span></div>
+                <div class="insight-content">检测到「华泰资管」资料补充即将超时（剩余2小时），建议立即联系客户</div>
+                <div class="insight-action">一键催办 →</div>
+            </div>
+            
+            <!-- 待办事项 - 横向滑动 -->
+            <div class="section-header"><span class="section-title">待办事项</span><span class="section-more">查看全部 3</span></div>
+            <div class="card-scroll">
+                <div class="todo-card urgent">
+                    <div class="todo-header"><span class="todo-badge urgent">紧急</span><span class="todo-time">剩余2小时</span></div>
+                    <div class="todo-title">华泰资管开户资料待补充</div>
+                    <div class="todo-desc">需补充：法人身份证、授权委托书</div>
+                    <div class="todo-actions"><button class="todo-btn primary">立即处理</button><button class="todo-btn secondary">稍后提醒</button></div>
+                </div>
+                <div class="todo-card warning">
+                    <div class="todo-header"><span class="todo-badge warning">预警</span><span class="todo-time">1小时前</span></div>
+                    <div class="todo-title">中银基金舆情监控</div>
+                    <div class="todo-desc">检测到1条负面舆情，涉及持仓标的</div>
+                    <div class="todo-actions"><button class="todo-btn primary">查看详情</button><button class="todo-btn secondary">标记已读</button></div>
+                </div>
+                <div class="todo-card">
+                    <div class="todo-header"><span class="todo-badge" style="background:rgba(0,122,255,0.15);color:#007aff;">跟进</span><span class="todo-time">今天</span></div>
+                    <div class="todo-title">易方达投资约访准备</div>
+                    <div class="todo-desc">明天14:00约访，需准备产品介绍材料</div>
+                    <div class="todo-actions"><button class="todo-btn primary">准备材料</button><button class="todo-btn secondary">稍后提醒</button></div>
+                </div>
+            </div>
+            
+            <!-- 我的客户 - 横向滑动 -->
+            <div class="section-header"><span class="section-title">我的客户</span><span class="section-more">全部 12</span></div>
+            <div class="card-scroll">
+                <div class="customer-card">
+                    <div class="customer-card-header"><div class="customer-avatar">华</div><div class="customer-info"><h4>华泰资管</h4><p>公募基金 · 准入审核中</p></div></div>
+                    <div class="customer-metrics"><div class="metric-box"><div class="metric-value yellow">审核中</div><div class="metric-label">当前状态</div></div><div class="metric-box"><div class="metric-value green">5.2亿</div><div class="metric-label">预计规模</div></div></div>
+                    <div class="customer-status-row"><span class="status-tag pending">待补充资料</span><span style="font-size:11px;color:#ff3b30;">⚠️ 即将超时</span></div>
+                </div>
+                <div class="customer-card">
+                    <div class="customer-card-header"><div class="customer-avatar green">中</div><div class="customer-info"><h4>中银基金</h4><p>公募基金 · 已开户</p></div></div>
+                    <div class="customer-metrics"><div class="metric-box"><div class="metric-value green">已开户</div><div class="metric-label">当前状态</div></div><div class="metric-box"><div class="metric-value blue">2.3亿</div><div class="metric-label">持仓规模</div></div></div>
+                    <div class="customer-status-row"><span class="status-tag active">正常</span><span class="status-alert">⚠️ 舆情预警</span></div>
+                </div>
+                <div class="customer-card">
+                    <div class="customer-card-header"><div class="customer-avatar blue">易</div><div class="customer-info"><h4>易方达投资</h4><p>公募基金 · 潜在客户</p></div></div>
+                    <div class="customer-metrics"><div class="metric-box"><div class="metric-value blue">跟进中</div><div class="metric-label">当前状态</div></div><div class="metric-box"><div class="metric-value" style="color:#9ca3af;">-</div><div class="metric-label">预计规模</div></div></div>
+                    <div class="customer-status-row"><span class="status-tag pending">明天约访</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="bottom-nav">
+            <div class="nav-item active"><span class="nav-icon">🏠</span><span class="nav-label">首页</span></div>
+            <div class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">待办</span></div>
+            <div class="nav-item"><span class="nav-icon">👥</span><span class="nav-label">客户</span></div>
+            <div class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">业绩</span></div>
+            <div class="nav-item"><span class="nav-icon">👤</span><span class="nav-label">我的</span></div>
+        </nav>
+        
+        <div class="fab-ai">🦁<div class="fab-badge">2</div></div>
+    </div>
+</body>
+</html>
