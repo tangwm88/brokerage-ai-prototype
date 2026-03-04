@@ -409,6 +409,147 @@
         .stat-row:last-child { border-bottom: none; }
         .stat-label { color: #86909c; }
         .stat-value { font-weight: 600; color: #ff6b6b; }
+        
+        /* 业务支持中心功能模块 */
+        .biz-module {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #e5e6eb;
+        }
+        .module-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* 转化漏斗 */
+        .funnel-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .funnel-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .funnel-bar {
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .funnel-stage { width: 60px; font-size: 12px; color: #4e5969; }
+        .funnel-count { margin-left: auto; font-size: 13px; font-weight: 600; }
+        
+        /* 账户审核 */
+        .audit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .audit-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            gap: 10px;
+        }
+        .audit-icon {
+            width: 32px; height: 32px;
+            border-radius: 6px;
+            background: #e8f0ff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .audit-info { flex: 1; }
+        .audit-name { font-size: 13px; font-weight: 500; }
+        .audit-meta { font-size: 11px; color: #86909c; }
+        .audit-status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+        }
+        .audit-status.ai { background: #e6f7e6; color: #00b42a; }
+        .audit-status.pending { background: #fff3e0; color: #e67c00; }
+        
+        /* 事项分级 */
+        .matter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .matter-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            gap: 10px;
+            border-left: 3px solid #e5e6eb;
+        }
+        .matter-item.urgent { border-left-color: #ff6b6b; background: #fff5f5; }
+        .matter-item.important { border-left-color: #ffaa00; background: #fffbf0; }
+        .matter-icon { font-size: 18px; }
+        .matter-info { flex: 1; }
+        .matter-title { font-size: 12px; font-weight: 500; }
+        .matter-sla { font-size: 10px; color: #86909c; }
+        .matter-sla.warning { color: #ff6b6b; }
+        
+        /* 应急指挥 */
+        .emergency-panel {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            border-radius: 10px;
+            padding: 16px;
+            color: #fff;
+        }
+        .emergency-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .emergency-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .emergency-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .emergency-item-title { font-weight: 500; margin-bottom: 4px; }
+        .emergency-item-desc { opacity: 0.9; font-size: 11px; }
+        .emergency-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .emergency-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .emergency-btn:hover { background: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -622,56 +763,141 @@
         
         <!-- 右侧信息栏 -->
         <div class="info-panel">
-            <!-- 圆桌会议 -->
-            <div class="round-card">
-                <div class="round-header">
-                    <span class="round-title">🏛️ 机构经纪圆桌会议</span>
-                    <span class="round-count">3 待处理</span>
+            <!-- 转化漏斗看板 -->
+            <div class="biz-module">
+                <div class="module-title">
+                    <span>📊</span>
+                    <span>客户转化漏斗</span>
                 </div>
-                
-                <div class="round-item">
-                    <div class="round-item-title">⚠️ 高毅资产交易异常</div>
-                    <div class="round-item-desc">需技术/交易/客服三方联合处理</div>
+                <div class="funnel-chart">
+                    <div class="funnel-item">
+                        <span class="funnel-stage">线索</span>
+                        <div class="funnel-bar" style="width: 100%; background: #3370ff;">120</div>
+                        <span class="funnel-count">100%</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-stage">意向</span>
+                        <div class="funnel-bar" style="width: 60%; background: #5c8cff;">72</div>
+                        <span class="funnel-count">60%</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-stage">开户</span>
+                        <div class="funnel-bar" style="width: 35%; background: #85a5ff;">42</div>
+                        <span class="funnel-count">35%</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-stage">成交</span>
+                        <div class="funnel-bar" style="width: 23%; background: #adc4ff;">28</div>
+                        <span class="funnel-count">23%</span>
+                    </div>
                 </div>
-                
-                <div class="round-item">
-                    <div class="round-item-title">💰 战略客户费率审批</div>
-                    <div class="round-item-desc">易方达等3家公募申请佣金优惠</div>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e6eb;">
+                    <div style="font-size: 12px; color: #86909c;">AI预测本月成交：<strong style="color: #3370ff;">35家</strong>（置信度85%）</div>
                 </div>
-                
-                <div class="round-item">
-                    <div class="round-item-title">🚀 算法交易2.0试点</div>
-                    <div class="round-item-desc">申请10家战略客户参与试点</div>
+            </div>
+            
+            <!-- 账户开立审核 -->
+            <div class="biz-module">
+                <div class="module-title">
+                    <span>✅</span>
+                    <span>账户开立审核</span>
+                    <span style="margin-left: auto; font-size: 11px; color: #86909c;">待审 5</span>
+                </div>
+                <div class="audit-list">
+                    <div class="audit-item">
+                        <div class="audit-icon">📋</div>
+                        <div class="audit-info">
+                            <div class="audit-name">深圳XX私募基金</div>
+                            <div class="audit-meta">AI预审通过 · 材料完整</div>
+                        </div>
+                        <span class="audit-status ai">AI通过</span>
+                    </div>
+                    <div class="audit-item">
+                        <div class="audit-icon">📋</div>
+                        <div class="audit-info">
+                            <div class="audit-name">上海XX资管</div>
+                            <div class="audit-meta">AI预审异常 · 需人工确认</div>
+                        </div>
+                        <span class="audit-status pending">待确认</span>
+                    </div>
+                </div>
+                <div class="emergency-actions" style="margin-top: 10px;">
+                    <button class="emergency-btn" style="background: #3370ff;">批量通过</button>
+                    <button class="emergency-btn" style="background: #f2f3f5; color: #4e5969;">查看全部</button>
+                </div>
+            </div>
+            
+            <!-- 事项分级响应 -->
+            <div class="biz-module">
+                <div class="module-title">
+                    <span>🔔</span>
+                    <span>事项分级响应</span>
+                </div>
+                <div class="matter-list">
+                    <div class="matter-item urgent">
+                        <span class="matter-icon">🚨</span>
+                        <div class="matter-info">
+                            <div class="matter-title">高毅资产交易异常</div>
+                            <div class="matter-sla warning">SLA剩余 15分钟</div>
+                        </div>
+                    </div>
+                    <div class="matter-item important">
+                        <span class="matter-icon">⚠️</span>
+                        <div class="matter-info">
+                            <div class="matter-title">客户投诉：费率争议</div>
+                            <div class="matter-sla">SLA剩余 2小时</div>
+                        </div>
+                    </div>
+                    <div class="matter-item">
+                        <span class="matter-icon">📋</span>
+                        <div class="matter-info">
+                            <div class="matter-title">监管问询回复</div>
+                            <div class="matter-sla">SLA剩余 4小时</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 应急指挥面板 -->
+            <div class="emergency-panel">
+                <div class="emergency-title">
+                    <span>🚨</span>
+                    <span>应急指挥面板</span>
+                </div>
+                <div class="emergency-list">
+                    <div class="emergency-item">
+                        <div class="emergency-item-title">TWAP算法异常 · 高毅资产</div>
+                        <div class="emergency-item-desc">交易/技术/客服三方协调中</div>
+                    </div>
+                    <div class="emergency-item">
+                        <div class="emergency-item-title">舆情监控预警 · 某持仓股</div>
+                        <div class="emergency-item-desc">3家客户受影响，需主动沟通</div>
+                    </div>
+                </div>
+                <div class="emergency-actions">
+                    <button class="emergency-btn">启动应急响应</button>
+                    <button class="emergency-btn">召集应急小组</button>
                 </div>
             </div>
             
             <!-- 团队统计 -->
-            <div class="info-title">📊 机构经纪团队概况</div>
-            
+            <div class="info-title" style="margin-top: 20px;">📊 团队概况</div>
             <div class="team-stats">
                 <div class="stat-row">
                     <span class="stat-label">服务机构客户数</span>
                     <span class="stat-value">186家</span>
                 </div>
-                
                 <div class="stat-row">
                     <span class="stat-label">AUM托管规模</span>
                     <span class="stat-value">2,845亿</span>
                 </div>
-                
                 <div class="stat-row">
                     <span class="stat-label">本月交易佣金</span>
                     <span class="stat-value">3,680万</span>
                 </div>
-                
                 <div class="stat-row">
                     <span class="stat-label">产品销售规模</span>
                     <span class="stat-value">45.8亿</span>
-                </div>
-                
-                <div class="stat-row">
-                    <span class="stat-label">数字员工在线</span>
-                    <span class="stat-value">4/4</span>
                 </div>
             </div>
         </div>
