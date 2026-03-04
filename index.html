@@ -111,13 +111,11 @@
 
         window.onload = () => {
             setTimeout(() => {
-                typeWriter(`你好！我是你的机构经纪助手。
-
-请选择业务目标，或直接输入关键词（如"客户服务"）：`, () => {
+                typeWriter(`📋 今日重点工作：`, () => {
                     addBusinessNavCenter();
                     updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
                 });
-            }, 300);
+            }, 200);
         };
 
         function typeWriter(text, callback) {
