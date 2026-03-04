@@ -17,8 +17,6 @@
             --primary: #007aff;
             --warning: #ff9500;
             --danger: #ff3b30;
-            --blue: #5856d6;
-            --purple: #af52de;
         }
         
         body {
@@ -37,23 +35,12 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
+            background: var(--surface);
         }
         
         .brand { font-size: 16px; font-weight: 600; }
-        .status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        
-        .status-dot {
-            width: 6px; height: 6px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
+        .status { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); }
+        .status-dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite; }
         
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -61,10 +48,10 @@
         .chat {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 16px 100px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
         
         .message { max-width: 92%; animation: fadeIn 0.3s ease; }
@@ -79,126 +66,165 @@
             line-height: 1.5;
         }
         
-        .message-ai {
-            display: flex;
-            gap: 10px;
-        }
+        .message-ai { display: flex; gap: 10px; }
         
         .ai-icon {
             width: 28px; height: 28px;
             border-radius: 50%;
             background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; flex-shrink: 0;
         }
         
-        .ai-content {
-            flex: 1;
-            font-size: 15px;
-            line-height: 1.7;
-        }
+        .ai-content { flex: 1; font-size: 15px; line-height: 1.7; }
         
-        /* 目标概览卡片 */
-        .goals-overview {
-            background: linear-gradient(135deg, rgba(102,126,234,0.1), transparent);
-            border: 1px solid rgba(102,126,234,0.2);
+        /* 业务导航网格 - 核心 */
+        .biz-nav {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 16px;
             margin: 8px 0;
         }
         
-        .goals-title {
+        .nav-title {
             font-size: 14px;
             color: var(--text-secondary);
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-weight: 500;
         }
         
-        .goals-grid {
+        .nav-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
         
-        .goal-card {
-            background: rgba(0,0,0,0.05);
+        .nav-item {
+            background: rgba(0,0,0,0.03);
             border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            text-align: center;
+        }
+        
+        .nav-item:hover {
+            background: rgba(0,0,0,0.06);
+            border-color: rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .nav-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .nav-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .nav-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        /* 分类详情面板 */
+        .category-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 8px 0;
+        }
+        
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .panel-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        
+        .panel-title { font-size: 16px; font-weight: 600; }
+        
+        /* 子分类列表 */
+        .subcategory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .sub-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             padding: 14px;
+            background: rgba(0,0,0,0.02);
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid transparent;
         }
         
-        .goal-card:hover {
-            background: rgba(0,0,0,0.08);
-            border-color: rgba(0,0,0,0.1);
+        .sub-item:hover {
+            background: rgba(0,0,0,0.04);
+            border-color: var(--primary);
         }
         
-        .goal-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+        .sub-icon {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            background: rgba(0,0,0,0.05);
         }
         
-        .goal-name {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        
-        .goal-count {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        
-        .goal-count.urgent { color: var(--danger); }
-        .goal-count.warning { color: var(--warning); }
+        .sub-info { flex: 1; }
+        .sub-name { font-size: 14px; font-weight: 500; }
+        .sub-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .sub-arrow { font-size: 18px; color: var(--text-secondary); }
         
         /* 业务卡片 */
         .biz-card {
-            background: var(--card);
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 16px;
             margin: 10px 0;
         }
         
-        .biz-card:hover { border-color: rgba(0,0,0,0.15); }
-        
         .biz-card.urgent { border-left: 3px solid var(--danger); }
         .biz-card.warning { border-left: 3px solid var(--warning); }
-        .biz-card.success { border-left: 3px solid var(--primary); }
         
         .biz-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: flex; align-items: center; gap: 12px;
             margin-bottom: 12px;
         }
         
         .biz-avatar {
             width: 40px; height: 40px;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 600;
         }
         
         .biz-title { font-size: 15px; font-weight: 600; }
-        .biz-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .biz-subtitle { font-size: 12px; color: var(--text-secondary); }
         .biz-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 12px 0; }
         
-        .biz-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        .biz-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         
         .btn {
             padding: 8px 14px;
@@ -209,9 +235,8 @@
             border: none;
         }
         
-        .btn-primary { background: var(--primary); color: #000; font-weight: 500; }
+        .btn-primary { background: var(--primary); color: #fff; }
         .btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
-        .btn:hover { opacity: 0.9; }
         
         .tag {
             display: inline-block;
@@ -221,55 +246,13 @@
             margin-right: 4px;
         }
         
-        .tag-urgent { background: rgba(239,68,68,0.15); color: var(--danger); }
-        .tag-warning { background: rgba(245,158,11,0.15); color: var(--warning); }
-        .tag-success { background: rgba(25,195,125,0.15); color: var(--primary); }
-        
-        /* 分类引导列表 */
-        .category-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin: 12px 0;
-        }
-        
-        .category-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
-            background: var(--card);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        
-        .category-item:hover {
-            background: rgba(0,0,0,0.03);
-            border-color: rgba(0,0,0,0.1);
-        }
-        
-        .category-icon {
-            width: 40px; height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        
-        .category-info { flex: 1; }
-        .category-name { font-size: 15px; font-weight: 500; }
-        .category-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-        .category-arrow { font-size: 18px; color: var(--text-secondary); }
+        .tag-urgent { background: rgba(255,59,48,0.1); color: var(--danger); }
+        .tag-warning { background: rgba(255,149,0,0.1); color: var(--warning); }
         
         /* 输入区 */
         .input-area {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             padding: 12px 16px 24px;
             background: linear-gradient(180deg, transparent 0%, var(--bg) 30%);
         }
@@ -292,7 +275,6 @@
             font-size: 13px;
             white-space: nowrap;
             cursor: pointer;
-            transition: all 0.2s;
         }
         
         .chip:hover { background: rgba(0,0,0,0.1); }
@@ -325,17 +307,12 @@
         .input-btn {
             width: 36px; height: 36px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 18px;
         }
         
-        .input-btn.send { background: var(--primary); color: #000; }
+        .input-btn.send { background: var(--primary); color: #fff; }
         
-        /* 光标 */
         .cursor {
             display: inline-block;
             width: 8px; height: 18px;
@@ -360,7 +337,7 @@
         <div class="input-area">
             <div class="suggestions" id="suggestions"></div>
             <div class="input-box">
-                <input type="text" class="input-field" id="input" placeholder="输入你想做的..." onkeypress="if(event.key==='Enter')send()">
+                <input type="text" class="input-field" id="input" placeholder="输入业务关键词或直接点击上方分类..." onkeypress="if(event.key==='Enter')send()">
                 <div class="input-btn send" onclick="send()">↑</div>
             </div>
         </div>
@@ -371,32 +348,72 @@
         const input = document.getElementById('input');
         const suggestions = document.getElementById('suggestions');
 
-        // 今日数据
-        const todayData = {
-            goals: [
-                { icon: '👤', name: '引入客户', count: 2, urgent: 1, color: '#3b82f6' },
-                { icon: '📝', name: '账户开立', count: 3, urgent: 0, color: '#8b5cf6' },
-                { icon: '💰', name: '交易服务', count: 5, urgent: 0, color: '#10b981' },
-                { icon: '🎧', name: '客户服务', count: 4, urgent: 1, color: '#f59e0b' }
-            ],
-            customers: [
-                { name: '华泰资管', type: '紧急', desc: '准入审核，资料待补充，剩余2小时', avatar: '华', color: '#ef4444', actions: ['一键催办', '查看详情'] },
-                { name: '中银基金', type: '预警', desc: '舆情监控，发现1条负面信息', avatar: '中', color: '#f59e0b', actions: ['查看预警', '联系客户'] },
-                { name: '华夏理财', type: '新客', desc: '邮件咨询，AI评估为高价值客户', avatar: '华', color: '#3b82f6', actions: ['开始评估', '分配跟进'] },
-                { name: '易方达投资', type: '正常', desc: '交易活跃，无异常', avatar: '易', color: '#10b981', actions: ['交易分析', '发送研报'] }
-            ]
+        // 业务分类数据 - 完整版
+        const businessCategories = {
+            '引入客户': {
+                icon: '👤',
+                color: '#3b82f6',
+                desc: '客户开发、线索管理',
+                subcategories: [
+                    { name: '线索收集', desc: '从邮件、名片、活动收集客户线索', icon: '📧' },
+                    { name: '资质初筛', desc: 'AI评估客户资质、匹配度', icon: '⚡' },
+                    { name: '客户画像', desc: '完善客户信息、需求分析', icon: '🎨' },
+                    { name: '分配跟进', desc: '分配给客户经理、设置提醒', icon: '📋' }
+                ]
+            },
+            '账户开立': {
+                icon: '📝',
+                color: '#8b5cf6',
+                desc: '开户审核、协议签署',
+                subcategories: [
+                    { name: '准入审核', desc: '资料完整性、合规性审核', icon: '✓' },
+                    { name: '协议生成', desc: '自动生成开户协议、风险揭示书', icon: '📄' },
+                    { name: '权限配置', desc: '交易权限、额度设置', icon: '🔐' },
+                    { name: '账户激活', desc: '开通通知、使用指导', icon: '▶️' }
+                ]
+            },
+            '交易服务': {
+                icon: '💰',
+                color: '#10b981',
+                desc: '算法交易、订单执行',
+                subcategories: [
+                    { name: '算法配置', desc: 'TWAP、VWAP算法参数设置', icon: '⚙️' },
+                    { name: '订单执行', desc: '订单监控、执行反馈', icon: '📊' },
+                    { name: '异常预警', desc: '价格异动、成交异常监控', icon: '🚨' },
+                    { name: '成交反馈', desc: '实时成交报告、分析', icon: '📈' }
+                ]
+            },
+            '客户服务': {
+                icon: '🎧',
+                color: '#f59e0b',
+                desc: '客户维护、风险监控',
+                subcategories: [
+                    { name: '咨询响应', desc: '解答客户业务咨询', icon: '💬' },
+                    { name: '对账服务', desc: '生成对账单、差异处理', icon: '📑' },
+                    { name: '舆情跟踪', desc: '监控客户主体舆情动态', icon: '📰' },
+                    { name: '监管关联', desc: '监管问询、处罚预警', icon: '🏛️' },
+                    { name: '风险预警', desc: '综合风险评分、分级预警', icon: '⚠️' },
+                    { name: '满意度管理', desc: '定期调研、反馈收集', icon: '😊' }
+                ]
+            }
         };
 
-        // 初始欢迎
+        // 今日任务数据
+        const todayTasks = {
+            '引入客户': { total: 4, urgent: 1 },
+            '账户开立': { total: 3, urgent: 0 },
+            '交易服务': { total: 5, urgent: 0 },
+            '客户服务': { total: 6, urgent: 1 }
+        };
+
+        // 初始欢迎 + 业务导航
         window.onload = () => {
             setTimeout(() => {
-                typeWriter(`早上好！我是你的机构经纪助手。
+                typeWriter(`你好！我是你的机构经纪助手。
 
-今天你的展业概况：
-📊 4个业务目标 · 14项待办 · 2个紧急`, () => {
-                    // 展示目标概览卡片
-                    addGoalsOverview();
-                    updateSuggestions(['查看引入客户', '查看账户开立', '交易服务', '客户服务']);
+我可以帮你处理以下业务，点击或输入关键词即可开始：`, () => {
+                    addBusinessNav();
+                    updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
                 });
             }, 300);
         };
@@ -427,31 +444,36 @@
             type();
         }
 
-        function addGoalsOverview() {
-            const goalsHtml = `
-                <div class="goals-overview">
-                    <div class="goals-title">🎯 今日业务目标</div>
-                    <div class="goals-grid">
-                        ${todayData.goals.map(g => `
-                            <div class="goal-card" onclick="selectGoal('${g.name}')">
-                                <div class="goal-icon">${g.icon}</div>
-                                <div class="goal-name">${g.name}</div>
-                                <div class="goal-count ${g.urgent > 0 ? 'urgent' : ''}">${g.urgent > 0 ? '⚠️ ' + g.urgent + '紧急 · ' : ''}${g.count}项</div>
-                            </div>
-                        `).join('')}
+        // 添加业务导航网格
+        function addBusinessNav() {
+            const navHtml = `
+                <div class="biz-nav">
+                    <div class="nav-title">🎯 业务目标分类（点击选择）</div>
+                    <div class="nav-grid">
+                        ${Object.entries(businessCategories).map(([name, data]) => {
+                            const task = todayTasks[name];
+                            return `
+                                <div class="nav-item" onclick="selectCategory('${name}')" style="border-left:3px solid ${data.color};">
+                                    <div class="nav-icon">${data.icon}</div>
+                                    <div class="nav-name">${name}</div>
+                                    <div class="nav-desc">${data.desc}</div>
+                                    ${task.urgent > 0 ? `<div style="margin-top:6px;font-size:12px;color:#ff3b30;">🔴 ${task.urgent} 紧急 · ${task.total} 项</div>` : `<div style="margin-top:6px;font-size:12px;color:var(--text-secondary);">${task.total} 项待办</div>`}
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
             
             const lastMsg = chat.lastElementChild;
             if (lastMsg) {
-                lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', goalsHtml);
+                lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', navHtml);
             }
             chat.scrollTop = chat.scrollHeight;
         }
 
-        function selectGoal(goalName) {
-            send(goalName);
+        function selectCategory(categoryName) {
+            send(categoryName);
         }
 
         function send(text) {
@@ -472,187 +494,156 @@
         }
 
         function processResponse(userMsg) {
-            const msg = userMsg.toLowerCase();
+            const msg = userMsg.trim();
+            const category = Object.keys(businessCategories).find(k => msg.includes(k));
             
-            // 引入客户
-            if (msg.includes('引入') || msg.includes('新客') || msg.includes('开发')) {
-                setTimeout(() => {
-                    typeWriter(`👤 **引入客户** 业务板
-
-今日任务：**2位待跟进 · 1位紧急**
-
-下面是当前客户线索：`, () => {
-                        // 客户列表卡片
-                        addCustomerCard(todayData.customers[2]); // 华夏理财
-                        setTimeout(() => addCustomerCard(todayData.customers[0]), 400);
-                        
-                        updateSuggestions(['引入华夏理财', '催办华泰资管', '添加新线索', '查看全部客户']);
-                    });
-                }, 500);
+            if (category) {
+                showCategoryDetail(category);
             }
-            // 账户开立
-            else if (msg.includes('开户') || msg.includes('账户')) {
-                setTimeout(() => {
-                    typeWriter(`📝 **账户开立** 业务板
-
-今日任务：**3个待审核 · 0个紧急**
-
-当前开户进度：`, () => {
-                        addBizCard({
-                            avatar: '嘉',
-                            color: '#8b5cf6',
-                            title: '嘉实基金',
-                            subtitle: '资料审核中',
-                            body: '已提交：营业执照、法人身份证\n待审核：授权书、风险测评',
-                            tags: [<span class="tag tag-success">资料完整</span>],
-                            actions: ['快速审核', '退回补充', '联系客户']
-                        });
-                        updateSuggestions(['审核嘉实基金', '查看待审核列表', '开户流程指引']);
-                    });
-                }, 500);
+            else if (msg.includes('今日') || msg.includes('任务')) {
+                showTodayOverview();
             }
-            // 交易服务
-            else if (msg.includes('交易') || msg.includes('服务')) {
-                setTimeout(() => {
-                    typeWriter(`💰 **交易服务** 业务板
-
-今日任务：**5个服务请求 · 交易活跃**
-
-需要处理的服务：`, () => {
-                        addBizCard({
-                            avatar: '广',
-                            color: '#10b981',
-                            title: '广发基金',
-                            subtitle: '算法交易配置',
-                            body: '客户申请开通TWAP算法交易\n预计交易规模：5000万/日',
-                            tags: [<span class="tag tag-success">高价值</span>],
-                            actions: ['配置算法', '风险评估', '安排培训']
-                        });
-                        updateSuggestions(['配置算法交易', '查看交易异常', '服务报告']);
-                    });
-                }, 500);
-            }
-            // 客户服务
-            else if (msg.includes('服务') || msg.includes('维护')) {
-                setTimeout(() => {
-                    typeWriter(`🎧 **客户服务** 业务板
-
-今日任务：**4个待处理 · 1个预警**
-
-客户动态：`, () => {
-                        addBizCard(todayData.customers[1]); // 中银基金预警
-                        setTimeout(() => {
-                            addBizCard({
-                                avatar: '鹏',
-                                color: '#3b82f6',
-                                title: '鹏华基金',
-                                subtitle: '定期回访',
-                                body: '本月满意度调研待发送\n上次回访：30天前',
-                                tags: [<span class="tag">常规</span>],
-                                actions: ['发送调研', '预约回访', '查看历史']
-                            });
-                        }, 300);
-                        updateSuggestions(['处理中银预警', '发送鹏华调研', '客户满意度', '服务报告']);
-                    });
-                }, 500);
-            }
-            // 具体客户
-            else if (msg.includes('华泰')) {
-                setTimeout(() => {
-                    typeWriter(`查看华泰资管详情：`, () => {
-                        addBizCard({
-                            avatar: '华',
-                            color: '#ef4444',
-                            title: '华泰资管',
-                            subtitle: '准入审核中 · 剩余2小时',
-                            body: '⚠️ **紧急：资料即将超时**
-
-缺失材料：\n• 法人身份证复印件（正反面）\n• 授权委托书（加盖公章）\n• 风险测评问卷\n\n联系人：王经理 138xxxx8888',
-                            tags: [<span class="tag tag-urgent">即将超时</span>, <span class="tag">公募基金</span>],
-                            actions: ['✓ 一键催办', '电话提醒', '延后2小时', '标记已完成']
-                        });
-                        updateSuggestions(['✓ 一键催办', '电话提醒', '查看全部客户']);
-                    });
-                }, 500);
-            }
-            else if (msg.includes('华夏')) {
-                setTimeout(() => {
-                    typeWriter(`✓ 已识别「华夏理财」\n正在创建客户档案...`, () => {
-                        setTimeout(() => {
-                            addBizCard({
-                                avatar: '华',
-                                color: '#3b82f6',
-                                title: '华夏理财',
-                                subtitle: '新客户 · 待评估',
-                                body: '📊 **AI评估报告**
-
-客户类型：公募基金\n预计规模：3-5亿\n匹配度：92%\n建议优先级：高\n\n联系人：张总\n需求：股票交易、算法交易',
-                                tags: [<span class="tag tag-success">高价值</span>, <span class="tag">匹配度高</span>],
-                                actions: ['开始资质评估', '分配给张经理', '添加到日程']
-                            });
-                            updateSuggestions(['开始资质评估', '分配给张经理', '添加到今日任务']);
-                        }, 600);
-                    });
-                }, 500);
-            }
-            else if (msg.includes('催办') || msg.includes('处理')) {
-                setTimeout(() => {
-                    typeWriter(`✓ **已发送催办通知**
-
-📱 短信+邮件已发送至：王经理（华泰资管）
-⏱️ 预计10分钟内送达
-🔔 我会在对方查看后第一时间提醒你
-
-当前状态：等待回复`);
-                    updateSuggestions(['👤 查看其他客户', '📊 今日业绩', '🎯 业务目标']);
-                }, 600);
-            }
-            // 默认
             else {
+                // 默认回复
                 setTimeout(() => {
-                    typeWriter(`收到。我可以帮你处理以下业务：
+                    typeWriter(`收到。请从下方选择业务分类，或直接输入关键词：
 
-**引入客户** - 线索管理、资质评估、分配跟进
-**账户开立** - 资料审核、权限配置、进度跟踪  
-**交易服务** - 算法配置、订单执行、异常处理
-**客户服务** - 舆情监控、定期回访、满意度管理
+关键词示例：
+• "引入客户" → 进入客户开发流程
+• "账户开立" → 查看开户待办
+• "客户服务" → 查看服务事项
+• "交易服务" → 查看交易相关
 
-请选择业务目标或直接输入客户名称。`, () => {
-                        // 再次显示目标选择
-                        addGoalsOverview();
+也可以直接输入客户名称，如"华泰资管"`, () => {
+                        addBusinessNav();
                     });
                     updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
                 }, 500);
             }
         }
 
-        function addCustomerCard(data) {
-            const card = document.createElement('div');
-            card.className = `biz-card ${data.type === '紧急' ? 'urgent' : data.type === '预警' ? 'warning' : data.type === '新客' ? '' : 'success'}`;
-            card.innerHTML = `
-                <div class="biz-header">
-                    <div class="biz-avatar" style="background:${data.color}20;color:${data.color};">${data.avatar}</div>
-                    <div>
-                        <div class="biz-title">${data.name}</div>
-                        <div class="biz-subtitle">${data.type === '紧急' ? '🔴 ' : data.type === '预警' ? '🟡 ' : data.type === '新客' ? '🔵 ' : '🟢 '}${data.type}</div>
-                    </div>
-                </div>
-                <div class="biz-body">${data.desc}</div>
-                <div class="biz-actions">
-                    ${data.actions.map(a => `<button class="btn ${a.includes('✓') ? 'btn-primary' : 'btn-secondary'}" onclick="send('${a.replace('✓ ', '')} ${data.name}')">${a}</button>`).join('')}
-                </div>
-            `;
+        // 显示分类详情
+        function showCategoryDetail(categoryName) {
+            const data = businessCategories[categoryName];
+            const task = todayTasks[categoryName];
             
-            const lastMsg = chat.lastElementChild;
-            if (lastMsg && lastMsg.classList.contains('message-ai')) {
-                lastMsg.querySelector('.ai-content').appendChild(card);
-            }
-            chat.scrollTop = chat.scrollHeight;
+            setTimeout(() => {
+                typeWriter(`已进入 **${categoryName}** 工作台
+
+今日任务：${task.total} 项${task.urgent > 0 ? ` · 🔴 ${task.urgent} 个紧急` : ''}
+
+请选择具体业务：`, () => {
+                    // 添加子分类面板
+                    const panelHtml = `
+                        <div class="category-panel">
+                            <div class="panel-header">
+                                <div class="panel-icon" style="background:${data.color}20;color:${data.color};">${data.icon}</div>
+                                <div class="panel-title">${categoryName}</div>
+                            </div>
+                            <div class="subcategory-list">
+                                ${data.subcategories.map(sub => `
+                                    <div class="sub-item" onclick="handleSubcategory('${categoryName}', '${sub.name}')">
+                                        <div class="sub-icon">${sub.icon}</div>
+                                        <div class="sub-info">
+                                            <div class="sub-name">${sub.name}</div>
+                                            <div class="sub-desc">${sub.desc}</div>
+                                        </div>
+                                        <div class="sub-arrow">›</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) {
+                        lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', panelHtml);
+                    }
+                    
+                    // 根据不同分类显示示例任务
+                    if (categoryName === '引入客户') {
+                        setTimeout(() => {
+                            addBizCard({
+                                avatar: '华',
+                                color: '#ef4444',
+                                title: '华泰资管',
+                                subtitle: '准入审核 · 剩余2小时',
+                                body: '⚠️ 紧急：资料补充即将超时\n缺失：法人身份证、授权委托书',
+                                tags: ['<span class="tag tag-urgent">即将超时</span>'],
+                                actions: ['一键催办', '查看详情']
+                            });
+                        }, 400);
+                    }
+                    else if (categoryName === '客户服务') {
+                        setTimeout(() => {
+                            addBizCard({
+                                avatar: '中',
+                                color: '#f59e0b',
+                                title: '中银基金',
+                                subtitle: '舆情预警 · 2小时前',
+                                body: '📰 发现负面舆情：投资业绩波动报道\n建议：主动沟通，准备说明材料',
+                                tags: ['<span class="tag tag-warning">舆情预警</span>'],
+                                actions: ['生成简报', '联系客户', '标记已读']
+                            });
+                        }, 400);
+                    }
+                    
+                    chat.scrollTop = chat.scrollHeight;
+                    updateSuggestions([...data.subcategories.slice(0,3).map(s => s.name), '查看全部', '返回首页']);
+                });
+            }, 500);
+        }
+
+        // 显示今日概览
+        function showTodayOverview() {
+            setTimeout(() => {
+                typeWriter(`📊 **今日任务概览**
+
+共 18 项待处理 · 2 个紧急
+
+各业务线任务分布：`, () => {
+                    const overviewHtml = `
+                        <div class="biz-nav">
+                            <div class="nav-grid">
+                                ${Object.entries(businessCategories).map(([name, data]) => {
+                                    const task = todayTasks[name];
+                                    return `
+                                        <div class="nav-item" onclick="selectCategory('${name}')" style="border-left:3px solid ${data.color};">
+                                            <div class="nav-icon" style="font-size:20px;">${data.icon}</div>
+                                            <div class="nav-name" style="font-size:14px;">${name}</div>
+                                            <div class="nav-desc" style="font-size:13px;margin-top:4px;">${task.urgent > 0 ? `🔴 ${task.urgent} 紧急 · ` : ''}${task.total} 项</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) {
+                        lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', overviewHtml);
+                    }
+                    chat.scrollTop = chat.scrollHeight;
+                    updateSuggestions(['👤 引入客户', '📝 账户开立', '💰 交易服务', '🎧 客户服务']);
+                });
+            }, 500);
+        }
+
+        // 处理子分类点击
+        function handleSubcategory(category, subcategory) {
+            setTimeout(() => {
+                typeWriter(`已进入 **${category} - ${subcategory}**
+
+正在加载相关数据...`, () => {
+                    // 这里可以加载具体子分类的数据
+                    updateSuggestions(['查看列表', '添加新任务', '返回' + category, '返回首页']);
+                });
+            }, 300);
         }
 
         function addBizCard(data) {
             const card = document.createElement('div');
-            card.className = 'biz-card';
+            card.className = 'biz-card urgent';
             card.innerHTML = `
                 <div class="biz-header">
                     <div class="biz-avatar" style="background:${data.color}20;color:${data.color};">${data.avatar}</div>
@@ -662,9 +653,9 @@
                     </div>
                 </div>
                 <div class="biz-body">${data.body}</div>
-                ${data.tags.length > 0 ? `<div style="margin-bottom:12px;">${data.tags.join('')}</div>` : ''}
+                <div style="margin-bottom:12px;">${data.tags.join('')}</div>
                 <div class="biz-actions">
-                    ${data.actions.map(a => `<button class="btn ${a.includes('✓') ? 'btn-primary' : 'btn-secondary'}" onclick="send('${a.replace('✓ ', '')}')">${a}</button>`).join('')}
+                    ${data.actions.map(a => `<button class="btn ${a.includes('一键') ? 'btn-primary' : 'btn-secondary'}" onclick="send('${a}')">${a}</button>`).join('')}
                 </div>
             `;
             
@@ -676,7 +667,7 @@
         }
 
         function updateSuggestions(list) {
-            suggestions.innerHTML = list.map(s => `<div class="chip" onclick="send('${s.replace(/🔴|🟡|🔵|🟢|👤|📝|💰|🎧|✓|📊|🎯/g, '').trim()}')">${s}</div>`).join('');
+            suggestions.innerHTML = list.map(s => `<div class="chip" onclick="send('${s.replace(/🔴|🟡|🔵|👤|📝|💰|🎧|✓|📊|🎯|/g, '').trim()}')">${s}</div>`).join('');
         }
     </script>
 </body>
