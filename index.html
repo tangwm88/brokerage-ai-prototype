@@ -230,12 +230,11 @@
                         `}).join('')}
                     </div>
                     <div class="quick-prompts">
-                        <div class="quick-title">💡 常用提示词（可直接点击或输入）</div>
+                        <div class="quick-title">💡 常用提示词</div>
                         <div class="prompt-tags">
-                            <div class="prompt-tag" onclick="send('引入华夏理财')">引入华夏理财</div>
-                            <div class="prompt-tag" onclick="send('查看华泰资管')">查看华泰资管</div>
-                            <div class="prompt-tag" onclick="send('处理舆情预警')">处理舆情预警</div>
-                            <div class="prompt-tag" onclick="send('今日任务')">今日任务</div>
+                            <div class="prompt-tag" onclick="send('今日工作台')">📊 今日工作台</div>
+                            <div class="prompt-tag" onclick="send('🔴 紧急事项')">🔴 紧急事项</div>
+                            <div class="prompt-tag" onclick="send('🔍 潜客挖掘')">🔍 潜客挖掘</div>
                         </div>
                     </div>
                 </div>`;
@@ -283,7 +282,10 @@
             else if (msg.includes('客户回访')) {
                 showCustomerVisit();
             }
-            else if (msg.includes('今日') || msg.includes('任务') || msg.includes('工作台')) {
+            else if (msg.includes('紧急')) {
+                showUrgentTasks();
+            }
+            else if (msg.includes('今日') || msg.includes('工作台')) {
                 showTodayOverview();
             }
             else if (msg.includes('华泰')) showTaskDetail('华泰资管');
@@ -649,6 +651,54 @@ AI建议今日回访客户（按优先级排序）：`, () => {
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', visitHtml);
                     chat.scrollTop = chat.scrollHeight;
                     updateSuggestions(['预约鹏华回访', '发送周年信', '查看回访计划']);
+                });
+            }, 500);
+        }
+
+        function showUrgentTasks() {
+            setTimeout(() => {
+                typeWriter(`🔴 **紧急事项** - 需立即处理
+
+共 **2 项** 紧急任务：`, () => {
+                    const urgentHtml = `
+                        <div class="task-card urgent">
+                            <div class="task-header">
+                                <div class="task-avatar" style="background:#ef444420;color:#ef4444;">华</div>
+                                <div>
+                                    <div class="task-title">华泰资管</div>
+                                    <div class="task-subtitle">引入客户 · 资料待补充 · 剩余2小时</div>
+                                </div>
+                            </div>
+                            <div class="task-body" style="font-size:13px;color:var(--text-secondary);">
+                                缺失：法人身份证、授权委托书、风险测评问卷
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-success" onclick="completeAction('一键催办')">✓ 一键催办</button>
+                                <button class="btn btn-secondary" onclick="completeAction('电话提醒')">电话提醒</button>
+                            </div>
+                        </div>
+                        
+                        <div class="task-card urgent">
+                            <div class="task-header">
+                                <div class="task-avatar" style="background:#f59e0b20;color:#f59e0b;">中</div>
+                                <div>
+                                    <div class="task-title">中银基金</div>
+                                    <div class="task-subtitle">客户服务 · 舆情预警 · 2小时前</div>
+                                </div>
+                            </div>
+                            <div class="task-body" style="font-size:13px;color:var(--text-secondary);">
+                                负面报道：投资业绩波动，建议主动沟通
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-primary" onclick="completeAction('生成简报')">生成简报</button>
+                                <button class="btn btn-secondary" onclick="completeAction('联系客户')">联系客户</button>
+                            </div>
+                        </div>
+                    `;
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', urgentHtml);
+                    chat.scrollTop = chat.scrollHeight;
+                    updateSuggestions(['一键催办华泰', '生成中银简报', '查看全部任务']);
                 });
             }, 500);
         }
