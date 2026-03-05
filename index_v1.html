@@ -38,7 +38,7 @@
         .quick-prompts { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
         .quick-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
         .prompt-tags { display: flex; flex-direction: column; gap: 12px; }
-        .prompt-tag { padding: 16px 20px; background: #f2f3f5; border-radius: 16px; font-size: 15px; color: var(--text); cursor: pointer; text-align: left; border: none; }
+        .prompt-tag { padding: 16px 20px; background: #f2f3f5; border-radius: 16px; font-size: 15px; color: var(--text); cursor: pointer; text-align: left; border: none; margin-bottom: 12px; line-height: 1.5; }
         .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin: 10px 0; }
         .task-card.urgent { border-left: 4px solid var(--danger); }
         .task-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
@@ -186,9 +186,9 @@
             }
             
             navHtml += '</div><div class="quick-prompts" style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;"><div class="prompt-tags" style="flex-direction:column;align-items:stretch;">';
-            navHtml += '<div class="prompt-tag" onclick="send(\'查看我的客户\')" style="text-align:center;padding:12px 16px;margin-bottom:8px;">👤 查看我的客户</div>';
-            navHtml += '<div class="prompt-tag" onclick="send(\'推进服务事项\')" style="text-align:center;padding:12px 16px;margin-bottom:8px;">⚡ 推进服务事项</div>';
-            navHtml += '<div class="prompt-tag" onclick="send(\'制定经营方案\')" style="text-align:center;padding:12px 16px;">📊 制定经营方案</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'查看我的客户\')" style="text-align:left;padding:16px 20px;margin-bottom:12px;font-size:15px;">我想查看一下我的客户列表和跟进状态</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'推进服务事项\')" style="text-align:left;padding:16px 20px;margin-bottom:12px;font-size:15px;">帮我推进一下当前的服务事项和待办任务</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'制定经营方案\')" style="text-align:left;padding:16px 20px;font-size:15px;">如何为我的客户制定个性化的经营方案？</div>';
             navHtml += '</div></div></div>';
             
             const lastMsg = chat.lastElementChild;
