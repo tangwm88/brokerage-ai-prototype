@@ -130,7 +130,7 @@
             setTimeout(() => {
                 typeWriter('📋 今日重点工作：', () => {
                     addBusinessNavCenter();
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
+                    updateSuggestions(['📝 客户登记', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
                 });
             }, 200);
         };
@@ -188,7 +188,7 @@
             navHtml += '</div><div class="quick-prompts" style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;"><div class="prompt-tags" style="flex-direction:column;align-items:stretch;">';
             navHtml += '<div class="prompt-tag" onclick="send(\'查看我的客户\')" style="text-align:left;padding:16px 20px;margin-bottom:12px;font-size:15px;">我想查看一下我的客户列表和跟进状态</div>';
             navHtml += '<div class="prompt-tag" onclick="send(\'推进服务事项\')" style="text-align:left;padding:16px 20px;margin-bottom:12px;font-size:15px;">帮我推进一下当前的服务事项和待办任务</div>';
-            navHtml += '<div class="prompt-tag" onclick="send(\'制定经营方案\')" style="text-align:left;padding:16px 20px;font-size:15px;">如何为我的客户制定个性化的经营方案？</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'制定经营方案\')" style="text-align:left;padding:16px 20px;font-size:15px;">定制高效的机构经纪业务经营方案</div>';
             navHtml += '</div></div></div>';
             
             const lastMsg = chat.lastElementChild;
@@ -219,7 +219,7 @@
             
             if (businessNav[msg]) {
                 showCategoryInterface(msg);
-            } else if (msg.includes('潜客挖掘')) {
+            } else if (msg.includes('客户登记') || msg.includes('潜客挖掘')) {
                 showNewLeadEntry();
             } else if (msg.includes('快速开户')) {
                 showQuickOpenAccount();
@@ -236,7 +236,7 @@
                     typeWriter('收到。请从上方选择今日重点工作，或使用底部快捷入口：', () => {
                         addBusinessNavCenter();
                     });
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
+                    updateSuggestions(['📝 客户登记', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
                 }, 500);
             }
         }
@@ -373,12 +373,62 @@
 
         function showNewLeadEntry() {
             setTimeout(() => {
-                typeWriter('🔍 **潜客挖掘** - 新客户线索发现\n\nAI扫描到以下潜在线索：', () => {
+                typeWriter('📝 **客户登记** - 请选择客户引入方式：', () => {
+                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
+                        '<div class="sub-item" onclick="showAIProspecting()" style="background:linear-gradient(135deg,#e8f0ff,#fff);">' +
+                        '<div style="font-size:24px;margin-bottom:8px;">🤖</div>' +
+                        '<div class="sub-name" style="color:#3370ff;font-size:15px;">AI潜客挖掘</div>' +
+                        '<div class="sub-desc">AI智能扫描，自动发现潜在客户</div></div>' +
+                        '<div class="sub-item" onclick="showInboundClients()" style="background:linear-gradient(135deg,#f0f7f0,#fff);">' +
+                        '<div style="font-size:24px;margin-bottom:8px;">📨</div>' +
+                        '<div class="sub-name" style="color:#10b981;font-size:15px;">找过来的客户</div>' +
+                        '<div class="sub-desc">主动咨询、转介绍、活动获客</div></div>' +
+                        '<div class="sub-item" onclick="showOutboundClients()" style="background:linear-gradient(135deg,#fff5f0,#fff);">' +
+                        '<div style="font-size:24px;margin-bottom:8px;">🎯</div>' +
+                        '<div class="sub-name" style="color:#ff6b6b;font-size:15px;">主动出击获客</div>' +
+                        '<div class="sub-desc">陌拜、电话营销、渠道拓展</div></div></div>';
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    updateSuggestions(['🤖 AI潜客挖掘', '📨 找过来的客户', '🎯 主动出击获客']);
+                });
+            }, 500);
+        }
+
+        function showAIProspecting() {
+            addUserMessage('🤖 AI潜客挖掘');
+            setTimeout(() => {
+                typeWriter('🤖 **AI潜客挖掘**\n\nAI扫描到以下潜在线索：', () => {
                     const html = '<div class="task-card"><div class="task-title">易方达投资（邮件）</div><div class="task-desc">张总咨询TWAP算法，预计5000万/月</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料\')">发送资料</button></div></div>' +
                         '<div class="task-card"><div class="task-title">国泰基金（活动）</div><div class="task-desc">李总对量化交易感兴趣，名片已扫描</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'AI评估\')">AI评估</button></div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
                     updateSuggestions(['录入易方达线索', '录入国泰线索']);
+                });
+            }, 500);
+        }
+
+        function showInboundClients() {
+            addUserMessage('📨 找过来的客户');
+            setTimeout(() => {
+                typeWriter('📨 **找过来的客户**\n\n主动咨询或转介绍的客户：', () => {
+                    const html = '<div class="task-card"><div class="task-title">华夏理财（官网咨询）</div><div class="task-desc">王经理咨询机构开户流程，意向强烈</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'分配跟进\')">分配跟进</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料包\')">发送资料包</button></div></div>' +
+                        '<div class="task-card"><div class="task-title">南方基金（客户转介绍）</div><div class="task-desc">老客户推荐，张总监对接算法交易需求</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'预约拜访\')">预约拜访</button></div></div>';
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    updateSuggestions(['录入华夏理财', '录入南方基金']);
+                });
+            }, 500);
+        }
+
+        function showOutboundClients() {
+            addUserMessage('🎯 主动出击获客');
+            setTimeout(() => {
+                typeWriter('🎯 **主动出击获客**\n\n陌拜、电话营销、渠道拓展记录：', () => {
+                    const html = '<div class="task-card"><div class="task-title">博时基金（陌拜）</div><div class="task-desc">李总对收益互换感兴趣，下周二拜访</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入拜访记录\')">录入拜访记录</button><button class="btn btn-secondary" onclick="completeAction(\'准备方案\')">准备方案</button></div></div>' +
+                        '<div class="task-card"><div class="task-title">嘉实基金（渠道推荐）</div><div class="task-desc">合作伙伴推荐，对接量化团队负责人</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入渠道线索\')">录入渠道线索</button><button class="btn btn-secondary" onclick="completeAction(\'约会议\')">约会议</button></div></div>';
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    updateSuggestions(['录入博时拜访', '录入嘉实渠道']);
                 });
             }, 500);
         }
@@ -528,7 +578,7 @@
                         const lastMsg = chat.lastElementChild;
                         if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
                     }
-                    updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
+                    updateSuggestions(['📝 客户登记', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
                 });
             }, 500);
         }
