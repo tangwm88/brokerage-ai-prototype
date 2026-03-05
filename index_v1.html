@@ -37,8 +37,8 @@
         .case-desc { color: var(--text-secondary); }
         .quick-prompts { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
         .quick-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
-        .prompt-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-        .prompt-tag { padding: 8px 14px; background: rgba(0,122,255,0.08); border: 1px solid rgba(0,122,255,0.2); border-radius: 16px; font-size: 13px; color: var(--primary); cursor: pointer; }
+        .prompt-tags { display: flex; flex-direction: column; gap: 12px; }
+        .prompt-tag { padding: 16px 20px; background: #f2f3f5; border-radius: 16px; font-size: 15px; color: var(--text); cursor: pointer; text-align: left; border: none; }
         .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin: 10px 0; }
         .task-card.urgent { border-left: 4px solid var(--danger); }
         .task-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
@@ -49,13 +49,15 @@
         .btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
         .btn-success { background: var(--success); color: #fff; }
         .tag-urgent { display: inline-block; padding: 2px 8px; background: rgba(255,59,48,0.1); color: var(--danger); border-radius: 4px; font-size: 11px; margin-bottom: 8px; }
-        .input-area { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 24px; background: linear-gradient(180deg, transparent 0%, var(--bg) 30%); }
-        .suggestions { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; }
+        .input-area { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 24px; background: linear-gradient(180deg, transparent 0%, var(--bg) 20%); }
+        .suggestions { display: flex; gap: 10px; overflow-x: auto; padding: 8px 0; }
         .suggestions::-webkit-scrollbar { display: none; }
-        .chip { padding: 8px 14px; background: rgba(0,122,255,0.08); border: 1px solid rgba(0,122,255,0.2); border-radius: 16px; font-size: 13px; white-space: nowrap; cursor: pointer; color: var(--primary); }
-        .input-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 4px 4px 4px 16px; display: flex; align-items: center; gap: 8px; }
-        .input-field { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; outline: none; padding: 10px 0; }
-        .input-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; background: var(--primary); color: #fff; }
+        .chip { padding: 10px 16px; background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 20px; font-size: 14px; white-space: nowrap; cursor: pointer; color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
+        .input-box { background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 28px; padding: 6px; display: flex; align-items: center; gap: 8px; }
+        .input-field { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; outline: none; padding: 10px 4px; }
+        .input-voice { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; }
+        .input-actions { display: flex; align-items: center; gap: 4px; }
+        .input-action { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: var(--text-secondary); }
         .cursor { display: inline-block; width: 8px; height: 18px; background: var(--primary); margin-left: 2px; animation: blink 1s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .sub-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin: 16px 0; }
@@ -74,8 +76,12 @@
         <div class="input-area">
             <div class="suggestions" id="suggestions"></div>
             <div class="input-box">
-                <input type="text" class="input-field" id="input" placeholder="输入关键词或点击上方入口..." onkeypress="if(event.key==='Enter')send()">
-                <div class="input-btn" onclick="send()">↑</div>
+                <div class="input-voice" onclick="startVoice()">🎤</div>
+                <input type="text" class="input-field" id="input" placeholder="发消息或按住说话..." onkeypress="if(event.key==='Enter')send()">
+                <div class="input-actions">
+                    <div class="input-action" onclick="openCamera()">📷</div>
+                    <div class="input-action" onclick="openMore()">+</div>
+                </div>
             </div>
         </div>
     </div>
@@ -523,6 +529,36 @@
                         if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
                     }
                     updateSuggestions(['🔍 潜客挖掘', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
+                });
+            }, 500);
+        }
+
+        function startVoice() {
+            addUserMessage('🎤 语音输入中...');
+            setTimeout(() => {
+                typeWriter('收到语音消息，正在识别...\n\n识别结果："查看今日工作重点"\n\n为您展示今日业务概览：', () => {
+                    showTodayOverview();
+                });
+            }, 1500);
+        }
+
+        function openCamera() {
+            addUserMessage('📷 打开相机');
+            setTimeout(() => {
+                typeWriter('📷 **拍照识别**\n\n请拍摄客户名片或资料，我将自动提取信息并建档。\n\n💡 **支持识别**：\n• 名片信息（姓名、公司、职位、电话）\n• 证件资料（身份证、营业执照）\n• 合同文件（关键条款提取）', () => {
+                    updateSuggestions(['上传名片', '拍摄证件', '识别合同']);
+                });
+            }, 500);
+        }
+
+        function openMore() {
+            addUserMessage('更多功能');
+            setTimeout(() => {
+                typeWriter('📱 **更多功能**\n\n请选择功能：', () => {
+                    const html = '<div class="sub-grid"><div class="sub-item" onclick="send(\'文件传输\')"><div class="sub-name">📎 文件传输</div><div class="sub-desc">发送合同、协议等文件</div></div><div class="sub-item" onclick="send(\'位置共享\')"><div class="sub-name">📍 位置共享</div><div class="sub-desc">分享拜访位置</div></div><div class="sub-item" onclick="send(\'日程同步\')"><div class="sub-name">📅 日程同步</div><div class="sub-desc">同步客户拜访日程</div></div><div class="sub-item" onclick="send(\'历史记录\')"><div class="sub-name">📜 历史记录</div><div class="sub-desc">查看沟通历史</div></div></div>';
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    updateSuggestions(['返回工作台']);
                 });
             }, 500);
         }
