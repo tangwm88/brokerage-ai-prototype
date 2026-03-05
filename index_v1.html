@@ -691,11 +691,43 @@
 
         function showPerformanceDashboard() {
             setTimeout(() => {
-                typeWriter('📊 **业绩看板** - 今日数据概览\n\n📈 **关键指标**：', () => {
-                    const html = '<div class="sub-grid"><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#10b981;">2.3亿</div><div class="sub-desc">今日成交额</div></div><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#3b82f6;">18</div><div class="sub-desc">在办任务</div></div><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#8b5cf6;">4</div><div class="sub-desc">本月新客</div></div><div class="sub-item"><div style="font-size:20px;font-weight:700;color:#f59e0b;">96%</div><div class="sub-desc">客户满意度</div></div></div><div class="task-card" style="margin-top:10px;"><div class="task-desc">💡 AI洞察：今日成交额超目标，建议重点跟进华泰资管开户</div><div class="task-actions"><button class="btn btn-primary" onclick="send(\'查看华泰资管\')">查看详情</button></div></div>';
+                typeWriter('📊 **业绩看板** - 本月经营数据\n\n📈 **关键指标达成情况**：', () => {
+                    const html = '<div class="sub-grid" style="margin:16px 0;">' +
+                        '<div class="sub-item" style="background:linear-gradient(135deg,#e6f7e6,#fff);">' +
+                        '<div style="font-size:12px;color:#10b981;margin-bottom:4px;">收入目标</div>' +
+                        '<div style="font-size:20px;font-weight:700;color:#10b981;">68%</div>' +
+                        '<div style="font-size:11px;color:var(--text-secondary);">850万/1250万</div></div>' +
+                        '<div class="sub-item" style="background:linear-gradient(135deg,#e8f0ff,#fff);">' +
+                        '<div style="font-size:12px;color:#3b82f6;margin-bottom:4px;">客户新增</div>' +
+                        '<div style="font-size:20px;font-weight:700;color:#3b82f6;">4家</div>' +
+                        '<div style="font-size:11px;color:var(--text-secondary);">目标8家</div></div>' +
+                        '<div class="sub-item" style="background:linear-gradient(135deg,#fff5f0,#fff);">' +
+                        '<div style="font-size:12px;color:#ff6b6b;margin-bottom:4px;">成交额</div>' +
+                        '<div style="font-size:20px;font-weight:700;color:#ff6b6b;">2.3亿</div>' +
+                        '<div style="font-size:11px;color:var(--text-secondary);">今日</div></div>' +
+                        '<div class="sub-item" style="background:linear-gradient(135deg,#f3e5f5,#fff);">' +
+                        '<div style="font-size:12px;color:#8b5cf6;margin-bottom:4px;">客户满意度</div>' +
+                        '<div style="font-size:20px;font-weight:700;color:#8b5cf6;">96%</div>' +
+                        '<div style="font-size:11px;color:var(--text-secondary);">环比+2%</div></div></div>' +
+                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">🎯 **重点行动建议**</div>' +
+                        '<div class="task-card" style="border-left:4px solid #ff6b6b;">' +
+                        '<div class="task-title">⚠️ 收入缺口预警</div>' +
+                        '<div class="task-desc">本月收入完成度68%，低于时间进度（83%），存在400万缺口</div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'查看缺口明细\')">查看明细</button><button class="btn btn-secondary" onclick="completeAction(\'制定追赶计划\')">制定计划</button></div></div>' +
+                        '<div class="task-card" style="border-left:4px solid #3b82f6;">' +
+                        '<div class="task-title">💡 本月Top机会</div>' +
+                        '<div class="task-desc">华泰资管（预计120万）、嘉实基金（预计80万）、跨境收益互换（预计200万）</div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'查看机会清单\')">查看清单</button><button class="btn btn-secondary" onclick="completeAction(\'分配跟进\')">分配跟进</button></div></div>' +
+                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
+                        '<div class="task-title">✅ 值得表扬</div>' +
+                        '<div class="task-desc">客户满意度96%超目标，本月新增4家客户质量良好</div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'查看优秀案例\')">查看案例</button><button class="btn btn-secondary" onclick="completeAction(\'分享经验\')">分享经验</button></div></div>' +
+                        '<div style="margin-top:16px;padding:16px;background:rgba(0,122,255,0.05);border-radius:12px;border:1px solid rgba(0,122,255,0.1);">' +
+                        '<div style="font-size:13px;color:var(--primary);margin-bottom:8px;">📈 AI经营建议</div>' +
+                        '<div style="font-size:14px;">建议优先突破华泰资管开户（预计本周完成），同时启动跨境收益互换产品推介，预计可补足60%的收入缺口。</div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['查看详细数据', '导出日报']);
+                    updateSuggestions(['制定追赶计划', '查看机会清单', '导出月报', '设置下月目标']);
                 });
             }, 500);
         }
