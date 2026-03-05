@@ -451,10 +451,13 @@
                         '<div class="sub-desc">私募/资管/企业客户</div></div>' +
                         '<div class="sub-item" onclick="startFamilyOfficeOpen()">' +
                         '<div class="sub-name" style="color:#10b981;">家族办公室</div>' +
-                        '<div class="sub-desc">家族财富管理</div></div></div>';
+                        '<div class="sub-desc">家族财富管理</div></div>' +
+                        '<div class="sub-item" onclick="startProductOpen()">' +
+                        '<div class="sub-name" style="color:#f59e0b;">产品开户</div>' +
+                        '<div class="sub-desc">资管产品/私募基金产品</div></div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['高净值个人开户', '专业机构开户', '家族办公室开户']);
+                    updateSuggestions(['高净值个人开户', '专业机构开户', '家族办公室开户', '产品开户']);
                 });
             }, 500);
         }
@@ -515,6 +518,28 @@
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
                     updateSuggestions(['预约私享会', '定制方案', '专属服务']);
+                });
+            }, 500);
+        }
+
+        function startProductOpen() {
+            addUserMessage('产品开户');
+            setTimeout(() => {
+                typeWriter('📦 **产品开户**\n\n请提交产品信息：', () => {
+                    const formHtml = '<div class="task-card">' +
+                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">产品信息</div>' +
+                        '<div style="margin-bottom:10px;"><input type="text" placeholder="产品代码" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
+                        '<div style="margin-bottom:10px;"><input type="text" placeholder="产品名称" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
+                        '<div style="margin-bottom:10px;"><input type="text" placeholder="管理人" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
+                        '<div style="margin-bottom:10px;"><input type="text" placeholder="托管行" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
+                        '<div style="margin-bottom:10px;"><input type="text" placeholder="托管账户" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
+                        '<div style="margin-bottom:10px;"><select style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;"><option>产品类型</option><option>私募基金</option><option>资管计划</option><option>信托计划</option><option>其他产品</option></select></div>' +
+                        '<div class="task-actions" style="margin-top:16px;">' +
+                        '<button class="btn btn-primary" onclick="submitProductInfo()">提交信息</button>' +
+                        '<button class="btn btn-secondary" onclick="uploadProductDoc()">上传产品文件</button></div></div>';
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
+                    updateSuggestions(['上传产品合同', '上传备案证明', '预约产品审核']);
                 });
             }, 500);
         }
@@ -623,6 +648,14 @@
 
         function schedulePrivateMeeting() {
             completeAction('预约私享会');
+        }
+
+        function submitProductInfo() {
+            completeAction('提交产品信息');
+        }
+
+        function uploadProductDoc() {
+            completeAction('上传产品文件');
         }
 
         function showApplyMenu() {
