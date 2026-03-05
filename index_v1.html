@@ -130,7 +130,7 @@
             setTimeout(() => {
                 typeWriter('📋 今日重点工作：', () => {
                     addBusinessNavCenter();
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
+                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 协同申请', '📊 业绩看板']);
                 });
             }, 200);
         };
@@ -223,7 +223,7 @@
                 showNewLeadEntry();
             } else if (msg.includes('快速开户')) {
                 showQuickOpenAccount();
-            } else if (msg.includes('申请事项')) {
+            } else if (msg.includes('协同申请')) {
                 showApplyMenu();
             } else if (msg.includes('业绩看板')) {
                 showPerformanceDashboard();
@@ -236,7 +236,7 @@
                     typeWriter('收到。请从上方选择今日重点工作，或使用底部快捷入口：', () => {
                         addBusinessNavCenter();
                     });
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
+                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 协同申请', '📊 业绩看板']);
                 }, 500);
             }
         }
@@ -539,11 +539,67 @@
 
         function showApplyMenu() {
             setTimeout(() => {
-                typeWriter('📋 **申请事项** - 业务申请中心\n\n请选择申请类型：', () => {
-                    const html = '<div class="sub-grid"><div class="sub-item" onclick="send(\'申请算法交易\')"><div class="sub-name" style="color:#3b82f6;">算法交易</div><div class="sub-desc">TWAP/VWAP等算法服务</div></div><div class="sub-item" onclick="send(\'申请两融业务\')"><div class="sub-name" style="color:#8b5cf6;">融资融券</div><div class="sub-desc">开通融资融券权限</div></div></div>';
+                typeWriter('📋 **协同申请** - 机构经纪业务协同支持\n\n请选择申请类型：', () => {
+                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
+                        '<div class="sub-item" onclick="showVerticalRequest()" style="background:linear-gradient(135deg,#fff5f0,#fff);">' +
+                        '<div style="font-size:24px;margin-bottom:8px;">🏛️</div>' +
+                        '<div class="sub-name" style="color:#ff6b6b;font-size:15px;">向上请示</div>' +
+                        '<div class="sub-desc">向公司经营层请示重大事项</div></div>' +
+                        '<div class="sub-item" onclick="showHorizontalRequest()" style="background:linear-gradient(135deg,#e8f0ff,#fff);">' +
+                        '<div style="font-size:24px;margin-bottom:8px;">🤝</div>' +
+                        '<div class="sub-name" style="color:#3370ff;font-size:15px;">横向协同</div>' +
+                        '<div class="sub-desc">请求其他业务线协同支持</div></div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['申请算法交易', '申请两融业务']);
+                    updateSuggestions(['🏛️ 向上请示重大事项', '🤝 横向业务协同']);
+                });
+            }, 500);
+        }
+
+        function showVerticalRequest() {
+            addUserMessage('🏛️ 向上请示重大事项');
+            setTimeout(() => {
+                typeWriter('🏛️ **向上请示** - 向公司经营层请示\n\n请选择请示类型：', () => {
+                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
+                        '<div class="sub-item" onclick="send(\'申请战略客户政策\')">' +
+                        '<div class="sub-name" style="color:#ff6b6b;">战略客户特殊政策</div>' +
+                        '<div class="sub-desc">百亿级客户费率/服务申请</div></div>' +
+                        '<div class="sub-item" onclick="send(\'申请资源支持\')">' +
+                        '<div class="sub-name" style="color:#ff9500;">资源投入申请</div>' +
+                        '<div class="sub-desc">算力/人力/预算超规申请</div></div>' +
+                        '<div class="sub-item" onclick="send(\'请示合规风险\')">' +
+                        '<div class="sub-name" style="color:#8b5cf6;">合规风险请示</div>' +
+                        '<div class="sub-desc">重大合规事项决策支持</div></div>' +
+                        '<div class="sub-item" onclick="send(\'申请跨部门协调\')">' +
+                        '<div class="sub-name" style="color:#3b82f6;">跨部门协调</div>' +
+                        '<div class="sub-desc">需公司层面协调事项</div></div></div>';
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    updateSuggestions(['战略客户政策', '资源投入', '合规风险', '跨部门协调']);
+                });
+            }, 500);
+        }
+
+        function showHorizontalRequest() {
+            addUserMessage('🤝 横向业务协同');
+            setTimeout(() => {
+                typeWriter('🤝 **横向协同** - 跨业务线协同支持\n\n请选择协同业务线：', () => {
+                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
+                        '<div class="sub-item" onclick="send(\'协同研究所\')">' +
+                        '<div class="sub-name" style="color:#3b82f6;">📊 研究所</div>' +
+                        '<div class="sub-desc">研究服务/路演/专家访谈</div></div>' +
+                        '<div class="sub-item" onclick="send(\'协同资管\')">' +
+                        '<div class="sub-name" style="color:#8b5cf6;">💼 资管</div>' +
+                        '<div class="sub-desc">代销/托管外包服务</div></div>' +
+                        '<div class="sub-item" onclick="send(\'协同信用\')">' +
+                        '<div class="sub-name" style="color:#10b981;">💰 信用</div>' +
+                        '<div class="sub-desc">融资融券/股票质押</div></div>' +
+                        '<div class="sub-item" onclick="send(\'协同投行\')">' +
+                        '<div class="sub-name" style="color:#f59e0b;">🏢 投行</div>' +
+                        '<div class="sub-desc">承销/并购/财务顾问</div></div></div>';
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    updateSuggestions(['研究所协同', '资管协同', '信用协同', '投行协同']);
                 });
             }, 500);
         }
@@ -578,7 +634,7 @@
                         const lastMsg = chat.lastElementChild;
                         if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
                     }
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 申请事项', '📊 业绩看板']);
+                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 协同申请', '📊 业绩看板']);
                 });
             }, 500);
         }
