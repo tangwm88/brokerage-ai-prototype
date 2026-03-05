@@ -52,7 +52,7 @@
         .input-area { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 24px; background: linear-gradient(180deg, transparent 0%, var(--bg) 30%); }
         .suggestions { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; }
         .suggestions::-webkit-scrollbar { display: none; }
-        .chip { padding: 6px 12px; background: rgba(0,0,0,0.05); border: 1px solid var(--border); border-radius: 14px; font-size: 13px; white-space: nowrap; cursor: pointer; }
+        .chip { padding: 8px 14px; background: rgba(0,122,255,0.08); border: 1px solid rgba(0,122,255,0.2); border-radius: 16px; font-size: 13px; white-space: nowrap; cursor: pointer; color: var(--primary); }
         .input-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 4px 4px 4px 16px; display: flex; align-items: center; gap: 8px; }
         .input-field { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; outline: none; padding: 10px 0; }
         .input-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; background: var(--primary); color: #fff; }
@@ -179,10 +179,10 @@
                 navHtml += '</div>';
             }
             
-            navHtml += '</div><div class="quick-prompts"><div class="quick-title">💡 常用提示词</div><div class="prompt-tags">';
-            navHtml += '<div class="prompt-tag" onclick="send(\'今日工作台\')">📊 今日工作台</div>';
-            navHtml += '<div class="prompt-tag" onclick="send(\'🔴 紧急事项\')">🔴 紧急事项</div>';
-            navHtml += '<div class="prompt-tag" onclick="send(\'🔍 潜客挖掘\')">🔍 潜客挖掘</div>';
+            navHtml += '</div><div class="quick-prompts" style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;"><div class="prompt-tags" style="flex-direction:column;align-items:stretch;">';
+            navHtml += '<div class="prompt-tag" onclick="send(\'查看我的客户\')" style="text-align:center;padding:12px 16px;margin-bottom:8px;">👤 查看我的客户</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'推进服务事项\')" style="text-align:center;padding:12px 16px;margin-bottom:8px;">⚡ 推进服务事项</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'制定经营方案\')" style="text-align:center;padding:12px 16px;">📊 制定经营方案</div>';
             navHtml += '</div></div></div>';
             
             const lastMsg = chat.lastElementChild;
