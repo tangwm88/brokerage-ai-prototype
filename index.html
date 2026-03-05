@@ -72,8 +72,18 @@
         }
         .workbenches {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
+        }
+        @media (max-width: 1024px) {
+            .workbenches {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .workbenches {
+                grid-template-columns: 1fr;
+            }
         }
         .workbench-card {
             background: #fff;
@@ -102,6 +112,12 @@
         }
         .workbench-card.blue .workbench-icon { background: linear-gradient(135deg, #3370ff, #7b9dff); }
         .workbench-card.red .workbench-icon { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
+        .workbench-card.green .workbench-icon { background: linear-gradient(135deg, #10b981, #34d399); }
+        
+        .workbench-card.green .enter-btn {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: #fff;
+        }
         
         .workbench-title {
             font-size: 20px;
@@ -250,6 +266,25 @@
                 </div>
                 <div class="enter-btn">
                     进入AI助手 →
+                </div>
+            </a>
+            
+            <!-- 机构经纪业务员工AI工作台 -->
+            <a href="index_v1.html" class="workbench-card green">
+                <div class="workbench-icon">📱</div>
+                <div class="workbench-title">机构经纪业务员工AI工作台</div>
+                <span class="workbench-role">机构客户经理 · 移动端卡片版</span>
+                <div class="workbench-desc">
+                    移动端优先的卡片式交互工作台。今日重点工作一目了然，四大业务目标卡片式展示，支持快捷操作与客户画像查看。
+                </div>
+                <div class="workbench-features">
+                    <span class="feature-tag">📱 移动优先</span>
+                    <span class="feature-tag">📋 今日重点工作</span>
+                    <span class="feature-tag">🎯 四大业务目标</span>
+                    <span class="feature-tag">⚡ 快捷操作</span>
+                </div>
+                <div class="enter-btn">
+                    进入工作台 →
                 </div>
             </a>
         </div>
