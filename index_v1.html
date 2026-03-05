@@ -569,13 +569,10 @@
                         '<div class="sub-desc">算力/人力/预算超规申请</div></div>' +
                         '<div class="sub-item" onclick="send(\'请示合规风险\')">' +
                         '<div class="sub-name" style="color:#8b5cf6;">合规风险请示</div>' +
-                        '<div class="sub-desc">重大合规事项决策支持</div></div>' +
-                        '<div class="sub-item" onclick="send(\'申请跨部门协调\')">' +
-                        '<div class="sub-name" style="color:#3b82f6;">跨部门协调</div>' +
-                        '<div class="sub-desc">需公司层面协调事项</div></div></div>';
+                        '<div class="sub-desc">重大合规事项决策支持</div></div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['战略客户政策', '资源投入', '合规风险', '跨部门协调']);
+                    updateSuggestions(['战略客户政策', '资源投入', '合规风险']);
                 });
             }, 500);
         }
@@ -590,16 +587,16 @@
                         '<div class="sub-desc">研究服务/路演/专家访谈</div></div>' +
                         '<div class="sub-item" onclick="send(\'协同资管\')">' +
                         '<div class="sub-name" style="color:#8b5cf6;">💼 资管</div>' +
-                        '<div class="sub-desc">代销/托管外包服务</div></div>' +
+                        '<div class="sub-desc">机构自有资金配置/理财产品投资</div></div>' +
                         '<div class="sub-item" onclick="send(\'协同信用\')">' +
                         '<div class="sub-name" style="color:#10b981;">💰 信用</div>' +
                         '<div class="sub-desc">融资融券/股票质押</div></div>' +
-                        '<div class="sub-item" onclick="send(\'协同投行\')">' +
-                        '<div class="sub-name" style="color:#f59e0b;">🏢 投行</div>' +
-                        '<div class="sub-desc">承销/并购/财务顾问</div></div></div>';
+                        '<div class="sub-item" onclick="send(\'协同托管外包\')">' +
+                        '<div class="sub-name" style="color:#f59e0b;">📦 托管和外包</div>' +
+                        '<div class="sub-desc">资产托管/运营外包服务</div></div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['研究所协同', '资管协同', '信用协同', '投行协同']);
+                    updateSuggestions(['研究所协同', '资管协同', '信用协同', '托管外包协同']);
                 });
             }, 500);
         }
