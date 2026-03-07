@@ -17,281 +17,380 @@
         .top-bar { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #fff; }
         .brand { font-size: 16px; font-weight: 600; }
         .back-btn { padding: 8px 12px; background: rgba(255,255,255,0.2); border-radius: 8px; font-size: 14px; cursor: pointer; }
-        .content { flex: 1; overflow-y: auto; padding: 16px; }
-        
-        /* 统计卡片 */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .stat-card { background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
-        .stat-label { font-size: 13px; color: var(--text-secondary); }
-        .stat-card.alert .stat-value { color: #ff3b30; }
-        .stat-card.task .stat-value { color: #3b82f6; }
-        .stat-card.team .stat-value { color: #10b981; }
-        .stat-card.risk .stat-value { color: #f59e0b; }
-        
-        /* 功能卡片 */
-        .section-card { background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-        .section-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .section-title { font-size: 16px; font-weight: 600; flex: 1; }
-        .section-badge { padding: 4px 10px; background: #fff2f0; color: #ff4d4f; border-radius: 12px; font-size: 12px; font-weight: 500; }
-        
-        /* 列表项 */
-        .list-item { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-        .list-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .list-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 16px; }
-        .list-icon.blue { background: #e8f0ff; }
-        .list-icon.green { background: #e6f7e6; }
-        .list-icon.orange { background: #fff7e6; }
-        .list-icon.red { background: #fff2f0; }
-        .list-content { flex: 1; }
-        .list-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-        .list-desc { font-size: 12px; color: var(--text-secondary); }
-        .list-arrow { font-size: 18px; color: #ccc; }
-        .list-badge { padding: 2px 8px; background: #ff4d4f; color: #fff; border-radius: 10px; font-size: 11px; }
-        
-        /* 快捷操作 */
-        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-        .quick-btn { background: var(--surface); border-radius: 12px; padding: 16px 8px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .quick-icon { font-size: 24px; margin-bottom: 8px; }
-        .quick-label { font-size: 12px; color: var(--text-secondary); }
-        
-        /* 底部导航 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0 20px; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 20px; cursor: pointer; color: var(--text-secondary); }
-        .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 24px; }
-        .nav-label { font-size: 11px; }
+        .status { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+        .status-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .chat { flex: 1; overflow-y: auto; padding: 16px 16px 120px 16px; display: flex; flex-direction: column; gap: 16px; }
+        .message { max-width: 92%; animation: fadeIn 0.3s ease; }
+        .message-user { align-self: flex-end; background: var(--primary); color: white; padding: 12px 16px; border-radius: 20px 20px 4px 20px; font-size: 15px; }
+        .message-ai { display: flex; gap: 10px; }
+        .ai-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #fbbf24); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .ai-content { flex: 1; font-size: 15px; line-height: 1.7; }
+        .nav-center { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin: 8px 0; }
+        .biz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .biz-entry { background: rgba(0,0,0,0.02); border-radius: 16px; padding: 16px; cursor: pointer; transition: all 0.25s; border: 2px solid transparent; }
+        .biz-entry:hover { background: rgba(0,0,0,0.04); transform: translateY(-2px); }
+        .entry-keyword { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: #f59e0b; }
+        .entry-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
+        .case-box { margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px; font-size: 12px; }
+        .case-title { font-weight: 500; margin-bottom: 4px; }
+        .case-desc { color: var(--text-secondary); }
+        .quick-prompts { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+        .quick-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
+        .prompt-tags { display: flex; flex-direction: column; gap: 12px; }
+        .prompt-tag { padding: 16px 20px; background: #f2f3f5; border-radius: 16px; font-size: 15px; color: var(--text); cursor: pointer; text-align: left; border: none; margin-bottom: 12px; line-height: 1.5; }
+        .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin: 10px 0; }
+        .task-card.urgent { border-left: 4px solid var(--danger); }
+        .task-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+        .task-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+        .task-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: none; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
+        .btn-success { background: var(--success); color: #fff; }
+        .tag-urgent { display: inline-block; padding: 2px 8px; background: rgba(255,59,48,0.1); color: var(--danger); border-radius: 4px; font-size: 11px; margin-bottom: 8px; }
+        .input-area { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 24px; background: linear-gradient(180deg, transparent 0%, var(--bg) 20%); }
+        .suggestions { display: flex; gap: 10px; overflow-x: auto; padding: 8px 0; }
+        .suggestions::-webkit-scrollbar { display: none; }
+        .chip { padding: 10px 16px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: 18px; font-size: 13px; white-space: nowrap; cursor: pointer; color: #f59e0b; display: inline-flex; align-items: center; gap: 6px; }
+        .input-box { background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 28px; padding: 6px; display: flex; align-items: center; gap: 8px; }
+        .input-field { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; outline: none; padding: 10px 4px; }
+        .input-voice { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; }
+        .input-actions { display: flex; align-items: center; gap: 4px; }
+        .input-action { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: var(--text-secondary); }
+        .cursor { display: inline-block; width: 8px; height: 18px; background: var(--primary); margin-left: 2px; animation: blink 1s infinite; vertical-align: middle; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .sub-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin: 16px 0; }
+        .sub-item { padding: 12px; background: rgba(0,0,0,0.02); border-radius: 12px; cursor: pointer; }
+        .sub-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .sub-desc { font-size: 11px; color: var(--text-secondary); }
+        .submenu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
+        .submenu-item { padding: 14px; background: rgba(245,158,11,0.08); border-radius: 12px; cursor: pointer; border: 1px solid rgba(245,158,11,0.15); transition: all 0.2s; }
+        .submenu-item:hover { background: rgba(245,158,11,0.12); transform: translateY(-1px); }
+        .submenu-item:active { transform: scale(0.98); }
+        .submenu-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: #f59e0b; display: flex; align-items: center; justify-content: space-between; }
+        .submenu-count { font-size: 11px; color: var(--text-secondary); }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 6px; }
+        .badge-red { background: rgba(255,59,48,0.1); color: var(--danger); }
+        .badge-orange { background: rgba(255,149,0,0.1); color: var(--warning); }
+        .badge-green { background: rgba(52,199,89,0.1); color: var(--success); }
     </style>
 </head>
 <body>
     <div class="app">
         <div class="top-bar">
             <div class="back-btn" onclick="location.href='index.html'">← 返回</div>
-            <div class="brand">🏛️ 业务支持中心工作台</div>
-            <div style="width: 60px;"></div>
+            <div class="brand">🏛️ 业务支持中心</div>
+            <div class="status"><div class="status-dot"></div><span>AI运行中</span></div>
         </div>
-        
-        <div class="content">
-            <!-- 快捷操作 -->
-            <div class="quick-actions">
-                <div class="quick-btn" onclick="showAlerts()">
-                    <div class="quick-icon">📢</div>
-                    <div class="quick-label">提示事项</div>
+        <div class="chat" id="chat"></div>
+        <div class="input-area">
+            <div class="suggestions" id="suggestions"></div>
+            <div class="input-box">
+                <div class="input-voice" onclick="startVoice()">🎤</div>
+                <input type="text" class="input-field" id="input" placeholder="发消息或按住说话..." onkeypress="if(event.key==='Enter')send()">
+                <div class="input-actions">
+                    <div class="input-action" onclick="openCamera()">📷</div>
+                    <div class="input-action" onclick="openMore()">+</div>
                 </div>
-                <div class="quick-btn" onclick="showOrganization()">
-                    <div class="quick-icon">📊</div>
-                    <div class="quick-label">业务组织</div>
-                </div>
-                <div class="quick-btn" onclick="showTeam()">
-                    <div class="quick-icon">👥</div>
-                    <div class="quick-label">队伍状况</div>
-                </div>
-                <div class="quick-btn" onclick="showRisks()">
-                    <div class="quick-icon">⚠️</div>
-                    <div class="quick-label">风险提示</div>
-                </div>
-            </div>
-            
-            <!-- 提示事项 -->
-            <div class="section-card">
-                <div class="section-header">
-                    <div class="section-icon" style="background: #fff2f0;">📢</div>
-                    <div class="section-title">提示事项</div>
-                    <div class="section-badge">3 待处理</div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon red">🚨</div>
-                    <div class="list-content">
-                        <div class="list-title">
-                            向公司申请战略客户特殊政策
-                            <span class="list-badge">紧急</span>
-                        </div>
-                        <div class="list-desc">华泰资管 · 申请费率优惠 · 待审批</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon orange">📋</div>
-                    <div class="list-content">
-                        <div class="list-title">资源协调申请</div>
-                        <div class="list-desc">研究所 · 专家访谈支持 · 待响应</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon blue">💬</div>
-                    <div class="list-content">
-                        <div class="list-title">跨部门问题反馈</div>
-                        <div class="list-desc">信用交易 · 系统对接问题 · 处理中</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-            </div>
-            
-            <!-- 业务组织 -->
-            <div class="section-card">
-                <div class="section-header">
-                    <div class="section-icon" style="background: #e8f0ff;">📊</div>
-                    <div class="section-title">业务组织</div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon blue">👤</div>
-                    <div class="list-content">
-                        <div class="list-title">确认前端引入客户</div>
-                        <div class="list-desc">5 家待确认 · 3 家今日新增</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon green">✅</div>
-                    <div class="list-content">
-                        <div class="list-title">确认自动开户审核</div>
-                        <div class="list-desc">12 笔已完成 · 2 笔待复核</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon orange">🏢</div>
-                    <div class="list-content">
-                        <div class="list-title">跟踪分支机构开户</div>
-                        <div class="list-desc">北京分公司 · 上海分公司 · 进展正常</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon blue">🔧</div>
-                    <div class="list-content">
-                        <div class="list-title">反馈系统开通结果</div>
-                        <div class="list-desc">8 个系统已开通 · 待通知客户</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon green">🤝</div>
-                    <div class="list-content">
-                        <div class="list-title">响应协调事项</div>
-                        <div class="list-desc">3 项待处理 · 资管/信用/托管</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-            </div>
-            
-            <!-- 队伍状况 -->
-            <div class="section-card">
-                <div class="section-header">
-                    <div class="section-icon" style="background: #e6f7e6;">👥</div>
-                    <div class="section-title">队伍状况</div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon blue">🏢</div>
-                    <div class="list-content">
-                        <div class="list-title">机构经纪团队</div>
-                        <div class="list-desc">12 人 · 8人在线 · 4人忙碌</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon green">📊</div>
-                    <div class="list-content">
-                        <div class="list-title">研究所协同团队</div>
-                        <div class="list-desc">6 人 · 研究服务对接中</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon orange">💼>
-                    <div class="list-content">
-                        <div class="list-title">资管协同团队</div>
-                        <div class="list-desc">4 人 · 产品配置支持</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-            </div>
-            
-            <!-- 风险提示 -->
-            <div class="section-card">
-                <div class="section-header">
-                    <div class="section-icon" style="background: #fff7e6;">⚠️</div>
-                    <div class="section-title">风险提示</div>
-                    <div class="section-badge">2 待处理</div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon red">🔴</div>
-                    <div class="list-content">
-                        <div class="list-title">
-                            客户集中度风险预警
-                            <span class="list-badge">高</span>
-                        </div>
-                        <div class="list-desc">单一客户持仓占比超阈值 · 需关注</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon orange">🟡</div>
-                    <div class="list-content">
-                        <div class="list-title">舆情风险跟踪</div>
-                        <div class="list-desc">3 家客户负面舆情 · 持续监控中</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-                
-                <div class="list-item">
-                    <div class="list-icon blue">📋</div>
-                    <div class="list-content">
-                        <div class="list-title">合规检查提醒</div>
-                        <div class="list-desc">月度合规自查 · 待提交</div>
-                    </div>
-                    <div class="list-arrow">></div>
-                </div>
-            </div>
-            
-            <div style="height: 80px;"></div>
-        </div>
-        
-        <!-- 底部导航 -->
-        <div class="bottom-nav">
-            <div class="nav-item active">
-                <div class="nav-icon">🏛️</div>
-                <div class="nav-label">工作台</div>
-            </div>
-            <div class="nav-item">
-                <div class="nav-icon">📊</div>
-                <div class="nav-label">数据</div>
-            </div>
-            <div class="nav-item">
-                <div class="nav-icon">👤</div>
-                <div class="nav-label">我的</div>
             </div>
         </div>
     </div>
-    
+
     <script>
-        function showAlerts() {
-            alert('提示事项功能：向公司提交重大事项、问题等');
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('input');
+        const suggestions = document.getElementById('suggestions');
+
+        const supportModules = {
+            '提示事项': {
+                color: '#ff6b6b', desc: '向公司提交重大事项、问题反馈、资源协调',
+                count: { total: 3, urgent: 1 },
+                submenu: [
+                    { name: '重大事项请示', count: 1, urgent: 1 },
+                    { name: '问题反馈', count: 1, urgent: 0 },
+                    { name: '资源协调', count: 1, urgent: 0 }
+                ],
+                cases: [
+                    { title: '战略客户政策申请', desc: '华泰资管费率优惠 · 待审批', urgent: true },
+                    { title: '研究所专家支持', desc: '客户路演需求 · 待响应', urgent: false }
+                ]
+            },
+            '业务组织': {
+                color: '#3b82f6', desc: '客户确认、开户审核、系统开通、协调事项',
+                count: { total: 12, urgent: 0 },
+                submenu: [
+                    { name: '确认前端客户', count: 5, urgent: 0 },
+                    { name: '开户审核确认', count: 3, urgent: 0 },
+                    { name: '分支机构跟踪', count: 2, urgent: 0 },
+                    { name: '系统开通反馈', count: 2, urgent: 0 }
+                ],
+                cases: [
+                    { title: '前端客户待确认', desc: '5家客户待审核 · 3家今日新增', urgent: false },
+                    { title: '系统开通待反馈', desc: '8个系统已开通 · 待通知客户', urgent: false }
+                ]
+            },
+            '队伍状况': {
+                color: '#10b981', desc: '各板块团队人员情况、工作负载',
+                count: { total: 22, urgent: 0 },
+                submenu: [
+                    { name: '机构经纪团队', count: 12, urgent: 0 },
+                    { name: '研究所协同', count: 6, urgent: 0 },
+                    { name: '资管协同', count: 4, urgent: 0 }
+                ],
+                cases: [
+                    { title: '团队在线情况', desc: '12人 · 8人在线 · 4人忙碌', urgent: false },
+                    { title: '工作负载监控', desc: '张经理负载90% · 建议分流', urgent: false }
+                ]
+            },
+            '风险提示': {
+                color: '#f59e0b', desc: '集中度、舆情、合规风险处理',
+                count: { total: 5, urgent: 2 },
+                submenu: [
+                    { name: '集中度风险', count: 1, urgent: 1 },
+                    { name: '舆情风险', count: 2, urgent: 1 },
+                    { name: '合规检查', count: 2, urgent: 0 }
+                ],
+                cases: [
+                    { title: '客户集中度预警', desc: '单一客户持仓超阈值 · 高风险', urgent: true },
+                    { title: '负面舆情跟踪', desc: '3家客户舆情监控中', urgent: true }
+                ]
+            }
+        };
+
+        window.onload = () => {
+            setTimeout(() => {
+                typeWriter('🤖 您好！我是业务支持中心AI助手\n\n🏛️ 我可以帮您处理以下工作：', () => {
+                    addSupportNavCenter();
+                    updateSuggestions(['📢 提示事项', '📊 业务组织', '👥 队伍状况', '⚠️ 风险提示']);
+                });
+            }, 200);
+        };
+
+        function typeWriter(text, callback) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message message-ai';
+            wrapper.innerHTML = '<div class="ai-icon">🏛️</div><div class="ai-content"><span id="typing-text"></span><span class="cursor"></span></div>';
+            chat.appendChild(wrapper);
+            chat.scrollTop = chat.scrollHeight;
+            
+            const span = wrapper.querySelector('#typing-text');
+            let i = 0;
+            const type = () => {
+                if (i < text.length) {
+                    span.textContent += text.charAt(i);
+                    i++;
+                    chat.scrollTop = chat.scrollHeight;
+                    setTimeout(type, 15);
+                } else {
+                    wrapper.querySelector('.cursor').remove();
+                    if (callback) callback();
+                }
+            };
+            type();
         }
-        function showOrganization() {
-            alert('业务组织功能：确认客户、开户审核、系统开通、协调事项');
+
+        function addSupportNavCenter() {
+            let navHtml = '<div class="nav-center"><div class="biz-grid">';
+            
+            for (const [keyword, data] of Object.entries(supportModules)) {
+                const firstCase = data.cases[0];
+                
+                navHtml += '<div class="biz-entry" onclick="enterCategory(\'' + keyword + '\')" style="border-color:transparent;" onmouseover="this.style.borderColor=\'' + data.color + '40\'" onmouseout="this.style.borderColor=\'transparent\'"'>;
+                navHtml += '<div class="entry-keyword" style="color:' + data.color + ';"'>' + keyword + '</div>';
+                navHtml += '<div class="entry-desc">' + data.desc + '</div>';
+                navHtml += '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary);"'>';
+                navHtml += (data.count.urgent > 0 ? '<span style="color:var(--danger);font-weight:500;">🔴 ' + data.count.urgent + ' 紧急</span> · ' : '');
+                navHtml += '<span style="font-weight:500;">' + data.count.total + ' 项待办</span></div>';
+                
+                if (firstCase) {
+                    navHtml += '<div class="case-box" style="' + (firstCase.urgent ? 'border-left:2px solid var(--danger);' : '') + '"'>';
+                    navHtml += '<div class="case-title" style="' + (firstCase.urgent ? 'color:var(--danger);' : '') + '"'>' + (firstCase.urgent ? '🔴 ' : '') + firstCase.title + '</div>';
+                    navHtml += '<div class="case-desc">' + firstCase.desc + '</div></div>';
+                }
+                navHtml += '</div>';
+            }
+            
+            navHtml += '</div>';
+            navHtml += '<div class="quick-prompts" style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px;"><div class="prompt-tags" style="flex-direction:column;align-items:stretch;">';
+            navHtml += '<div class="prompt-tag" onclick="send(\'查看待处理事项\')" style="text-align:left;padding:16px 20px;margin-bottom:12px;font-size:15px;">查看今日待处理的提示事项和业务组织工作</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'队伍状况概览\')" style="text-align:left;padding:16px 20px;margin-bottom:12px;font-size:15px;">查看各板块团队人员状况和工作负载</div>';
+            navHtml += '<div class="prompt-tag" onclick="send(\'风险提示\')" style="text-align:left;padding:16px 20px;font-size:15px;">查看和处理当前的风险预警事项</div>';
+            navHtml += '</div></div></div>';
+            
+            const lastMsg = chat.lastElementChild;
+            if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', navHtml);
+            chat.scrollTop = chat.scrollHeight;
         }
-        function showTeam() {
-            alert('队伍状况功能：查看各板块团队人员情况');
+
+        function enterCategory(keyword) { send(keyword); }
+
+        function send(text) {
+            const msg = text || input.value.trim();
+            if (!msg) return;
+            addUserMessage(msg);
+            input.value = '';
+            processResponse(msg);
         }
-        function showRisks() {
-            alert('风险提示功能：集中度、舆情、合规风险处理');
+
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message message-user';
+            div.textContent = text;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
         }
+
+        function processResponse(userMsg) {
+            const msg = userMsg.trim();
+            
+            if (supportModules[msg]) {
+                showCategoryInterface(msg);
+            } else if (msg.includes('提示事项') || msg.includes('重大事项') || msg.includes('请示')) {
+                showAlertItems();
+            } else if (msg.includes('业务组织') || msg.includes('客户确认') || msg.includes('开户')) {
+                showBusinessOrg();
+            } else if (msg.includes('队伍') || msg.includes('人员') || msg.includes('团队')) {
+                showTeamStatus();
+            } else if (msg.includes('风险') || msg.includes('预警') || msg.includes('舆情')) {
+                showRiskAlerts();
+            } else if (msg.includes('查看待处理')) {
+                showAllPending();
+            } else {
+                setTimeout(() => {
+                    typeWriter('收到。请从上方选择工作模块，或输入具体需求：', () => {
+                        addSupportNavCenter();
+                    });
+                    updateSuggestions(['📢 提示事项', '📊 业务组织', '👥 队伍状况', '⚠️ 风险提示']);
+                }, 500);
+            }
+        }
+
+        function showCategoryInterface(keyword) {
+            const data = supportModules[keyword];
+            const welcomeMsgs = {
+                '提示事项': '📢 **提示事项**\n\n待办 ' + data.count.total + ' 项' + (data.count.urgent > 0 ? ' · 🔴 紧急 ' + data.count.urgent + ' 项' : '') + '\n请选择二级功能：',
+                '业务组织': '📊 **业务组织**\n\n待办 ' + data.count.total + ' 项\n请选择二级功能：',
+                '队伍状况': '👥 **队伍状况**\n\n共 ' + data.count.total + ' 人\n请选择查看：',
+                '风险提示': '⚠️ **风险提示**\n\n待处理 ' + data.count.total + ' 项' + (data.count.urgent > 0 ? ' · 🔴 紧急 ' + data.count.urgent + ' 项' : '') + '\n请选择二级功能：'
+            };
+            
+            setTimeout(() => {
+                typeWriter(welcomeMsgs[keyword], () => {
+                    showSubmenu(keyword);
+                });
+            }, 500);
+        }
+
+        function showSubmenu(category) {
+            const data = supportModules[category];
+            let html = '<div class="submenu-grid">';
+            
+            data.submenu.forEach(item => {
+                let badge = '';
+                if (item.urgent > 0) {
+                    badge = '<span class="badge badge-red">' + item.urgent + '</span>';
+                } else if (item.count > 0) {
+                    badge = '<span class="badge badge-green">' + item.count + '</span>';
+                }
+                html += '<div class="submenu-item" onclick="showDetail(\'' + item.name + '\')"'>';
+                html += '<div class="submenu-name">' + item.name + badge + '</div>';
+                html += '</div>';
+            });
+            
+            html += '</div>';
+            
+            html += '<div style="margin-top:16px;font-size:14px;font-weight:600;">📌 重点关注</div>';
+            data.cases.forEach(caseItem => {
+                html += '<div class="task-card" style="' + (caseItem.urgent ? 'border-left:3px solid var(--danger);' : '') + '"'>';
+                html += '<div class="task-title" style="' + (caseItem.urgent ? 'color:var(--danger);' : '') + '"'>' + (caseItem.urgent ? '🔴 ' : '') + caseItem.title + '</div>';
+                html += '<div class="task-desc">' + caseItem.desc + '</div>';
+                html += '</div>';
+            });
+            
+            const lastMsg = chat.lastElementChild;
+            if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+            chat.scrollTop = chat.scrollHeight;
+            
+            const submenuNames = data.submenu.map(s => s.name);
+            updateSuggestions(submenuNames.slice(0, 4));
+        }
+
+        function showDetail(name) {
+            addUserMessage(name);
+            setTimeout(() => {
+                typeWriter('📋 **' + name + '**\n\n正在加载详细数据...', () => {
+                    let html = '<div class="task-card" style="margin-top:12px;">';
+                    html += '<div class="task-title">功能详情</div>';
+                    html += '<div class="task-desc">该功能模块正在开发中，敬请期待完整版本。</div>';
+                    html += '<div class="task-actions"><button class="btn btn-primary" onclick="send(\'返回\')">返回上级</button></div>';
+                    html += '</div>';
+                    
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    chat.scrollTop = chat.scrollHeight;
+                });
+            }, 500);
+        }
+
+        function showAlertItems() {
+            send('提示事项');
+        }
+
+        function showBusinessOrg() {
+            send('业务组织');
+        }
+
+        function showTeamStatus() {
+            send('队伍状况');
+        }
+
+        function showRiskAlerts() {
+            send('风险提示');
+        }
+
+        function showAllPending() {
+            addUserMessage('查看待处理事项');
+            setTimeout(() => {
+                typeWriter('📋 **今日待处理事项汇总**\n\n🔴 **紧急事项（2项）**：', () => {
+                    let html = '<div class="task-card urgent" style="border-left:3px solid #ff4d4f;">';
+                    html += '<div class="task-title" style="color:#ff4d4f;">战略客户政策申请 · 待审批</div>';
+                    html += '<div class="task-desc">华泰资管费率优惠申请，需今日内完成审批</div>';
+                    html += '</div>';
+                    
+                    html += '<div class="task-card urgent" style="border-left:3px solid #ff4d4f;">';
+                    html += '<div class="task-title" style="color:#ff4d4f;">客户集中度风险预警</div>';
+                    html += '<div class="task-desc">单一客户持仓占比超阈值，需立即关注</div>';
+                    html += '</div>';
+                    
+                    html += '<div style="margin-top:16px;font-size:14px;font-weight:600;">📊 **业务组织（12项）**：</div>';
+                    html += '<div class="task-card"><div class="task-title">前端客户确认 · 5家待处理</div></div>';
+                    html += '<div class="task-card"><div class="task-title">开户审核确认 · 3笔待复核</div></div>';
+                    
+                    const lastMsg = chat.lastElementChild;
+                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                    chat.scrollTop = chat.scrollHeight;
+                    updateSuggestions(['处理紧急事项', '查看业务组织', '返回工作台']);
+                });
+            }, 500);
+        }
+
+        function updateSuggestions(chips) {
+            suggestions.innerHTML = chips.map(c => '<div class="chip" onclick="send(\'' + c + \')"'>' + c + '</div>').join('');
+        }
+
+        function startVoice() {
+            addUserMessage('🎤 语音输入中...');
+            setTimeout(() => {
+                typeWriter('收到语音消息，正在识别...\n\n识别结果："查看今日待处理事项"\n\n为您展示今日工作概览：', () => {
+                    showAllPending();
+                });
+            }, 1500);
+        }
+
+        function openCamera() { addUserMessage('📷 打开相机'); }
+        function openMore() { addUserMessage('📎 更多功能'); }
     </script>
 </body>
 </html>
