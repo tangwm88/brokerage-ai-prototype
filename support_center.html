@@ -174,13 +174,33 @@
         };
 
         window.onload = () => {
-            setTimeout(() => {
-                typeWriter('🤖 您好！我是业务支持中心AI助手\n\n🏛️ 我可以帮您处理以下工作：', () => {
-                    addSupportNavCenter();
-                    updateSuggestions(['📢 提示事项', '📊 业务组织', '👥 队伍状况', '⚠️ 风险提示']);
-                });
-            }, 200);
+            // 直接显示内容，不依赖setTimeout
+            addWelcomeMessage();
         };
+        
+        function addWelcomeMessage() {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message message-ai';
+            wrapper.innerHTML = '<div class="ai-icon">🏛️</div><div class="ai-content"><span id="typing-text"></span><span class="cursor"></span></div>';
+            chat.appendChild(wrapper);
+            
+            const text = '🤖 您好！我是业务支持中心AI助手\n\n🏛️ 我可以帮您处理以下工作：';
+            const span = wrapper.querySelector('#typing-text');
+            let i = 0;
+            const type = () => {
+                if (i < text.length) {
+                    span.textContent += text.charAt(i);
+                    i++;
+                    chat.scrollTop = chat.scrollHeight;
+                    setTimeout(type, 15);
+                } else {
+                    wrapper.querySelector('.cursor').remove();
+                    addSupportNavCenter();
+                    updateSuggestions(['📢 提示事项', '📊 业务组织', '👥 队伍状况', '⚠️ 风险提示', '📈 业绩看板']);
+                }
+            };
+            type();
+        }
 
         function typeWriter(text, callback) {
             const wrapper = document.createElement('div');
