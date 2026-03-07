@@ -403,12 +403,34 @@
         function showAIProspecting() {
             addUserMessage('🤖 AI潜客挖掘');
             setTimeout(() => {
-                typeWriter('🤖 **AI潜客挖掘**\n\nAI扫描到以下潜在线索：', () => {
-                    const html = '<div class="task-card"><div class="task-title">易方达投资（邮件）</div><div class="task-desc">张总咨询TWAP算法，预计5000万/月</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料\')">发送资料</button></div></div>' +
-                        '<div class="task-card"><div class="task-title">国泰基金（活动）</div><div class="task-desc">李总对量化交易感兴趣，名片已扫描</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'AI评估\')">AI评估</button></div></div>';
+                typeWriter('🤖 **AI潜客挖掘**\n\nAI智能扫描发现 **5 条** 高质量线索，按优先级排序：\n\n📊 **线索来源分布**：官网咨询(2) · 活动获客(2) · 转介绍(1)', () => {
+                    const html = '<div style="margin:16px 0;font-size:14px;font-weight:600;">🔥 **高优先级线索**</div>' +
+                        '<div class="task-card" style="border-left:4px solid #ff6b6b;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                        '<div><div class="task-title">易方达投资（邮件咨询）</div><div class="task-desc">张总咨询TWAP算法交易，预计规模5000万/月</div></div>' +
+                        '<span class="tag-urgent">热度98%</span></div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
+                        '<div style="margin-bottom:4px;"><strong>AI评估维度：</strong></div>' +
+                        '• 资金规模：⭐⭐⭐⭐⭐ (5000万/月) | • 需求明确度：⭐⭐⭐⭐⭐ | • 决策周期：⭐⭐⭐⭐ (预计2周)</div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'AI评估\')">深度评估</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料\')">发送资料</button></div></div>' +
+                        '<div class="task-card" style="border-left:4px solid #ff9500;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                        '<div><div class="task-title">国泰基金（策略会活动）</div><div class="task-desc">李总对量化交易感兴趣，名片已扫描入库</div></div>' +
+                        '<span style="display:inline-block;padding:2px 8px;background:rgba(255,149,0,0.1);color:#ff9500;border-radius:4px;font-size:11px;">热度85%</span></div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
+                        '<div style="margin-bottom:4px;"><strong>AI评估维度：</strong></div>' +
+                        '• 管理规模：⭐⭐⭐⭐ (300亿+) | • 合作意愿：⭐⭐⭐⭐ | • 匹配度：⭐⭐⭐⭐ (88分)</div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'查看名片\')">查看名片</button><button class="btn btn-secondary" onclick="completeAction(\'预约拜访\')">预约拜访</button></div></div>' +
+                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📋 **其他线索**</div>' +
+                        '<div class="task-card">' +
+                        '<div class="task-title">博时基金 · 邮件咨询</div><div class="task-desc">收益互换业务咨询，预计规模3000万</div>' +
+                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'查看线索\')">查看</button><button class="btn btn-secondary" onclick="completeAction(\'稍后处理\')">稍后处理</button></div></div>' +
+                        '<div class="task-card">' +
+                        '<div class="task-title">南方基金 · 转介绍</div><div class="task-desc">老客户推荐，算法交易需求</div>' +
+                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'查看线索\')">查看</button><button class="btn btn-secondary" onclick="completeAction(\'稍后处理\')">稍后处理</button></div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['录入易方达线索', '录入国泰线索']);
+                    updateSuggestions(['录入易方达线索', '录入国泰线索', '查看全部线索', '设置挖掘规则']);
                 });
             }, 500);
         }
@@ -416,12 +438,40 @@
         function showInboundClients() {
             addUserMessage('📨 找过来的客户');
             setTimeout(() => {
-                typeWriter('📨 **找过来的客户**\n\n主动咨询或转介绍的客户：', () => {
-                    const html = '<div class="task-card"><div class="task-title">华夏理财（官网咨询）</div><div class="task-desc">王经理咨询机构开户流程，意向强烈</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'分配跟进\')">分配跟进</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料包\')">发送资料包</button></div></div>' +
-                        '<div class="task-card"><div class="task-title">南方基金（客户转介绍）</div><div class="task-desc">老客户推荐，张总监对接算法交易需求</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'预约拜访\')">预约拜访</button></div></div>';
+                typeWriter('📨 **找过来的客户**\n\n客户主动找上门，共 **4 家** 待跟进\n\n📊 **客户来源分类**：官网咨询(2) · 客户转介绍(1) · 400热线(1)', () => {
+                    const html = '<div style="margin:16px 0;font-size:14px;font-weight:600;">🌟 **高意向客户**</div>' +
+                        '<div class="task-card" style="border-left:4px solid #3b82f6;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                        '<div><div class="task-title">华夏理财（官网咨询）</div><div class="task-desc">王经理咨询机构开户流程，意向强烈，已浏览产品页15分钟</div></div>' +
+                        '<span class="tag-urgent" style="background:rgba(59,130,246,0.1);color:#3b82f6;">高意向</span></div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
+                        '<div style="margin-bottom:4px;"><strong>客户画像：</strong></div>' +
+                        '• 来源渠道：官网产品页 | • 咨询次数：3次 | • 停留时长：15分钟 | • 关注产品：算法交易+托管</div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">' +
+                        '<strong>跟进策略：</strong>1小时内回电，重点介绍费率优势和系统稳定性</div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'分配跟进\')">分配跟进</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料包\')">发送资料包</button><button class="btn btn-secondary" onclick="completeAction(\'回电\')">立即回电</button></div></div>' +
+                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                        '<div><div class="task-title">南方基金（客户转介绍）</div><div class="task-desc">老客户推荐，张总监对接算法交易需求</div></div>' +
+                        '<span style="display:inline-block;padding:2px 8px;background:rgba(16,185,129,0.1);color:#10b981;border-radius:4px;font-size:11px;">转介绍</span></div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
+                        '<div style="margin-bottom:4px;"><strong>推荐信息：</strong></div>' +
+                        '• 推荐人：易方达基金（合作3年+） | • 关系强度：强信任 | • 预计规模：8000万/月</div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">' +
+                        '<strong>跟进策略：</strong>先感谢推荐人，24小时内联系张总监，强调信任背书</div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'预约拜访\')">预约拜访</button><button class="btn btn-secondary" onclick="completeAction(\'感谢推荐人\')">感谢推荐人</button></div></div>' +
+                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📋 **其他咨询</div>' +
+                        '<div class="task-card">' +
+                        '<div class="task-title">嘉实基金 · 400热线</div><div class="task-desc">询问开户所需材料清单</div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin:8px 0;"><strong>跟进策略：</strong>发送材料清单，询问预计开户时间</div>' +
+                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'发送清单\')">发送清单</button><button class="btn btn-secondary" onclick="completeAction(\'标记跟进\')">标记跟进</button></div></div>' +
+                        '<div class="task-card">' +
+                        '<div class="task-title">鹏华基金 · 官网留言</div><div class="task-desc">咨询产品费率</div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin:8px 0;"><strong>跟进策略：</strong>发送费率表，询问交易规模以便推荐最优方案</div>' +
+                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'发送费率表\')">发送费率表</button><button class="btn btn-secondary" onclick="completeAction(\'标记跟进\')">标记跟进</button></div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['录入华夏理财', '录入南方基金']);
+                    updateSuggestions(['录入华夏理财', '录入南方基金', '查看跟进记录', '设置分配规则']);
                 });
             }, 500);
         }
@@ -429,12 +479,53 @@
         function showOutboundClients() {
             addUserMessage('🎯 主动出击获客');
             setTimeout(() => {
-                typeWriter('🎯 **主动出击获客**\n\n陌拜、电话营销、渠道拓展记录：', () => {
-                    const html = '<div class="task-card"><div class="task-title">博时基金（陌拜）</div><div class="task-desc">李总对收益互换感兴趣，下周二拜访</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入拜访记录\')">录入拜访记录</button><button class="btn btn-secondary" onclick="completeAction(\'准备方案\')">准备方案</button></div></div>' +
-                        '<div class="task-card"><div class="task-title">嘉实基金（渠道推荐）</div><div class="task-desc">合作伙伴推荐，对接量化团队负责人</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入渠道线索\')">录入渠道线索</button><button class="btn btn-secondary" onclick="completeAction(\'约会议\')">约会议</button></div></div>';
+                typeWriter('🎯 **主动出击获客**\n\n陌拜、电话营销、渠道拓展记录\n\n📊 **本月获客漏斗**：线索(12) → 拜访(8) → 意向(4) → 签约(1) → 转化率 8.3%', () => {
+                    const html = '<div style="margin:16px 0;font-size:14px;font-weight:600;">📈 **转化漏斗跟踪**</div>' +
+                        '<div style="padding:16px;background:rgba(0,0,0,0.02);border-radius:12px;margin-bottom:16px;">' +
+                        '<div style="display:flex;align-items:center;margin-bottom:12px;">' +
+                        '<div style="width:80px;font-size:12px;">线索获取</div>' +
+                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:100%;height:100%;background:#3b82f6;"></div></div>' +
+                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">12</div></div>' +
+                        '<div style="display:flex;align-items:center;margin-bottom:12px;">' +
+                        '<div style="width:80px;font-size:12px;">拜访洽谈</div>' +
+                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:67%;height:100%;background:#8b5cf6;"></div></div>' +
+                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">8</div></div>' +
+                        '<div style="display:flex;align-items:center;margin-bottom:12px;">' +
+                        '<div style="width:80px;font-size:12px;">意向确认</div>' +
+                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:33%;height:100%;background:#f59e0b;"></div></div>' +
+                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">4</div></div>' +
+                        '<div style="display:flex;align-items:center;">' +
+                        '<div style="width:80px;font-size:12px;">签约落地</div>' +
+                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:8%;height:100%;background:#10b981;"></div></div>' +
+                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">1</div></div></div>' +
+                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📝 **陌拜记录**</div>' +
+                        '<div class="task-card" style="border-left:4px solid #3b82f6;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                        '<div><div class="task-title">博时基金（陌拜）</div><div class="task-desc">李总对收益互换感兴趣，下周二拜访</div></div>' +
+                        '<span style="display:inline-block;padding:2px 8px;background:rgba(59,130,246,0.1);color:#3b82f6;border-radius:4px;font-size:11px;">拜访中</span></div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
+                        '<div><strong>拜访时间：</strong>2024-03-12 14:00 | <strong>地点：</strong>博时基金总部</div>' +
+                        '<div style="margin-top:6px;"><strong>拜访目标：</strong>了解收益互换需求，介绍产品优势，争取试用</div></div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入拜访记录\')">录入拜访记录</button><button class="btn btn-secondary" onclick="completeAction(\'准备方案\')">准备方案</button><button class="btn btn-secondary" onclick="completeAction(\'设置提醒\')">设置提醒</button></div></div>' +
+                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                        '<div><div class="task-title">嘉实基金（渠道推荐）</div><div class="task-desc">合作伙伴推荐，对接量化团队负责人</div></div>' +
+                        '<span style="display:inline-block;padding:2px 8px;background:rgba(16,185,129,0.1);color:#10b981;border-radius:4px;font-size:11px;">已约会议</span></div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
+                        '<div><strong>会议时间：</strong>2024-03-15 10:00 | <strong>形式：</strong>线上腾讯会议</div>' +
+                        '<div style="margin-top:6px;"><strong>参会人员：</strong>对方量化团队3人，我方投资经理+客户经理</div></div>' +
+                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入渠道线索\')">录入渠道线索</button><button class="btn btn-secondary" onclick="completeAction(\'约会议\')">修改会议</button><button class="btn btn-secondary" onclick="completeAction(\'准备材料\')">准备材料</button></div></div>' +
+                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📊 **渠道拓展**</div>' +
+                        '<div class="task-card">' +
+                        '<div class="task-title">银行渠道合作</div><div class="task-desc">与招商银行私人银行部建立合作，共同服务高净值客户</div>' +
+                        '<div style="font-size:12px;color:var(--text-secondary);margin:8px 0;"><strong>阶段：</strong>框架协议签署中 | <strong>预计获客：</strong>5-8家/季度</div>' +
+                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'查看协议\')">查看协议</button><button class="btn btn-secondary" onclick="completeAction(\'跟进进度\')">跟进进度</button></div></div>' +
+                        '<div style="margin-top:16px;padding:16px;background:rgba(59,130,246,0.05);border-radius:12px;border:1px solid rgba(59,130,246,0.1);">' +
+                        '<div style="font-size:13px;color:#3b82f6;margin-bottom:8px;">💡 AI获客建议</div>' +
+                        '<div style="font-size:14px;">本月转化率略低于目标(10%)，建议：1) 增加拜访频次；2) 重点跟进博时基金争取突破；3) 优化陌拜话术，提高意向确认率。</div></div>';
                     const lastMsg = chat.lastElementChild;
                     if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['录入博时拜访', '录入嘉实渠道']);
+                    updateSuggestions(['录入拜访记录', '查看转化分析', '优化陌拜策略', '渠道拓展计划']);
                 });
             }, 500);
         }
@@ -627,35 +718,67 @@
         }
 
         function submitClientInfo() {
-            completeAction('提交客户信息');
+            setTimeout(() => {
+                typeWriter('✓ **高净值个人开户信息已提交**\n\n📋 **提交详情**：\n• 客户姓名：张先生\n• 身份证号：310***********1234\n• 联系电话：138****8888\n• 预计资产规模：3000万\n• 风险承受能力：R4-积极型\n\n⚡ **处理流程**：\n1. ✓ 信息初审通过（AI自动校验）\n2. → 分配专属客户经理（预计5分钟）\n3. → 预约面签时间\n4. → 完成开户\n\n📅 **下一步**：\n客户经理将在30分钟内联系您确认面签时间\n\n🔔 **提醒设置**：\n已为您设置开户进度提醒，有更新将第一时间通知', () => {
+                    updateSuggestions(['查看进度', '预约面签', '上传补充资料', '联系客户经理']);
+                });
+            }, 500);
         }
 
         function scanIDCard() {
-            completeAction('扫描身份证');
+            setTimeout(() => {
+                typeWriter('📷 **身份证扫描**\n\n请将身份证正面放置在扫描框内，系统会自动识别信息。\n\n💡 **识别内容**：\n• 姓名\n• 身份证号\n• 有效期\n• 户籍地址\n\n🔒 **安全提示**：\n• 扫描数据仅用于开户审核\n• 采用银行级加密传输\n• 符合监管合规要求', () => {
+                    updateSuggestions(['开始扫描', '手动输入', '稍后上传']);
+                });
+            }, 500);
         }
 
         function submitInstitutionInfo() {
-            completeAction('提交机构信息');
+            setTimeout(() => {
+                typeWriter('✓ **专业机构开户信息已提交**\n\n📋 **提交详情**：\n• 机构全称：嘉实基金管理有限公司\n• 统一社会信用代码：91110000710929****\n• 法定代表人：赵学军\n• 机构类型：证券资管\n• 注册资本：3亿元\n\n📊 **尽调流程启动**：\n1. ✓ 基本信息录入完成\n2. → 尽调小组分配（预计2小时）\n3. → 实地尽调预约\n4. → 尽调报告撰写\n5. → 审核委员会审批\n\n📅 **尽调安排**：\n预计尽调时间：2024-03-08\n尽调人员：风控部张经理 + 机构部李经理\n\n📑 **待补充材料**：\n• 近3年审计报告\n• 公司章程\n• 股东结构图\n• 投决会成员名单', () => {
+                    updateSuggestions(['上传尽调材料', '查看尽调进度', '预约尽调时间', '下载材料清单']);
+                });
+            }, 500);
         }
 
         function uploadLicense() {
-            completeAction('上传营业执照');
+            setTimeout(() => {
+                typeWriter('📄 **营业执照上传**\n\n请选择上传方式：\n\n📷 **拍照上传**\n直接拍摄营业执照原件，系统自动识别关键信息\n\n📁 **文件上传**\n支持PDF、JPG、PNG格式，文件大小不超过10MB\n\n✅ **识别信息**：\n• 公司名称\n• 统一社会信用代码\n• 法定代表人\n• 注册资本\n• 成立日期\n• 经营范围\n\n🔍 **自动核验**：\n上传后将与工商系统自动核验真实性', () => {
+                    updateSuggestions(['拍照上传', '选择文件', '稍后上传']);
+                });
+            }, 500);
         }
 
         function submitFamilyInfo() {
-            completeAction('提交家族信息');
+            setTimeout(() => {
+                typeWriter('✓ **家族办公室开户信息已提交**\n\n📋 **提交详情**：\n• 家族代表姓名：王先生\n• 家族总资产规模：5亿\n• 投资需求：财富传承+资产配置+税务优化\n• 风险承受能力：R5-激进型\n• 所在地区：上海\n\n👑 **私享会安排**：\n\n📅 **推荐场次**：\n• 2024-03-15 14:00 家族财富传承专题\n• 2024-03-22 14:00 全球资产配置策略\n• 2024-03-29 14:00 税务规划与家族信托\n\n📍 **地点**：上海中心大厦52层 私享厅\n\n🎯 **定制方案准备中**：\n1. ✓ 家族信息录入完成\n2. → 家族办公室团队分配\n3. → 初步方案设计（预计3个工作日）\n4. → 私享会面谈\n5. → 定制方案确认\n\n💡 **专属服务**：\n• 专属家族顾问：陈总（服务家族客户10年+）\n• 私密会议空间：已预留VIP会议室\n• 定制化服务：根据家族需求定制投资方案', () => {
+                    updateSuggestions(['预约私享会', '查看定制进度', '联系家族顾问', '了解服务内容']);
+                });
+            }, 500);
         }
 
         function schedulePrivateMeeting() {
-            completeAction('预约私享会');
+            setTimeout(() => {
+                typeWriter('📅 **私享会预约**\n\n请选择合适的私享会场次：\n\n🎯 **即将举办的私享会**：\n\n**场次一：家族财富传承专题**\n📅 时间：2024-03-15 14:00-16:00\n📍 地点：上海中心大厦52层\n👥 主讲：财富管理总监 张总\n📝 内容：家族信托架构、代际传承规划\n\n**场次二：全球资产配置策略**\n📅 时间：2024-03-22 14:00-16:00\n📍 地点：上海中心大厦52层\n👥 主讲：投资总监 李总\n📝 内容：2024全球市场展望、跨境配置机会\n\n**场次三：税务规划与家族信托**\n📅 时间：2024-03-29 14:00-16:00\n📍 地点：上海中心大厦52层\n👥 主讲：税务专家 王教授\n📝 内容：税务优化策略、离岸信托设立\n\n📋 **预约信息**：\n每场限额10组家族，确保私密交流\n已为您预留2个席位（家族代表+陪同人员）', () => {
+                    updateSuggestions(['预约3月15日场', '预约3月22日场', '预约3月29日场', '定制专场']);
+                });
+            }, 500);
         }
 
         function submitProductInfo() {
-            completeAction('提交产品信息');
+            setTimeout(() => {
+                typeWriter('✓ **产品开户信息已提交**\n\n📋 **提交详情**：\n• 产品代码：SJP2024030101\n• 产品名称：嘉实量化精选1号\n• 管理人：嘉实基金管理有限公司\n• 托管行：招商银行\n• 托管账户：1234567890123456\n• 产品类型：私募基金\n• 预计规模：2亿元\n\n📊 **产品审核流程**：\n1. ✓ 产品信息录入完成\n2. → 产品合规审核（预计1个工作日）\n3. → 托管行对接确认\n4. → 交易系统配置\n5. → 产品正式上线\n\n🏦 **托管对接进度**：\n• 托管行：招商银行\n• 对接状态：已发起对接申请\n• 预计完成：2024-03-06\n• 对接专员：招商银行 刘经理 021-****8888\n\n📑 **待补充文件**：\n• 产品合同（已上传）\n• 基金备案证明\n• 托管协议\n• 风险揭示书\n\n🔔 **进度提醒**：\n已设置审核进度提醒，每个环节完成将自动通知', () => {
+                    updateSuggestions(['查看审核进度', '上传补充文件', '联系托管行', '配置交易权限']);
+                });
+            }, 500);
         }
 
         function uploadProductDoc() {
-            completeAction('上传产品文件');
+            setTimeout(() => {
+                typeWriter('📁 **产品文件上传**\n\n请上传以下产品相关文件：\n\n📋 **必需文件清单**：\n1. 产品合同/招募说明书\n2. 基金业协会备案证明\n3. 托管协议\n4. 风险揭示书\n5. 投资者适当性匹配意见\n\n📄 **文件要求**：\n• 格式：PDF、JPG、PNG\n• 大小：单个文件不超过10MB\n• 清晰度：文字清晰可辨认\n• 完整性：所有页面完整上传\n\n✅ **智能识别**：\n系统将自动提取文件关键信息，减少手动录入', () => {
+                    updateSuggestions(['上传产品合同', '上传备案证明', '上传托管协议', '查看示例']);
+                });
+            }, 500);
         }
 
         function showApplyMenu() {
