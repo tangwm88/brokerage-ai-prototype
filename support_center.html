@@ -156,6 +156,20 @@
                     { title: '客户集中度预警', desc: '单一客户持仓超阈值 · 高风险', urgent: true },
                     { title: '负面舆情跟踪', desc: '3家客户舆情监控中', urgent: true }
                 ]
+            },
+            '数据看板': {
+                color: '#8b5cf6', desc: '业务数据、业绩指标、趋势分析',
+                count: { total: 6, urgent: 0 },
+                submenu: [
+                    { name: '业务概览', count: 1, urgent: 0 },
+                    { name: '业绩指标', count: 2, urgent: 0 },
+                    { name: '趋势分析', count: 2, urgent: 0 },
+                    { name: '报表导出', count: 1, urgent: 0 }
+                ],
+                cases: [
+                    { title: '本月业务概览', desc: '收入854万 · 客户23家 · 同比+12%', urgent: false },
+                    { title: '业绩目标进度', desc: '收入目标68% · 新增客户50%', urgent: false }
+                ]
             }
         };
 
@@ -255,6 +269,8 @@
                 showTeamStatus();
             } else if (msg.includes('风险') || msg.includes('预警') || msg.includes('舆情')) {
                 showRiskAlerts();
+            } else if (msg.includes('数据') || msg.includes('看板') || msg.includes('业绩') || msg.includes('报表')) {
+                showDashboard();
             } else if (msg.includes('查看待处理')) {
                 showAllPending();
             } else {
@@ -262,7 +278,7 @@
                     typeWriter('收到。请从上方选择工作模块，或输入具体需求：', () => {
                         addSupportNavCenter();
                     });
-                    updateSuggestions(['📢 提示事项', '📊 业务组织', '👥 队伍状况', '⚠️ 风险提示']);
+                    updateSuggestions(['📢 提示事项', '📊 业务组织', '👥 队伍状况', '⚠️ 风险提示', '📈 数据看板']);
                 }, 500);
             }
         }
@@ -273,7 +289,8 @@
                 '提示事项': '📢 **提示事项**\n\n待办 ' + data.count.total + ' 项' + (data.count.urgent > 0 ? ' · 🔴 紧急 ' + data.count.urgent + ' 项' : '') + '\n请选择二级功能：',
                 '业务组织': '📊 **业务组织**\n\n待办 ' + data.count.total + ' 项\n请选择二级功能：',
                 '队伍状况': '👥 **队伍状况**\n\n共 ' + data.count.total + ' 人\n请选择查看：',
-                '风险提示': '⚠️ **风险提示**\n\n待处理 ' + data.count.total + ' 项' + (data.count.urgent > 0 ? ' · 🔴 紧急 ' + data.count.urgent + ' 项' : '') + '\n请选择二级功能：'
+                '风险提示': '⚠️ **风险提示**\n\n待处理 ' + data.count.total + ' 项' + (data.count.urgent > 0 ? ' · 🔴 紧急 ' + data.count.urgent + ' 项' : '') + '\n请选择二级功能：',
+                '数据看板': '📈 **数据看板**\n\n' + data.count.total + ' 个指标模块\n请选择查看：'
             };
             
             setTimeout(() => {
@@ -348,6 +365,10 @@
 
         function showRiskAlerts() {
             send('风险提示');
+        }
+
+        function showDashboard() {
+            send('数据看板');
         }
 
         function showAllPending() {
