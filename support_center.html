@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>机构经纪业务支持中心工作台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg: #f5f5f7; --surface: #ffffff; --card: #ffffff;
+            --border: rgba(0,0,0,0.08); --text: #1d1d1f;
+            --text-secondary: rgba(0,0,0,0.5); --primary: #f59e0b;
+            --success: #34c759; --warning: #ff9500; --danger: #ff3b30;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+        .app { height: 100vh; display: flex; flex-direction: column; }
+        .top-bar { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #fff; }
+        .brand { font-size: 16px; font-weight: 600; }
+        .back-btn { padding: 8px 12px; background: rgba(255,255,255,0.2); border-radius: 8px; font-size: 14px; cursor: pointer; }
+        .content { flex: 1; overflow-y: auto; padding: 16px; }
+        
+        /* 统计卡片 */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { font-size: 13px; color: var(--text-secondary); }
+        .stat-card.alert .stat-value { color: #ff3b30; }
+        .stat-card.task .stat-value { color: #3b82f6; }
+        .stat-card.team .stat-value { color: #10b981; }
+        .stat-card.risk .stat-value { color: #f59e0b; }
+        
+        /* 功能卡片 */
+        .section-card { background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .section-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .section-title { font-size: 16px; font-weight: 600; flex: 1; }
+        .section-badge { padding: 4px 10px; background: #fff2f0; color: #ff4d4f; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        
+        /* 列表项 */
+        .list-item { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .list-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .list-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 16px; }
+        .list-icon.blue { background: #e8f0ff; }
+        .list-icon.green { background: #e6f7e6; }
+        .list-icon.orange { background: #fff7e6; }
+        .list-icon.red { background: #fff2f0; }
+        .list-content { flex: 1; }
+        .list-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .list-desc { font-size: 12px; color: var(--text-secondary); }
+        .list-arrow { font-size: 18px; color: #ccc; }
+        .list-badge { padding: 2px 8px; background: #ff4d4f; color: #fff; border-radius: 10px; font-size: 11px; }
+        
+        /* 快捷操作 */
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .quick-btn { background: var(--surface); border-radius: 12px; padding: 16px 8px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .quick-icon { font-size: 24px; margin-bottom: 8px; }
+        .quick-label { font-size: 12px; color: var(--text-secondary); }
+        
+        /* 底部导航 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0 20px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 20px; cursor: pointer; color: var(--text-secondary); }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 24px; }
+        .nav-label { font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="top-bar">
+            <div class="back-btn" onclick="location.href='index.html'">← 返回</div>
+            <div class="brand">🏛️ 业务支持中心工作台</div>
+            <div style="width: 60px;"></div>
+        </div>
+        
+        <div class="content">
+            <!-- 快捷操作 -->
+            <div class="quick-actions">
+                <div class="quick-btn" onclick="showAlerts()">
+                    <div class="quick-icon">📢</div>
+                    <div class="quick-label">提示事项</div>
+                </div>
+                <div class="quick-btn" onclick="showOrganization()">
+                    <div class="quick-icon">📊</div>
+                    <div class="quick-label">业务组织</div>
+                </div>
+                <div class="quick-btn" onclick="showTeam()">
+                    <div class="quick-icon">👥</div>
+                    <div class="quick-label">队伍状况</div>
+                </div>
+                <div class="quick-btn" onclick="showRisks()">
+                    <div class="quick-icon">⚠️</div>
+                    <div class="quick-label">风险提示</div>
+                </div>
+            </div>
+            
+            <!-- 提示事项 -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background: #fff2f0;">📢</div>
+                    <div class="section-title">提示事项</div>
+                    <div class="section-badge">3 待处理</div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon red">🚨</div>
+                    <div class="list-content">
+                        <div class="list-title">
+                            向公司申请战略客户特殊政策
+                            <span class="list-badge">紧急</span>
+                        </div>
+                        <div class="list-desc">华泰资管 · 申请费率优惠 · 待审批</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon orange">📋</div>
+                    <div class="list-content">
+                        <div class="list-title">资源协调申请</div>
+                        <div class="list-desc">研究所 · 专家访谈支持 · 待响应</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon blue">💬</div>
+                    <div class="list-content">
+                        <div class="list-title">跨部门问题反馈</div>
+                        <div class="list-desc">信用交易 · 系统对接问题 · 处理中</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+            </div>
+            
+            <!-- 业务组织 -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background: #e8f0ff;">📊</div>
+                    <div class="section-title">业务组织</div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon blue">👤</div>
+                    <div class="list-content">
+                        <div class="list-title">确认前端引入客户</div>
+                        <div class="list-desc">5 家待确认 · 3 家今日新增</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon green">✅</div>
+                    <div class="list-content">
+                        <div class="list-title">确认自动开户审核</div>
+                        <div class="list-desc">12 笔已完成 · 2 笔待复核</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon orange">🏢</div>
+                    <div class="list-content">
+                        <div class="list-title">跟踪分支机构开户</div>
+                        <div class="list-desc">北京分公司 · 上海分公司 · 进展正常</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon blue">🔧</div>
+                    <div class="list-content">
+                        <div class="list-title">反馈系统开通结果</div>
+                        <div class="list-desc">8 个系统已开通 · 待通知客户</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon green">🤝</div>
+                    <div class="list-content">
+                        <div class="list-title">响应协调事项</div>
+                        <div class="list-desc">3 项待处理 · 资管/信用/托管</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+            </div>
+            
+            <!-- 队伍状况 -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background: #e6f7e6;">👥</div>
+                    <div class="section-title">队伍状况</div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon blue">🏢</div>
+                    <div class="list-content">
+                        <div class="list-title">机构经纪团队</div>
+                        <div class="list-desc">12 人 · 8人在线 · 4人忙碌</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon green">📊</div>
+                    <div class="list-content">
+                        <div class="list-title">研究所协同团队</div>
+                        <div class="list-desc">6 人 · 研究服务对接中</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon orange">💼>
+                    <div class="list-content">
+                        <div class="list-title">资管协同团队</div>
+                        <div class="list-desc">4 人 · 产品配置支持</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+            </div>
+            
+            <!-- 风险提示 -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon" style="background: #fff7e6;">⚠️</div>
+                    <div class="section-title">风险提示</div>
+                    <div class="section-badge">2 待处理</div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon red">🔴</div>
+                    <div class="list-content">
+                        <div class="list-title">
+                            客户集中度风险预警
+                            <span class="list-badge">高</span>
+                        </div>
+                        <div class="list-desc">单一客户持仓占比超阈值 · 需关注</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon orange">🟡</div>
+                    <div class="list-content">
+                        <div class="list-title">舆情风险跟踪</div>
+                        <div class="list-desc">3 家客户负面舆情 · 持续监控中</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+                
+                <div class="list-item">
+                    <div class="list-icon blue">📋</div>
+                    <div class="list-content">
+                        <div class="list-title">合规检查提醒</div>
+                        <div class="list-desc">月度合规自查 · 待提交</div>
+                    </div>
+                    <div class="list-arrow">></div>
+                </div>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+        
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon">🏛️</div>
+                <div class="nav-label">工作台</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📊</div>
+                <div class="nav-label">数据</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <div class="nav-label">我的</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showAlerts() {
+            alert('提示事项功能：向公司提交重大事项、问题等');
+        }
+        function showOrganization() {
+            alert('业务组织功能：确认客户、开户审核、系统开通、协调事项');
+        }
+        function showTeam() {
+            alert('队伍状况功能：查看各板块团队人员情况');
+        }
+        function showRisks() {
+            alert('风险提示功能：集中度、舆情、合规风险处理');
+        }
+    </script>
+</body>
+</html>
