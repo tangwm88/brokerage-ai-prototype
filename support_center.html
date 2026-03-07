@@ -231,7 +231,7 @@
             for (const [keyword, data] of Object.entries(supportModules)) {
                 const firstCase = data.cases[0];
                 
-                navHtml += '<div class="biz-entry" onclick="enterCategory(\'' + keyword + '\')" style="border-color:transparent;" onmouseover="this.style.borderColor=\'' + data.color + '40\'" onmouseout="this.style.borderColor=\'transparent\'"'>;
+                navHtml += '<div class="biz-entry" onclick="enterCategory(\'' + keyword + '\')" style="border-color:transparent;" onmouseover="this.style.borderColor=\'' + data.color + '40\'" onmouseout="this.style.borderColor=\'transparent\'">';
                 navHtml += '<div class="entry-keyword" style="color:' + data.color + ';">' + keyword + '</div>';
                 navHtml += '<div class="entry-desc">' + data.desc + '</div>';
                 navHtml += '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary);">';
@@ -331,7 +331,7 @@
                 } else if (item.count > 0) {
                     badge = '<span class="badge badge-green">' + item.count + '</span>';
                 }
-                html += '<div class="submenu-item" onclick="showDetail(\'' + item.name + '\')"'>';
+                html += '<div class="submenu-item" onclick="showDetail(\'' + item.name + '\')">';
                 html += '<div class="submenu-name">' + item.name + badge + '</div>';
                 html += '</div>';
             });
@@ -340,8 +340,8 @@
             
             html += '<div style="margin-top:16px;font-size:14px;font-weight:600;">📌 重点关注</div>';
             data.cases.forEach(caseItem => {
-                html += '<div class="task-card" style="' + (caseItem.urgent ? 'border-left:3px solid var(--danger);' : '') + '"'>';
-                html += '<div class="task-title" style="' + (caseItem.urgent ? 'color:var(--danger);' : '') + '"'>' + (caseItem.urgent ? '🔴 ' : '') + caseItem.title + '</div>';
+                html += '<div class="task-card" style="' + (caseItem.urgent ? 'border-left:3px solid var(--danger);' : '') + '">';
+                html += '<div class="task-title" style="' + (caseItem.urgent ? 'color:var(--danger);' : '') + '">' + (caseItem.urgent ? '🔴 ' : '') + caseItem.title + '</div>';
                 html += '<div class="task-desc">' + caseItem.desc + '</div>';
                 html += '</div>';
             });
@@ -418,7 +418,7 @@
         }
 
         function updateSuggestions(chips) {
-            suggestions.innerHTML = chips.map(c => '<div class="chip" onclick="send(\'' + c + \')"'>' + c + '</div>').join('');
+            suggestions.innerHTML = chips.map(c => '<div class="chip" onclick="send(\'' + c + '\')">' + c + '</div>').join('');
         }
 
         function startVoice() {
