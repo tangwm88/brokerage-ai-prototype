@@ -60,6 +60,48 @@
         .input-action { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: var(--text-secondary); }
         .cursor { display: inline-block; width: 8px; height: 18px; background: var(--primary); margin-left: 2px; animation: blink 1s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
+        /* AI Agents Bar - v2.0 */
+        .ai-agents-bar {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        .ai-agents-bar::-webkit-scrollbar { display: none; }
+        .ai-agent {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .ai-agent:hover { background: rgba(0,0,0,0.06); }
+        .ai-agent.active {
+            background: rgba(0,122,255,0.08);
+            border-color: var(--primary);
+        }
+        .ai-agent-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .ai-agent-name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
         .sub-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin: 16px 0; }
         .sub-item { padding: 12px; background: rgba(0,0,0,0.02); border-radius: 12px; cursor: pointer; }
         .sub-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
@@ -69,8 +111,24 @@
 <body>
     <div class="app">
         <div class="top-bar">
-            <div class="brand">🦁 机构经纪智能体</div>
-            <div class="status"><div class="status-dot"></div><span>AI运行中</span></div>
+            <div class="brand">🦁 机构经纪智能体 v2.0</div>
+            <div class="status"><div class="status-dot"></div><span>3个数字分身在线</span></div>
+        </div>
+        
+        <!-- 数字分身选择栏 -->
+        <div class="ai-agents-bar">
+            <div class="ai-agent active" onclick="selectAgent('account')">
+                <div class="ai-agent-icon" style="background: linear-gradient(135deg, #3370ff, #5b8cff);">👔</div>
+                <div class="ai-agent-name">开户专员</div>
+            </div>
+            <div class="ai-agent" onclick="selectAgent('trading')">
+                <div class="ai-agent-icon" style="background: linear-gradient(135deg, #00b578, #5cdb8a);">📊</div>
+                <div class="ai-agent-name">交易服务</div>
+            </div>
+            <div class="ai-agent" onclick="selectAgent('risk')">
+                <div class="ai-agent-icon" style="background: linear-gradient(135deg, #ff7d00, #ffa940);">⚠️</div>
+                <div class="ai-agent-name">风险提示</div>
+            </div>
         </div>
         <div class="chat" id="chat"></div>
         <div class="input-area">
@@ -92,45 +150,71 @@
         const suggestions = document.getElementById('suggestions');
 
         const businessNav = {
-            '引入客户': {
-                color: '#3b82f6', desc: '线索收集、资质评估、分配跟进',
+            '拓客准备': {
+                color: '#3b82f6', desc: '潜客挖掘、信息查询、沟通准备',
+                icon: '🎯',
                 count: { total: 4, urgent: 1 },
+                quickPrompts: ['📋 潜在客户清单', '🔍 查询客户信息', '📝 沟通要点准备'],
                 cases: [
-                    { title: '华泰资管 - 资料待补充', desc: '准入审核中，2小时截止', urgent: true },
-                    { title: '华夏理财 - AI评估完成', desc: '92分高价值客户，建议跟进', urgent: false }
+                    { title: '华夏未来 - AI推荐潜客', desc: '匹配度92%，量化私募，建议跟进', urgent: true },
+                    { title: '深圳创新投资 - 信息待补全', desc: '新分配客户，决策人信息缺失', urgent: false }
                 ]
             },
-            '账户开立': {
-                color: '#8b5cf6', desc: '准入审核、协议签署、权限配置',
+            '业务引入': {
+                color: '#8b5cf6', desc: '拜访反馈、信息登记、材料提交',
+                icon: '🤝',
                 count: { total: 3, urgent: 0 },
+                quickPrompts: ['📝 客户拜访反馈', '➕ 客户信息登记', '📎 客户材料提交', '📊 交易服务方案'],
                 cases: [
-                    { title: '嘉实基金 - 资料审核中', desc: '授权书待补充，预计今日完成', urgent: false },
-                    { title: '南方基金 - 协议待签署', desc: '电子协议已发送，等待回复', urgent: false }
+                    { title: '高毅资产 - 拜访待反馈', desc: '昨日拜访，需提交拜访记录', urgent: false },
+                    { title: '易方达 - 材料待提交', desc: '产品备案证明、托管协议待收', urgent: false }
                 ]
             },
             '交易服务': {
-                color: '#10b981', desc: '系统配置、订单执行、成交分析',
+                color: '#10b981', desc: '开户申请、系统开通、特殊事项',
+                icon: '⚡',
                 count: { total: 5, urgent: 0 },
+                quickPrompts: ['📝 开户申请及结果', '💻 系统开通申请', '⚠️ 特殊事项申请'],
                 cases: [
-                    { title: '广发基金 - 系统配置申请', desc: 'TWAP算法参数，5000万/日规模', urgent: false },
-                    { title: '博时基金 - 成交异常提醒', desc: '昨日大单成交滑点超阈值', urgent: false }
+                    { title: '广发基金 - 开户申请中', desc: '产品户审核中，预计明日完成', urgent: false },
+                    { title: '博时基金 - TradeX开通', desc: '极速交易系统权限申请待审批', urgent: false }
                 ]
             },
             '客户服务': {
-                color: '#f59e0b', desc: '咨询响应、舆情监控、风险预警',
+                color: '#f59e0b', desc: '账户分析、风险预警、增值服务',
+                icon: '💎',
                 count: { total: 6, urgent: 1 },
+                quickPrompts: ['📊 账户分析报告', '⚠️ 风险预警查看', '💡 增值服务推荐'],
                 cases: [
-                    { title: '中银基金 - 舆情预警', desc: '负面报道，需主动沟通', urgent: true },
-                    { title: '鹏华基金 - 定期回访', desc: '30天未回访，建议今日联系', urgent: false }
+                    { title: '中银基金 - 集中度预警', desc: '单票持仓15.2%，超出阈值', urgent: true },
+                    { title: '鹏华基金 - 30天未回访', desc: '建议今日安排客户回访', urgent: false }
                 ]
             }
         };
 
+        let currentAgent = 'account';
+        const agentConfig = {
+            'account': { name: '👔 机构开户专员', icon: '👔', desc: '材料·审核·进度' },
+            'trading': { name: '📊 交易服务员', icon: '📊', desc: '系统·算法·异常' },
+            'risk': { name: '⚠️ 风险提示官', icon: '⚠️', desc: '风控·合规·预警' }
+        };
+
+        function selectAgent(agent) {
+            currentAgent = agent;
+            document.querySelectorAll('.ai-agent').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const config = agentConfig[agent];
+            typeWriter(`${config.name}为您服务：${config.desc}`, () => {
+                updateSuggestions(['📋 今日任务', '🔍 查询客户', '📝 新建事项']);
+            });
+        }
+
         window.onload = () => {
             setTimeout(() => {
-                typeWriter('📋 今日重点工作：', () => {
+                typeWriter('📋 欢迎使用v2.0！👔 开户专员为您服务。今日有3个拓客任务待处理...', () => {
                     addBusinessNavCenter();
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 请示与协同', '📊 业绩看板']);
+                    updateSuggestions(['🎯 拓客准备', '🤝 业务引入', '⚡ 交易服务', '💎 客户服务']);
                 });
             }, 200);
         };
@@ -225,9 +309,9 @@
                 pushServiceTasks();
             } else if (msg.includes('制定经营方案') || msg.includes('定制我的')) {
                 createBusinessPlan();
-            } else if (msg.includes('客户开发') || msg.includes('潜客挖掘')) {
+            } else if (msg.includes('客户开发') || msg.includes('潜客挖掘') || msg.includes('潜在客户清单')) {
                 showNewLeadEntry();
-            } else if (msg.includes('快速开户')) {
+            } else if (msg.includes('快速开户') || msg.includes('开户申请')) {
                 showQuickOpenAccount();
             } else if (msg.includes('请示与协同')) {
                 showApplyMenu();
@@ -239,10 +323,10 @@
                 showTodayOverview();
             } else {
                 setTimeout(() => {
-                    typeWriter('收到。请从上方选择今日重点工作，或使用底部快捷入口：', () => {
+                    typeWriter('收到。请从上方选择业务模块，或使用底部快捷入口：', () => {
                         addBusinessNavCenter();
                     });
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 请示与协同', '📊 业绩看板']);
+                    updateSuggestions(['🎯 拓客准备', '🤝 业务引入', '⚡ 交易服务', '💎 客户服务']);
                 }, 500);
             }
         }
@@ -250,19 +334,39 @@
         function showCategoryInterface(keyword) {
             const data = businessNav[keyword];
             const welcomeMsgs = {
-                '引入客户': '👤 **引入客户** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个紧急' : '') + '\n\n🎯 **重点待办**：',
-                '账户开立': '📝 **账户开立** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务 · 预计今日完成 2 单\n\n🎯 **审核进度**：',
-                '交易服务': '💰 **交易服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项服务请求\n\n🎯 **服务动态**：',
-                '客户服务': '🎧 **客户服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个预警' : '') + '\n\n🎯 **服务提醒**：'
+                '拓客准备': '🎯 **拓客准备** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个紧急' : '') + '\n\n💡 **快捷提示词**：',
+                '业务引入': '🤝 **业务引入** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务 · 预计今日完成 2 单\n\n💡 **快捷提示词**：',
+                '交易服务': '⚡ **交易服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项服务请求\n\n💡 **快捷提示词**：',
+                '客户服务': '💎 **客户服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个预警' : '') + '\n\n💡 **快捷提示词**：'
             };
             
             setTimeout(() => {
                 typeWriter(welcomeMsgs[keyword], () => {
+                    // 显示快捷提示词
+                    if (data.quickPrompts) {
+                        data.quickPrompts.forEach((prompt, idx) => {
+                            setTimeout(() => addQuickPromptChip(prompt), idx * 150);
+                        });
+                    }
                     // 显示案例卡片
                     data.cases.forEach((caseItem, idx) => {
-                        setTimeout(() => addCaseCard(caseItem, data.color), idx * 200);
+                        setTimeout(() => addCaseCard(caseItem, data.color), idx * 200 + 300);
                     });
                     updateSuggestions(['处理', '查看全部', '返回']);
+                });
+            }, 300);
+        }
+        
+        function addQuickPromptChip(prompt) {
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.style.margin = '4px 8px 4px 0';
+            chip.style.display = 'inline-flex';
+            chip.textContent = prompt;
+            chip.onclick = () => send(prompt);
+            chat.lastElementChild.querySelector('.ai-content').appendChild(chip);
+            chat.scrollTop = chat.scrollHeight;
+        }
                 });
             }, 500);
         }
