@@ -92,7 +92,7 @@
         const suggestions = document.getElementById('suggestions');
 
         const businessNav = {
-            '引入客户': {
+            '拓客准备': {
                 color: '#3b82f6', desc: '线索收集、资质评估、分配跟进',
                 count: { total: 4, urgent: 1 },
                 cases: [
@@ -100,7 +100,7 @@
                     { title: '华夏理财 - AI评估完成', desc: '92分高价值客户，建议跟进', urgent: false }
                 ]
             },
-            '账户开立': {
+            '业务引入': {
                 color: '#8b5cf6', desc: '准入审核、协议签署、权限配置',
                 count: { total: 3, urgent: 0 },
                 cases: [
@@ -250,8 +250,8 @@
         function showCategoryInterface(keyword) {
             const data = businessNav[keyword];
             const welcomeMsgs = {
-                '引入客户': '👤 **引入客户** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个紧急' : '') + '\n\n🎯 **重点待办**：',
-                '账户开立': '📝 **账户开立** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务 · 预计今日完成 2 单\n\n🎯 **审核进度**：',
+                '拓客准备': '👤 **拓客准备** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个紧急' : '') + '\n\n🎯 **重点待办**：',
+                '业务引入': '📝 **业务引入** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务 · 预计今日完成 2 单\n\n🎯 **审核进度**：',
                 '交易服务': '💰 **交易服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项服务请求\n\n🎯 **服务动态**：',
                 '客户服务': '🎧 **客户服务** 工作台\n\n📊 今日概览：' + data.count.total + ' 项任务' + (data.count.urgent > 0 ? ' · 🔴 ' + data.count.urgent + ' 个预警' : '') + '\n\n🎯 **服务提醒**：'
             };
