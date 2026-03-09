@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构经纪员工AI工作台 v2.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f5f6f7;
+            color: #1f2329;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* 顶部 */
+        .header {
+            background: linear-gradient(135deg, #3370ff 0%, #7b9dff 100%);
+            padding: 0 20px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            color: #fff;
+        }
+        .logo { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .icon-btn {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            background: rgba(255,255,255,0.15);
+        }
+        .icon-btn:hover { background: rgba(255,255,255,0.25); }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            color: #3370ff; font-size: 14px; font-weight: 600;
+        }
+        
+        /* 主布局 */
+        .main {
+            display: flex;
+            height: 100vh;
+            padding-top: 56px;
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 280px;
+            background: #fff;
+            border-right: 1px solid #e5e6eb;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .new-chat-btn {
+            margin: 16px;
+            padding: 12px;
+            background: linear-gradient(135deg, #3370ff, #7b9dff);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .new-chat-btn:hover { opacity: 0.9; }
+        
+        /* 数字分身区域 */
+        .ai-agents-section {
+            padding: 0 16px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .ai-agents-title {
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-agents-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .ai-agent-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+            border: 2px solid #e5e6eb;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ai-agent-card:hover {
+            border-color: #3370ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(51,112,255,0.15);
+        }
+        .ai-agent-card.active {
+            border-color: #3370ff;
+            background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fa 100%);
+        }
+        .ai-agent-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .ai-agent-avatar.account {
+            background: linear-gradient(135deg, #3370ff, #5b8cff);
+        }
+        .ai-agent-avatar.trading {
+            background: linear-gradient(135deg, #00b578, #5cdb8a);
+        }
+        .ai-agent-avatar.risk {
+            background: linear-gradient(135deg, #ff7d00, #ffa940);
+        }
+        .ai-agent-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #1f2329;
+            margin-bottom: 2px;
+        }
+        .ai-agent-role {
+            font-size: 10px;
+            color: #86909c;
+        }
+        
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .sidebar-title {
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-title-right {
+            font-size: 11px;
+            color: #3370ff;
+            cursor: pointer;
+        }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .chat-item:hover { background: #f2f3f5; }
+        .chat-item.active { background: #e8f0ff; color: #3370ff; }
+        .chat-icon { font-size: 16px; }
+        .chat-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-badge {
+            background: #ff4d4f;
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        
+        /* 四大业务模块 - v2.0 */
+        .business-modules {
+            padding: 16px;
+        }
+        .module-title {
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .module-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .module-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .module-item:hover {
+            background: #e8f0ff;
+            border-color: #3370ff;
+        }
+        .module-item.active {
+            background: linear-gradient(135deg, #3370ff 0%, #5b8cff 100%);
+            color: #fff;
+        }
+        .module-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .module-item.active .module-icon {
+            background: rgba(255,255,255,0.2);
+            box-shadow: none;
+        }
+        .module-info { flex: 1; }
+        .module-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .module-desc {
+            font-size: 11px;
+            color: #86909c;
+        }
+        .module-item.active .module-desc {
+            color: rgba(255,255,255,0.8);
+        }
+        .module-arrow {
+            font-size: 14px;
+            color: #86909c;
+        }
+        .module-item.active .module-arrow {
+            color: #fff;
+        }
+        
+        /* 快捷提示词 */
+        .quick-prompts {
+            padding: 16px;
+        }
+        .quick-prompts-title {
+            font-size: 12px;
+            color: #86909c;
+            margin-bottom: 12px;
+        }
+        .quick-prompts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quick-prompt-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-prompt-item:hover {
+            background: #e8f0ff;
+            color: #3370ff;
+        }
+        .quick-prompt-icon {
+            font-size: 14px;
+        }
+        
+        /* 中间聊天区 */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        .chat-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e6eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chat-title { font-size: 15px; font-weight: 600; }
+        .chat-subtitle { font-size: 12px; color: #86909c; margin-top: 2px; }
+        .chat-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-btn {
+            padding: 8px 16px;
+            background: #f2f3f5;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header-btn:hover { background: #e5e6eb; }
+        
+        /* 消息列表 */
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .message.user { flex-direction: row-reverse; }
+        .message-avatar {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .message.ai .message-avatar { background: linear-gradient(135deg, #3370ff, #7b9dff); }
+        .message.user .message-avatar { background: #f2f3f5; color: #1f2329; }
+        .message-content {
+            max-width: 75%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .message.ai .message-content {
+            background: #f8f9fa;
+            border: 1px solid #e5e6eb;
+        }
+        .message.user .message-content {
+            background: #3370ff;
+            color: #fff;
+        }
+        
+        /* AI卡片 */
+        .ai-card {
+            background: #fff;
+            border: 1px solid #e5e6eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .card-content {
+            font-size: 13px;
+            color: #4e5969;
+            margin-bottom: 12px;
+        }
+        .card-content p { margin-bottom: 6px; }
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+        .card-btn.primary { background: #3370ff; color: #fff; }
+        .card-btn.secondary { background: #f2f3f5; color: #4e5969; }
+        
+        /* 推送卡片 */
+        .push-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 1px solid #e5e6eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+        .push-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #e5e6eb;
+        }
+        .push-badge {
+            background: #e8f0ff;
+            color: #3370ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .push-title {
+            font-weight: 600;
+            flex: 1;
+        }
+        .push-time {
+            font-size: 11px;
+            color: #86909c;
+        }
+        
+        /* 快捷操作栏 */
+        .quick-bar {
+            padding: 12px 24px;
+            border-top: 1px solid #e5e6eb;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        .quick-chip {
+            padding: 8px 14px;
+            background: #e8f0ff;
+            border-radius: 16px;
+            font-size: 12px;
+            white-space: nowrap;
+            cursor: pointer;
+            color: #3370ff;
+        }
+        .quick-chip:hover { background: #3370ff; color: #fff; }
+        
+        /* 输入区 */
+        .input-area {
+            padding: 16px 24px 24px;
+            border-top: 1px solid #e5e6eb;
+        }
+        .input-box {
+            display: flex;
+            gap: 12px;
+            background: #f8f9fa;
+            border: 1px solid #e5e6eb;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+        .input-box:focus-within { border-color: #3370ff; background: #fff; }
+        .chat-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+        }
+        .input-actions {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .input-icon {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 18px;
+        }
+        .input-icon:hover { background: #e5e6eb; }
+        .send-btn {
+            width: 32px; height: 32px;
+            background: #3370ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* 右侧信息栏 */
+        .info-panel {
+            width: 320px;
+            background: #fff;
+            border-left: 1px solid #e5e6eb;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .info-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .customer-card {
+            background: linear-gradient(135deg, #3370ff 0%, #7b9dff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .customer-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .customer-type { font-size: 12px; opacity: 0.9; margin-bottom: 16px; }
+        .customer-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .c-stat {
+            background: rgba(255,255,255,0.15);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .c-stat-value { font-size: 18px; font-weight: 600; }
+        .c-stat-label { font-size: 11px; opacity: 0.9; margin-top: 4px; }
+        
+        /* 任务列表 */
+        .task-section { margin-top: 20px; }
+        .task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .task-count {
+            background: #e8f0ff;
+            color: #3370ff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .task-item:hover { background: #e8f0ff; }
+        .task-icon { font-size: 18px; }
+        .task-content { flex: 1; }
+        .task-title { font-weight: 500; margin-bottom: 2px; }
+        .task-status { color: #86909c; font-size: 11px; }
+        .task-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+        }
+        .task-badge.pending { background: #fff7e6; color: #ff7d00; }
+        .task-badge.completed { background: #e6fffb; color: #00b578; }
+        .task-badge.running { background: #e8f0ff; color: #3370ff; }
+        
+        /* 工作模块详情 */
+        .module-detail {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .module-detail-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .module-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .module-action-btn {
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #e5e6eb;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .module-action-btn:hover {
+            border-color: #3370ff;
+            color: #3370ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部 -->
+    <div class="header">
+        <div class="logo">
+            <span>💼</span>
+            <span>机构经纪员工AI工作台 v2.0</span>
+        </div>
+        
+        <div class="header-center">
+            <span class="status-dot"></span>
+            <span>3个数字分身在线 · 四大业务模块就绪</span>
+        </div>
+        
+        <div class="header-right">
+            <div class="icon-btn">🔔</div>
+            <div class="icon-btn">⚙️</div>
+            <div class="avatar">张</div>
+        </div>
+    </div>
+    
+    <!-- 主布局 -->
+    <div class="main">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <button class="new-chat-btn">
+                <span>+</span>
+                <span>新对话</span>
+            </button>
+            
+            <!-- 数字分身区域 v2.0 -->
+            <div class="ai-agents-section">
+                <div class="ai-agents-title">
+                    <span>🤖</span>
+                    <span>数字分身（点击调用）</span>
+                </div>
+                <div class="ai-agents-grid">
+                    <div class="ai-agent-card active" onclick="switchAgent('account')">
+                        <div class="ai-agent-avatar account">👔</div>
+                        <div class="ai-agent-name">开户专员</div>
+                        <div class="ai-agent-role">材料·审核·进度</div>
+                    </div>
+                    <div class="ai-agent-card" onclick="switchAgent('trading')">
+                        <div class="ai-agent-avatar trading">📊</div>
+                        <div class="ai-agent-name">交易服务</div>
+                        <div class="ai-agent-role">系统·算法·异常</div>
+                    </div>
+                    <div class="ai-agent-card" onclick="switchAgent('risk')">
+                        <div class="ai-agent-avatar risk">⚠️</div>
+                        <div class="ai-agent-name">风险提示</div>
+                        <div class="ai-agent-role">风控·合规·预警</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 四大业务模块 v2.0 -->
+            <div class="business-modules">
+                <div class="module-title">📋 四大业务模块</div>
+                <div class="module-list">
+                    <div class="module-item active" onclick="switchModule('prospecting')">
+                        <div class="module-icon">🎯</div>
+                        <div class="module-info">
+                            <div class="module-name">拓客准备</div>
+                            <div class="module-desc">潜客挖掘 · 信息查询 · 沟通准备</div>
+                        </div>
+                        <div class="module-arrow">›</div>
+                    </div>
+                    <div class="module-item" onclick="switchModule('onboarding')">
+                        <div class="module-icon">🤝</div>
+                        <div class="module-info">
+                            <div class="module-name">业务引入</div>
+                            <div class="module-desc">拜访反馈 · 信息登记 · 材料提交</div>
+                        </div>
+                        <div class="module-arrow">›</div>
+                    </div>
+                    <div class="module-item" onclick="switchModule('trading')">
+                        <div class="module-icon">⚡</div>
+                        <div class="module-info">
+                            <div class="module-name">交易服务</div>
+                            <div class="module-desc">开户申请 · 系统开通 · 特殊事项</div>
+                        </div>
+                        <div class="module-arrow">›</div>
+                    </div>
+                    <div class="module-item" onclick="switchModule('service')">
+                        <div class="module-icon">💎</div>
+                        <div class="module-info">
+                            <div class="module-name">客户服务</div>
+                            <div class="module-desc">账户分析 · 风险预警 · 增值服务</div>
+                        </div>
+                        <div class="module-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 当前模块快捷提示词 -->
+            <div class="quick-prompts">
+                <div class="quick-prompts-title">⚡ 快捷提示词（拓客准备）</div>
+                <div class="quick-prompts-list">
+                    <div class="quick-prompt-item" onclick="sendPrompt('给我推荐潜在客户清单')">
+                        <span class="quick-prompt-icon">📋</span>
+                        <span>潜在客户清单</span>
+                    </div>
+                    <div class="quick-prompt-item" onclick="sendPrompt('查询客户信息')">
+                        <span class="quick-prompt-icon">🔍</span>
+                        <span>查询客户信息</span>
+                    </div>
+                    <div class="quick-prompt-item" onclick="sendPrompt('准备拜访沟通要点')">
+                        <span class="quick-prompt-icon">📝</span>
+                        <span>沟通要点准备</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    <span>💬 近期会话</span>
+                    <span class="sidebar-title-right">查看全部</span>
+                </div>
+                
+                <div class="chat-item active">
+                    <span class="chat-icon">🎯</span>
+                    <span class="chat-name">深圳XX私募-拓客准备</span>
+                </div>
+                
+                <div class="chat-item">
+                    <span class="chat-icon">🤝</span>
+                    <span class="chat-name">高毅资产-业务引入</span>
+                </div>
+                
+                <div class="chat-item">
+                    <span class="chat-icon">⚡</span>
+                    <span class="chat-name">易方达-交易服务</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 中间聊天区 -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div>
+                    <div class="chat-title">🎯 拓客准备 - 深圳XX私募基金</div>
+                    <div class="chat-subtitle">正在使用：👔 机构开户专员 · 客户阶段：潜客挖掘</div>
+                </div>
+                <div class="chat-header-right">
+                    <button class="header-btn">📊 客户画像</button>
+                    <button class="header-btn">➕ 新建任务</button>
+                </div>
+            </div>
+            
+            <div class="messages">
+                <!-- AI欢迎消息 -->
+                <div class="message ai">
+                    <div class="message-avatar">👔</div>
+                    <div class="message-content">
+                        您好！我是<strong>机构开户专员</strong>。我注意到您今日有<strong>3个待办任务</strong>需要处理：
+                        
+                        <div class="push-card">
+                            <div class="push-header">
+                                <span class="push-badge">自动推送</span>
+                                <span class="push-title">今日拓客任务</span>
+                                <span class="push-time">09:00</span>
+                            </div>
+                            <div class="card-content">
+                                <p>📋 <strong>潜客挖掘清单</strong> - AI推荐8条潜客待查看</p>
+                                <p>🔍 <strong>客户信息补全</strong> - 华夏未来资产信息待完善</p>
+                                <p>📝 <strong>拜访计划生成</strong> - 深圳XX私募拜访待准备</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-btn primary">查看任务</button>
+                                <button class="card-btn secondary">稍后处理</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户选择 -->
+                <div class="message user">
+                    <div class="message-avatar">张</div>
+                    <div class="message-content">
+                        给我推荐今天的潜在客户清单
+                    </div>
+                </div>
+                
+                <!-- AI回复：潜在客户清单 -->
+                <div class="message ai">
+                    <div class="message-avatar">👔</div>
+                    <div class="message-content">
+                        已为您生成今日<strong>潜在客户清单</strong>，基于您的历史偏好（量化私募类），共推荐8条潜客：
+                        
+                        <div class="ai-card">
+                            <div class="card-header">
+                                <span>🏆</span>
+                                <span>高匹配度推荐（Top 3）</span>
+                            </div>
+                            <div class="card-content">
+                                <p><strong>1. 华夏未来资产管理有限公司</strong></p>
+                                <p>匹配度：92% | 类型：私募证券投资基金 | 规模：50-100亿</p>
+                                <p>💡 推荐理由：同类客户"千禧投资"已签约，业务模式高度匹配。近期在招产品经理。</p>
+                                <p>🔗 关联线索：3月5日发布招聘启事 · 近期调研3家上市公司</p>
+                                <hr style="margin: 10px 0; border: none; border-top: 1px solid #e5e6eb;">
+                                <p><strong>2. 深圳创新投资有限公司</strong></p>
+                                <p>匹配度：88% | 类型：私募股权 | 规模：100亿+</p>
+                                <p>💡 推荐理由：深圳地区头部PE，扩张期有证券业务需求</p>
+                                <hr style="margin: 10px 0; border: none; border-top: 1px solid #e5e6eb;">
+                                <p><strong>3. 北京鼎信资本管理有限公司</strong></p>
+                                <p>匹配度：85% | 类型：量化私募 | 规模：20-50亿</p>
+                                <p>💡 推荐理由：量化策略客户，对交易系统要求高，符合TradeX定位</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-btn primary">查看全部8条</button>
+                                <button class="card-btn secondary">调整推荐偏好</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 快捷操作卡片 -->
+                <div class="message ai">
+                    <div class="message-avatar">👔</div>
+                    <div class="message-content">
+                        您可以直接选择下一步操作：
+                        <div class="card-actions" style="margin-top: 12px;">
+                            <button class="card-btn primary">🔍 查询客户详细信息</button>
+                            <button class="card-btn primary">📝 生成拜访准备</button>
+                            <button class="card-btn secondary">➕ 一键登记客户</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 快捷操作栏 -->
+            <div class="quick-bar">
+                <span class="quick-chip" onclick="sendPrompt('查询客户信息')">🔍 查询客户信息</span>
+                <span class="quick-chip" onclick="sendPrompt('准备拜访沟通要点')">📝 沟通要点准备</span>
+                <span class="quick-chip" onclick="sendPrompt('登记新客户')">➕ 客户信息登记</span>
+                <span class="quick-chip" onclick="sendPrompt('查看拓客任务')">📋 今日拓客任务</span>
+            </div>
+            
+            <!-- 输入区 -->
+            <div class="input-area">
+                <div class="input-box">
+                    <textarea class="chat-input" rows="1" placeholder="输入您的问题，或点击上方快捷提示词... 例如：@开户 查询开户进度"></textarea>
+                    
+                    <div class="input-actions">
+                        <div class="input-icon">@</div>
+                        <div class="input-icon">📎</div>
+                        <div class="input-icon">🎤</div>
+                        <button class="send-btn">➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧信息栏 -->
+        <div class="info-panel">
+            <div class="info-title">💼 客户信息</div>
+            
+            <div class="customer-card">
+                <div class="customer-name">深圳XX私募基金</div>
+                <div class="customer-type">私募证券投资基金</div>
+                
+                <div class="customer-stats">
+                    <div class="c-stat">
+                        <div class="c-stat-value">50亿</div>
+                        <div class="c-stat-label">管理规模</div>
+                    </div>
+                    <div class="c-stat">
+                        <div class="c-stat-value">量化</div>
+                        <div class="c-stat-label">策略类型</div>
+                    </div>
+                    <div class="c-stat">
+                        <div class="c-stat-value">高</div>
+                        <div class="c-stat-label">交易频率</div>
+                    </div>
+                    <div class="c-stat">
+                        <div class="c-stat-value">潜客</div>
+                        <div class="c-stat-label">客户阶段</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 当前模块工作区 -->
+            <div class="module-detail">
+                <div class="module-detail-title">
+                    <span>🎯</span>
+                    <span>拓客准备 - 快捷操作</span>
+                </div>
+                <div class="module-actions">
+                    <div class="module-action-btn" onclick="sendPrompt('潜在客户清单')">
+                        <div>📋</div>
+                        <div>潜客清单</div>
+                    </div>
+                    <div class="module-action-btn" onclick="sendPrompt('查询客户信息')">
+                        <div>🔍</div>
+                        <div>客户查询</div>
+                    </div>
+                    <div class="module-action-btn" onclick="sendPrompt('沟通要点准备')">
+                        <div>📝</div>
+                        <div>拜访准备</div>
+                    </div>
+                    <div class="module-action-btn" onclick="sendPrompt('客户信息登记')">
+                        <div>➕</div>
+                        <div>客户登记</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="task-section">
+                <div class="task-header">
+                    <div class="info-title">🔄 进行中的任务</div>
+                    <span class="task-count">3</span>
+                </div>
+                
+                <div class="task-item">
+                    <span class="task-icon">📋</span>
+                    <div class="task-content">
+                        <div class="task-title">潜客挖掘清单查看</div>
+                        <div class="task-status">AI自动推送 · 今日</div>
+                    </div>
+                    <span class="task-badge pending">待处理</span>
+                </div>
+                
+                <div class="task-item">
+                    <span class="task-icon">🔍</span>
+                    <div class="task-content">
+                        <div class="task-title">华夏未来信息补全</div>
+                        <div class="task-status">信息待完善 · 新分配</div>
+                    </div>
+                    <span class="task-badge pending">待处理</span>
+                </div>
+                
+                <div class="task-item">
+                    <span class="task-icon">📝</span>
+                    <div class="task-content">
+                        <div class="task-title">深圳XX拜访准备</div>
+                        <div class="task-status">拜访意向确认 · 待准备</div>
+                    </div>
+                    <span class="task-badge running">进行中</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 切换数字分身
+        function switchAgent(agentType) {
+            const cards = document.querySelectorAll('.ai-agent-card');
+            cards.forEach(card => card.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const agentNames = {
+                'account': '👔 机构开户专员',
+                'trading': '📊 交易服务员', 
+                'risk': '⚠️ 风险提示官'
+            };
+            
+            // 更新聊天标题中的数字分身信息
+            const subtitle = document.querySelector('.chat-subtitle');
+            const currentText = subtitle.textContent;
+            const newText = currentText.replace(/正在使用：[^·]+/, '正在使用：' + agentNames[agentType]);
+            subtitle.textContent = newText;
+        }
+        
+        // 切换业务模块
+        function switchModule(moduleType) {
+            const items = document.querySelectorAll('.module-item');
+            items.forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // 更新快捷提示词
+            const promptsTitle = document.querySelector('.quick-prompts-title');
+            const promptsList = document.querySelector('.quick-prompts-list');
+            const moduleDetailTitle = document.querySelector('.module-detail-title');
+            const moduleActions = document.querySelector('.module-actions');
+            
+            const moduleData = {
+                'prospecting': {
+                    name: '拓客准备',
+                    icon: '🎯',
+                    prompts: [
+                        {icon: '📋', text: '潜在客户清单'},
+                        {icon: '🔍', text: '查询客户信息'},
+                        {icon: '📝', text: '沟通要点准备'}
+                    ],
+                    actions: [
+                        {icon: '📋', name: '潜客清单'},
+                        {icon: '🔍', name: '客户查询'},
+                        {icon: '📝', name: '拜访准备'},
+                        {icon: '➕', name: '客户登记'}
+                    ]
+                },
+                'onboarding': {
+                    name: '业务引入',
+                    icon: '🤝',
+                    prompts: [
+                        {icon: '📝', text: '客户拜访反馈'},
+                        {icon: '➕', text: '客户信息登记'},
+                        {icon: '📎', text: '客户材料提交'},
+                        {icon: '📊', text: '交易服务方案'}
+                    ],
+                    actions: [
+                        {icon: '📝', name: '拜访反馈'},
+                        {icon: '➕', name: '信息登记'},
+                        {icon: '📎', name: '材料提交'},
+                        {icon: '📊', name: '服务方案'}
+                    ]
+                },
+                'trading': {
+                    name: '交易服务',
+                    icon: '⚡',
+                    prompts: [
+                        {icon: '📝', text: '开户申请及结果'},
+                        {icon: '💻', text: '系统开通申请'},
+                        {icon: '⚠️', text: '特殊事项申请'}
+                    ],
+                    actions: [
+                        {icon: '📝', name: '开户申请'},
+                        {icon: '💻', name: '系统开通'},
+                        {icon: '⚠️', name: '特殊事项'},
+                        {icon: '📈', name: '交易查询'}
+                    ]
+                },
+                'service': {
+                    name: '客户服务',
+                    icon: '💎',
+                    prompts: [
+                        {icon: '📊', text: '账户分析报告'},
+                        {icon: '⚠️', text: '风险预警查看'},
+                        {icon: '💡', text: '增值服务推荐'}
+                    ],
+                    actions: [
+                        {icon: '📊', name: '账户分析'},
+                        {icon: '⚠️', name: '风险预警'},
+                        {icon: '💡', name: '增值服务'},
+                        {icon: '📋', name: '服务记录'}
+                    ]
+                }
+            };
+            
+            const data = moduleData[moduleType];
+            if (data) {
+                promptsTitle.textContent = `⚡ 快捷提示词（${data.name}）`;
+                moduleDetailTitle.innerHTML = `<span>${data.icon}</span><span>${data.name} - 快捷操作</span>`;
+                
+                // 更新快捷提示词列表
+                promptsList.innerHTML = data.prompts.map(p => `
+                    <div class="quick-prompt-item" onclick="sendPrompt('${p.text}')">
+                        <span class="quick-prompt-icon">${p.icon}</span>
+                        <span>${p.text}</span>
+                    </div>
+                `).join('');
+                
+                // 更新模块操作按钮
+                moduleActions.innerHTML = data.actions.map(a => `
+                    <div class="module-action-btn" onclick="sendPrompt('${a.name}')">
+                        <div>${a.icon}</div>
+                        <div>${a.name}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // 发送快捷提示词
+        function sendPrompt(text) {
+            const input = document.querySelector('.chat-input');
+            input.value = text;
+            input.focus();
+        }
+    </script>
+</body>
+</html>
