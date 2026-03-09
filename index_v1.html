@@ -49,7 +49,7 @@
         .btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
         .btn-success { background: var(--success); color: #fff; }
         .tag-urgent { display: inline-block; padding: 2px 8px; background: rgba(255,59,48,0.1); color: var(--danger); border-radius: 4px; font-size: 11px; margin-bottom: 8px; }
-        .input-area { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px 24px; background: linear-gradient(180deg, transparent 0%, var(--bg) 20%); }
+        .input-area { position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 12px 24px; background: linear-gradient(180deg, transparent 0%, var(--bg) 20%); }
         .suggestions { display: flex; gap: 10px; overflow-x: auto; padding: 8px 0; }
         .suggestions::-webkit-scrollbar { display: none; }
         .chip { padding: 10px 16px; background: rgba(0,122,255,0.08); border: 1px solid rgba(0,122,255,0.15); border-radius: 18px; font-size: 13px; white-space: nowrap; cursor: pointer; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; }
@@ -65,45 +65,46 @@
         .sub-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
         .sub-desc { font-size: 11px; color: var(--text-secondary); }
         
-        /* 数字分身入口样式 - 上下布局 */
+        /* 数字分身入口样式 - 优化版 */
         .ai-agents-bar {
             display: flex;
-            justify-content: space-around;
-            gap: 16px;
-            padding: 16px 12px;
-            margin-bottom: 8px;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 8px 4px;
+            margin-bottom: 4px;
         }
         .ai-agent-entry {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 12px 8px;
+            gap: 4px;
+            padding: 8px 4px;
             background: var(--surface);
-            border: 2px solid var(--border);
-            border-radius: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
             flex: 1;
-            max-width: 100px;
+            min-width: 0;
         }
         .ai-agent-entry:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         .ai-agent-entry.active {
             border-color: var(--primary);
             background: rgba(0,122,255,0.05);
         }
         .ai-agent-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-            background: linear-gradient(135deg, #e8f0ff, #f0f7ff);
+            font-size: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 8px rgba(102,126,234,0.3);
         }
         .ai-agent-info {
             display: flex;
@@ -112,19 +113,21 @@
             text-align: center;
         }
         .ai-agent-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 2px;
+            margin-bottom: 1px;
+            white-space: nowrap;
         }
         .ai-agent-role {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-secondary);
+            line-height: 1.2;
         }
         .ai-divider {
             height: 1px;
             background: var(--border);
-            margin: 8px 0;
+            margin: 4px 0;
         }
     </style>
 </head>
@@ -139,21 +142,21 @@
             <!-- 数字分身入口 -->
             <div class="ai-agents-bar" id="aiAgents">
                 <div class="ai-agent-entry active" onclick="selectAgent('account')">
-                    <div class="ai-agent-avatar">🤖</div>
+                    <div class="ai-agent-avatar">🦸</div>
                     <div class="ai-agent-info">
                         <span class="ai-agent-name">机构开户</span>
                         <span class="ai-agent-role">材料·审核·进度</span>
                     </div>
                 </div>
                 <div class="ai-agent-entry" onclick="selectAgent('trading')">
-                    <div class="ai-agent-avatar">🤖</div>
+                    <div class="ai-agent-avatar">🦸</div>
                     <div class="ai-agent-info">
                         <span class="ai-agent-name">交易支持</span>
                         <span class="ai-agent-role">系统·算法·异常</span>
                     </div>
                 </div>
                 <div class="ai-agent-entry" onclick="selectAgent('risk')">
-                    <div class="ai-agent-avatar">🤖</div>
+                    <div class="ai-agent-avatar">🦸</div>
                     <div class="ai-agent-info">
                         <span class="ai-agent-name">客户服务</span>
                         <span class="ai-agent-role">风控·合规·预警</span>
@@ -176,7 +179,6 @@
     <script>
         const chat = document.getElementById('chat');
         const input = document.getElementById('input');
-        const suggestions = document.getElementById('suggestions');
 
         const businessNav = {
             '拓客准备': {
@@ -213,36 +215,20 @@
             }
         };
 
-        window.onload = () => {
-            setTimeout(() => {
-                typeWriter('📋 今日重点工作：', () => {
-                    addBusinessNavCenter();
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 请示与协同', '📊 业绩看板']);
-                });
-            }, 200);
+        let currentAgent = 'account';
+        const agentConfig = {
+            'account': { name: '机构开户专员', icon: '🦸', desc: '材料·审核·进度', color: '#667eea' },
+            'trading': { name: '交易支持员', icon: '🦸', desc: '系统·算法·异常', color: '#764ba2' },
+            'risk': { name: '客户服务官', icon: '🦸', desc: '风控·合规·预警', color: '#f093fb' }
         };
 
-        // 当前选中的数字分身
-        let currentAgent = 'account';
-        
-        // 数字分身配置
-        const agentConfig = {
-            'account': { name: '机构开户专员', icon: '👔', desc: '材料·审核·进度', color: '#3370ff' },
-            'trading': { name: '交易服务员', icon: '📊', desc: '系统·算法·异常', color: '#00b578' },
-            'risk': { name: '风险提示官', icon: '⚠️', desc: '风控·合规·预警', color: '#ff7d00' }
-        };
-        
-        // 切换数字分身
         function selectAgent(agentType) {
             currentAgent = agentType;
-            
-            // 更新UI状态
             document.querySelectorAll('.ai-agent-entry').forEach(el => {
                 el.classList.remove('active');
             });
             event.currentTarget.classList.add('active');
             
-            // 发送欢迎消息
             const config = agentConfig[agentType];
             typeWriter(`${config.icon} **${config.name}** 为您服务\n\n💡 ${config.desc}\n\n有什么可以帮您的？`, () => {
                 // 根据分身类型更新快捷建议
@@ -255,6 +241,20 @@
                 }
             });
         }
+
+        function updateSuggestions(tags) {
+            const suggestions = document.getElementById('suggestions');
+            suggestions.innerHTML = tags.map(tag => `<div class="chip" onclick="send('${tag}')">${tag}</div>`).join('');
+        }
+
+        window.onload = () => {
+            setTimeout(() => {
+                typeWriter('📋 今日重点工作：', () => {
+                    addBusinessNavCenter();
+                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 请示与协同', '📊 业绩看板']);
+                });
+            }, 200);
+        };
 
         function typeWriter(text, callback) {
             const wrapper = document.createElement('div');
@@ -346,9 +346,9 @@
                 pushServiceTasks();
             } else if (msg.includes('制定经营方案') || msg.includes('定制我的')) {
                 createBusinessPlan();
-            } else if (msg.includes('客户开发') || msg.includes('潜客挖掘')) {
+            } else if (msg.includes('客户开发') || msg.includes('潜客挖掘') || msg.includes('潜在客户清单')) {
                 showNewLeadEntry();
-            } else if (msg.includes('快速开户')) {
+            } else if (msg.includes('快速开户') || msg.includes('开户申请')) {
                 showQuickOpenAccount();
             } else if (msg.includes('请示与协同')) {
                 showApplyMenu();
@@ -360,10 +360,10 @@
                 showTodayOverview();
             } else {
                 setTimeout(() => {
-                    typeWriter('收到。请从上方选择今日重点工作，或使用底部快捷入口：', () => {
+                    typeWriter('收到。请从上方选择业务模块，或使用底部快捷入口：', () => {
                         addBusinessNavCenter();
                     });
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 请示与协同', '📊 业绩看板']);
+                    updateSuggestions(['🎯 拓客准备', '🤝 业务引入', '⚡ 交易服务', '💎 客户服务']);
                 }, 500);
             }
         }
@@ -385,686 +385,191 @@
                     });
                     updateSuggestions(['处理', '查看全部', '返回']);
                 });
-            }, 500);
+            }, 300);
         }
 
         function addCaseCard(caseItem, color) {
-            let actionsHtml = '';
-            if (caseItem.title.includes('华泰')) {
-                actionsHtml = '<button class="btn btn-success" onclick="completeAction(\'一键催办\')">✓ 一键催办</button><button class="btn btn-secondary" onclick="completeAction(\'查看资料清单\')">资料清单</button>';
-            } else if (caseItem.title.includes('华夏')) {
-                actionsHtml = '<button class="btn btn-primary" onclick="completeAction(\'开始评估\')">开始评估</button><button class="btn btn-secondary" onclick="completeAction(\'分配给张经理\')">分配给张经理</button>';
-            } else if (caseItem.title.includes('中银') || caseItem.title.includes('舆情')) {
-                actionsHtml = '<button class="btn btn-primary" onclick="completeAction(\'生成简报\')">生成简报</button><button class="btn btn-secondary" onclick="completeAction(\'联系客户\')">联系客户</button>';
-            } else {
-                actionsHtml = '<button class="btn btn-primary" onclick="completeAction(\'查看详情\')">查看详情</button><button class="btn btn-secondary" onclick="completeAction(\'开始处理\')">开始处理</button>';
-            }
-            
-            const cardHtml = '<div class="task-card ' + (caseItem.urgent ? 'urgent' : '') + '" style="border-left:4px solid ' + (caseItem.urgent ? 'var(--danger)' : color) + '">' +
-                '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                '<div><div class="task-title">' + caseItem.title + '</div><div class="task-desc">' + caseItem.desc + '</div></div>' +
-                (caseItem.urgent ? '<span class="tag-urgent">紧急</span>' : '') +
-                '</div><div class="task-actions">' + actionsHtml + '</div></div>';
-            
-            const lastMsg = chat.lastElementChild;
-            if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', cardHtml);
+            const card = document.createElement('div');
+            card.className = 'task-card' + (caseItem.urgent ? ' urgent' : '');
+            card.innerHTML = `
+                ${caseItem.urgent ? '<div class="tag-urgent">紧急</div>' : ''}
+                <div class="task-title" style="color:${caseItem.urgent ? 'var(--danger)' : 'var(--text)'};">${caseItem.title}</div>
+                <div class="task-desc">${caseItem.desc}</div>
+                <div class="task-actions">
+                    <button class="btn btn-primary">立即处理</button>
+                    <button class="btn btn-secondary">稍后提醒</button>
+                </div>
+            `;
+            chat.appendChild(card);
             chat.scrollTop = chat.scrollHeight;
         }
 
-        function completeAction(action) {
-            addUserMessage(action);
-            setTimeout(() => {
-                // 根据操作类型给出详细反馈
-                if (action === '一键催办') {
-                    typeWriter('✓ **催办已发送**\n\n📱 **发送详情**：\n• 短信：已发送至王经理 138xxxx8888\n• 邮件：已发送至 wang@huatai.com\n• 站内信：已推送至客户门户\n\n⏱️ **预计送达**：10分钟内\n🔔 **后续提醒**：对方查看后我会第一时间通知你\n\n📊 **催办记录**：已记录至客户档案，可追踪处理进度', () => {
-                        updateSuggestions(['查看催办状态', '电话跟进', '处理其他任务']);
-                    });
-                } else if (action === '开始评估') {
-                    typeWriter('⚡ **AI评估启动中...**\n\n📊 **评估维度**：\n• 注册资本：✓ 符合标准\n• 管理规模：✓ 500亿+（优秀）\n• 成立年限：✓ 8年（稳定）\n• 投资风格：✓ 与系统匹配\n\n🎯 **评估结果**：\n**匹配度：92分（高价值客户）**\n建议优先级：**立即跟进**\n预计成交周期：2-3周\n\n💡 **AI建议**：\n分配给张经理（匹配度95%），已准备话术模板', () => {
-                        updateSuggestions(['分配给张经理', '查看评估报告', '添加到日程']);
-                    });
-                } else if (action === '生成简报') {
-                    typeWriter('📄 **舆情简报已生成**\n\n📰 **舆情摘要**：\n• 来源：财经网\n• 时间：2024-03-04 10:30\n• 标题：《某基金公司业绩波动引发关注》\n• 情感：**负面**\n\n📊 **影响分析**：\n• 客户持仓：中银基金为持仓客户（2.3亿）\n• 风险等级：**中风险**\n• 传播趋势：已监测到5家媒体转载\n\n💡 **建议措施**：\n1. 主动致电客户说明情况\n2. 准备业绩归因分析报告\n3. 安排投资经理路演\n\n📎 **附件**：简报PDF已生成，可发送至客户', () => {
-                        updateSuggestions(['发送给客户', '安排路演', '联系投资经理']);
-                    });
-                } else if (action === '录入线索') {
-                    typeWriter('✓ **线索录入成功**\n\n📝 **线索信息**：\n• 客户名称：易方达投资\n• 来源渠道：邮件咨询\n• 需求类型：算法交易\n• 预计规模：5000万/月\n\n⚡ **AI自动处理**：\n• ✓ 已创建客户档案\n• ✓ 已分配客户编码：C2024030401\n• ✓ 已设置跟进提醒：明日15:00\n• ✓ 已通知客户经理：张经理\n\n📋 **待办事项**：\n1. 补充客户详细资料\n2. 准备算法交易方案\n3. 预约客户拜访\n\n🎯 **下一步建议**：开始资质评估或准备拜访材料', () => {
-                        updateSuggestions(['开始资质评估', '准备拜访材料', '查看客户档案']);
-                    });
-                } else if (action === '快速审核') {
-                    typeWriter('✓ **快速审核完成**\n\n📋 **审核结果**：\n• 客户名称：嘉实基金\n• 审核类型：准入审核\n• 审核状态：**通过**\n• 审核时间：2024-03-04 13:30\n\n✅ **已审核项目**：\n• ✓ 营业执照（有效期内）\n• ✓ 法人身份证（已核验）\n• ✓ 授权书（公章清晰）\n• ✓ 风险测评（R4等级）\n\n⚠️ **待补充材料**：\n• 机构信用代码证（已通知补充）\n\n📊 **下一步**：\n进入协议签署阶段，预计今日完成开户', () => {
-                        updateSuggestions(['进入协议签署', '通知客户补充材料', '查看审核记录']);
-                    });
-                } else if (action === '分配给张经理') {
-                    typeWriter('✓ **客户分配成功**\n\n👤 **分配信息**：\n• 客户名称：华夏理财\n• 分配给：张经理（资深客户经理）\n• 分配时间：2024-03-04 13:35\n\n📊 **张经理匹配度分析**：\n• 客户类型匹配：95%（擅长公募基金）\n• 地域匹配：100%（同区域）\n• 工作负载：适中（当前跟进12个客户）\n\n📅 **自动设置**：\n• ✓ 已添加至张经理日程\n• ✓ 已发送通知给张经理\n• ✓ 已设置跟进提醒：3天后\n• ✓ 客户已收到客户经理联系方式\n\n💡 **下一步建议**：\n张经理将在24小时内联系客户，你可以在【跟进记录】中查看进展', () => {
-                        updateSuggestions(['查看跟进记录', '修改分配', '处理其他任务']);
-                    });
-                } else if (action === '电话提醒') {
-                    typeWriter('📞 **电话提醒准备**\n\n👤 **联系人信息**：\n• 姓名：王经理\n• 电话：138xxxx8888\n• 客户：华泰资管\n• 事由：资料补充催办\n\n💡 **AI建议话术**：\n"王经理您好，我是XX证券的小李，想提醒您一下华泰资管的资料补充，因为今天截止，您看今天下午方便发过来吗？"\n\n📋 **通话要点**：\n1. 确认收到之前的短信/邮件\n2. 了解是否有疑问或困难\n3. 确认具体补充时间\n4. 记录沟通结果\n\n📊 **通话后操作**：\n通话结束后请记录结果，我会自动更新客户档案', () => {
-                        updateSuggestions(['开始拨打', '修改话术', '延后处理']);
-                    });
-                } else if (action === '延后' || action === '延后2小时' || action === '今日下班前' || action === '明天上午') {
-                    const timeMap = {
-                        '延后': '稍后',
-                        '延后2小时': '2小时后（15:35）',
-                        '今日下班前': '今日下班前（17:00）',
-                        '明天上午': '明天上午（09:00）'
-                    };
-                    const selectedTime = timeMap[action] || action;
-                    typeWriter('⏰ **提醒已设置**\n\n📅 **设置详情**：\n• 提醒时间：' + selectedTime + '\n• 提醒对象：华泰资管 - 资料补充\n• 提醒方式：系统推送 + 短信\n\n✓ **已记录**：\n• 延后原因：资料补充截止提醒\n• 设置时间：' + new Date().toLocaleString() + '\n\n💡 **温馨提示**：\n到期前30分钟会再次提醒，确保不遗漏\n\n📊 **延后记录**：\n此记录已同步至客户档案，可在【操作记录】中查看', () => {
-                        updateSuggestions(['查看提醒列表', '修改提醒时间', '处理其他任务']);
-                    });
-                } else if (action === '联系客户' || action === '发送资料' || action === 'AI评估' || action === '发送给客户' || action === '安排路演') {
-                    const actionDetails = {
-                        '联系客户': {
-                            title: '📞 **联系客户准备**',
-                            content: '👤 **客户信息**：\n• 客户名称：中银基金\n• 联系人：张总\n• 电话：138xxxx9999\n• 事由：舆情沟通\n\n💡 **沟通要点**：\n1. 主动说明情况，表达关切\n2. 提供业绩归因分析\n3. 介绍公司应对措施\n4. 确认客户疑虑并记录\n\n📋 **准备材料**：\n• 舆情简报（已生成）\n• 业绩分析报告\n• 公司声明稿\n\n📊 **沟通后**：\n记录沟通结果，更新客户满意度评分'
-                        },
-                        '发送资料': {
-                            title: '📧 **发送资料准备**',
-                            content: '📋 **资料清单**：\n• 公司介绍\n• 算法交易方案\n• 费率说明\n• 案例分享\n\n👤 **收件人**：\n• 易方达投资\n• 联系人：张总\n• 邮箱：zhang@yfd.com\n\n💡 **AI建议**：\n根据客户关注的TWAP算法，重点突出相关案例和费率优势。\n\n📊 **发送后跟踪**：\n系统会自动跟踪邮件打开情况，48小时内未打开将提醒跟进。'
-                        },
-                        'AI评估': {
-                            title: '⚡ **AI资质评估**',
-                            content: '📊 **评估对象**：国泰基金（活动线索）\n\n📋 **评估维度**：\n• 注册资本：2亿 ✓\n• 管理规模：300亿+ ✓\n• 成立年限：5年 ✓\n• 投资风格：稳健型\n• 合规记录：良好 ✓\n\n🎯 **评估结果**：\n**匹配度：88分（优质客户）**\n建议优先级：高\n预计成交周期：1-2个月\n\n💡 **下一步建议**：\n1. 优先安排拜访\n2. 准备定制化方案\n3. 邀请参加策略会'
-                        },
-                        '发送给客户': {
-                            title: '📄 **简报发送准备**',
-                            content: '📧 **发送内容**：\n• 舆情简报（PDF）\n• 公司应对声明\n• 投资经理观点\n\n👤 **收件人**：\n• 中银基金\n• 收件人：风控部/投资部\n• 邮箱：risk@zyfund.com\n\n💡 **AI建议**：\n简报已优化，重点突出客观数据和公司应对措施，降低客户担忧。\n\n📊 **发送后跟踪**：\n系统将跟踪阅读情况，建议2小时后电话跟进确认收到。'
-                        },
-                        '安排路演': {
-                            title: '🎯 **路演安排**',
-                            content: '📅 **路演信息**：\n• 主题：市场波动下的投资策略\n• 形式：线上/线下\n• 时长：60分钟\n\n👥 **参与人员**：\n• 主讲：投资总监 李总\n• 嘉宾：中银基金投研团队\n• 人数：预计15-20人\n\n📋 **准备事项**：\n• 预约场地/会议室\n• 准备演示材料\n• 发送邀请函\n• 准备茶歇\n\n⏰ **建议时间**：\n下周三或周四下午，避开月末busy期。'
-                        }
-                    };
-                    
-                    const detail = actionDetails[action] || { title: '✓ **' + action + '**', content: '操作已记录' };
-                    typeWriter(detail.title + '\n\n' + detail.content + '\n\n📊 **后续跟踪**：\n操作已记录，AI将持续跟踪进展并主动提醒。', () => {
-                        updateSuggestions(['确认执行', '修改方案', '处理其他任务']);
-                    });
-                } else if (action === '查看详情') {
-                    typeWriter('📋 **任务详情**\n\n👤 **客户信息**：\n• 客户名称：华夏理财\n• 客户类型：公募基金\n• 预计规模：3-5亿\n\n📊 **当前状态**：\n• 评估完成：92分（高价值）\n• 待分配：建议分配给张经理\n• 跟进状态：待首次接触\n\n📅 **时间线**：\n• 线索录入：2024-03-01\n• AI评估：2024-03-04\n• 下次跟进：待安排\n\n💡 **建议操作**：\n1. 分配给张经理跟进\n2. 准备拜访材料\n3. 预约首次拜访', () => {
-                        updateSuggestions(['分配给张经理', '准备拜访材料', '添加到日程']);
-                    });
-                } else if (action === '开始处理') {
-                    typeWriter('🚀 **开始处理任务**\n\n📋 **任务信息**：\n• 任务类型：客户服务\n• 客户名称：鹏华基金\n• 任务描述：定期回访（30天未联系）\n\n💡 **AI建议处理步骤**：\n1. 查看客户近期交易记录\n2. 回顾上次沟通要点\n3. 准备回访话术\n4. 确认客户时间偏好\n5. 执行回访并记录\n\n📊 **回访目标**：\n• 了解近期交易体验\n• 推荐新产品/服务\n• 收集反馈意见\n• 更新客户满意度\n\n⚡ **快捷操作**：\n可直接拨打电话或发送回访邀请', () => {
-                        updateSuggestions(['拨打电话', '发送邀请', '查看交易记录']);
-                    });
-                } else {
-                    typeWriter('✓ **' + action + '** 已完成\n\n📊 **操作记录**：\n• 操作时间：' + new Date().toLocaleString() + '\n• 操作人：当前用户\n• 状态：已记录\n\n💡 AI会继续跟踪该任务进展，有更新时会主动提醒你。', () => {
-                        updateSuggestions(['查看操作记录', '继续处理', '返回工作台']);
-                    });
-                }
-            }, 500);
-        }
-
-        function showNewLeadEntry() {
-            setTimeout(() => {
-                typeWriter('📝 **客户开发** - 请选择客户引入方式：', () => {
-                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
-                        '<div class="sub-item" onclick="showAIProspecting()" style="background:linear-gradient(135deg,#e8f0ff,#fff);">' +
-                        '<div style="font-size:24px;margin-bottom:8px;">🤖</div>' +
-                        '<div class="sub-name" style="color:#3370ff;font-size:15px;">AI潜客挖掘</div>' +
-                        '<div class="sub-desc">AI智能扫描，自动发现潜在客户</div></div>' +
-                        '<div class="sub-item" onclick="showInboundClients()" style="background:linear-gradient(135deg,#f0f7f0,#fff);">' +
-                        '<div style="font-size:24px;margin-bottom:8px;">📨</div>' +
-                        '<div class="sub-name" style="color:#10b981;font-size:15px;">找过来的客户</div>' +
-                        '<div class="sub-desc">主动咨询、转介绍、活动获客</div></div>' +
-                        '<div class="sub-item" onclick="showOutboundClients()" style="background:linear-gradient(135deg,#fff5f0,#fff);">' +
-                        '<div style="font-size:24px;margin-bottom:8px;">🎯</div>' +
-                        '<div class="sub-name" style="color:#ff6b6b;font-size:15px;">主动出击获客</div>' +
-                        '<div class="sub-desc">陌拜、电话营销、渠道拓展</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['🤖 AI潜客挖掘', '📨 找过来的客户', '🎯 主动出击获客']);
-                });
-            }, 500);
-        }
-
-        function showAIProspecting() {
-            addUserMessage('🤖 AI潜客挖掘');
-            setTimeout(() => {
-                typeWriter('🤖 **AI潜客挖掘**\n\nAI智能扫描发现 **5 条** 高质量线索，按优先级排序：\n\n📊 **线索来源分布**：官网咨询(2) · 活动获客(2) · 转介绍(1)', () => {
-                    const html = '<div style="margin:16px 0;font-size:14px;font-weight:600;">🔥 **高优先级线索**</div>' +
-                        '<div class="task-card" style="border-left:4px solid #ff6b6b;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">易方达投资（邮件咨询）</div><div class="task-desc">张总咨询TWAP算法交易，预计规模5000万/月</div></div>' +
-                        '<span class="tag-urgent">热度98%</span></div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
-                        '<div style="margin-bottom:4px;"><strong>AI评估维度：</strong></div>' +
-                        '• 资金规模：⭐⭐⭐⭐⭐ (5000万/月) | • 需求明确度：⭐⭐⭐⭐⭐ | • 决策周期：⭐⭐⭐⭐ (预计2周)</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'AI评估\')">深度评估</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料\')">发送资料</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #ff9500;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">国泰基金（策略会活动）</div><div class="task-desc">李总对量化交易感兴趣，名片已扫描入库</div></div>' +
-                        '<span style="display:inline-block;padding:2px 8px;background:rgba(255,149,0,0.1);color:#ff9500;border-radius:4px;font-size:11px;">热度85%</span></div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
-                        '<div style="margin-bottom:4px;"><strong>AI评估维度：</strong></div>' +
-                        '• 管理规模：⭐⭐⭐⭐ (300亿+) | • 合作意愿：⭐⭐⭐⭐ | • 匹配度：⭐⭐⭐⭐ (88分)</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'查看名片\')">查看名片</button><button class="btn btn-secondary" onclick="completeAction(\'预约拜访\')">预约拜访</button></div></div>' +
-                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📋 **其他线索**</div>' +
-                        '<div class="task-card">' +
-                        '<div class="task-title">博时基金 · 邮件咨询</div><div class="task-desc">收益互换业务咨询，预计规模3000万</div>' +
-                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'查看线索\')">查看</button><button class="btn btn-secondary" onclick="completeAction(\'稍后处理\')">稍后处理</button></div></div>' +
-                        '<div class="task-card">' +
-                        '<div class="task-title">南方基金 · 转介绍</div><div class="task-desc">老客户推荐，算法交易需求</div>' +
-                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'查看线索\')">查看</button><button class="btn btn-secondary" onclick="completeAction(\'稍后处理\')">稍后处理</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['录入易方达线索', '录入国泰线索', '查看全部线索', '设置挖掘规则']);
-                });
-            }, 500);
-        }
-
-        function showInboundClients() {
-            addUserMessage('📨 找过来的客户');
-            setTimeout(() => {
-                typeWriter('📨 **找过来的客户**\n\n客户主动找上门，共 **4 家** 待跟进\n\n📊 **客户来源分类**：官网咨询(2) · 客户转介绍(1) · 400热线(1)', () => {
-                    const html = '<div style="margin:16px 0;font-size:14px;font-weight:600;">🌟 **高意向客户**</div>' +
-                        '<div class="task-card" style="border-left:4px solid #3b82f6;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">华夏理财（官网咨询）</div><div class="task-desc">王经理咨询机构开户流程，意向强烈，已浏览产品页15分钟</div></div>' +
-                        '<span class="tag-urgent" style="background:rgba(59,130,246,0.1);color:#3b82f6;">高意向</span></div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
-                        '<div style="margin-bottom:4px;"><strong>客户画像：</strong></div>' +
-                        '• 来源渠道：官网产品页 | • 咨询次数：3次 | • 停留时长：15分钟 | • 关注产品：算法交易+托管</div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">' +
-                        '<strong>跟进策略：</strong>1小时内回电，重点介绍费率优势和系统稳定性</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'分配跟进\')">分配跟进</button><button class="btn btn-secondary" onclick="completeAction(\'发送资料包\')">发送资料包</button><button class="btn btn-secondary" onclick="completeAction(\'回电\')">立即回电</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">南方基金（客户转介绍）</div><div class="task-desc">老客户推荐，张总监对接算法交易需求</div></div>' +
-                        '<span style="display:inline-block;padding:2px 8px;background:rgba(16,185,129,0.1);color:#10b981;border-radius:4px;font-size:11px;">转介绍</span></div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
-                        '<div style="margin-bottom:4px;"><strong>推荐信息：</strong></div>' +
-                        '• 推荐人：易方达基金（合作3年+） | • 关系强度：强信任 | • 预计规模：8000万/月</div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">' +
-                        '<strong>跟进策略：</strong>先感谢推荐人，24小时内联系张总监，强调信任背书</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入线索\')">录入线索</button><button class="btn btn-secondary" onclick="completeAction(\'预约拜访\')">预约拜访</button><button class="btn btn-secondary" onclick="completeAction(\'感谢推荐人\')">感谢推荐人</button></div></div>' +
-                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📋 **其他咨询</div>' +
-                        '<div class="task-card">' +
-                        '<div class="task-title">嘉实基金 · 400热线</div><div class="task-desc">询问开户所需材料清单</div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin:8px 0;"><strong>跟进策略：</strong>发送材料清单，询问预计开户时间</div>' +
-                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'发送清单\')">发送清单</button><button class="btn btn-secondary" onclick="completeAction(\'标记跟进\')">标记跟进</button></div></div>' +
-                        '<div class="task-card">' +
-                        '<div class="task-title">鹏华基金 · 官网留言</div><div class="task-desc">咨询产品费率</div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin:8px 0;"><strong>跟进策略：</strong>发送费率表，询问交易规模以便推荐最优方案</div>' +
-                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'发送费率表\')">发送费率表</button><button class="btn btn-secondary" onclick="completeAction(\'标记跟进\')">标记跟进</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['录入华夏理财', '录入南方基金', '查看跟进记录', '设置分配规则']);
-                });
-            }, 500);
-        }
-
-        function showOutboundClients() {
-            addUserMessage('🎯 主动出击获客');
-            setTimeout(() => {
-                typeWriter('🎯 **主动出击获客**\n\n陌拜、电话营销、渠道拓展记录\n\n📊 **本月获客漏斗**：线索(12) → 拜访(8) → 意向(4) → 签约(1) → 转化率 8.3%', () => {
-                    const html = '<div style="margin:16px 0;font-size:14px;font-weight:600;">📈 **转化漏斗跟踪**</div>' +
-                        '<div style="padding:16px;background:rgba(0,0,0,0.02);border-radius:12px;margin-bottom:16px;">' +
-                        '<div style="display:flex;align-items:center;margin-bottom:12px;">' +
-                        '<div style="width:80px;font-size:12px;">线索获取</div>' +
-                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:100%;height:100%;background:#3b82f6;"></div></div>' +
-                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">12</div></div>' +
-                        '<div style="display:flex;align-items:center;margin-bottom:12px;">' +
-                        '<div style="width:80px;font-size:12px;">拜访洽谈</div>' +
-                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:67%;height:100%;background:#8b5cf6;"></div></div>' +
-                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">8</div></div>' +
-                        '<div style="display:flex;align-items:center;margin-bottom:12px;">' +
-                        '<div style="width:80px;font-size:12px;">意向确认</div>' +
-                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:33%;height:100%;background:#f59e0b;"></div></div>' +
-                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">4</div></div>' +
-                        '<div style="display:flex;align-items:center;">' +
-                        '<div style="width:80px;font-size:12px;">签约落地</div>' +
-                        '<div style="flex:1;background:#e5e7eb;height:20px;border-radius:10px;overflow:hidden;"><div style="width:8%;height:100%;background:#10b981;"></div></div>' +
-                        '<div style="width:40px;text-align:right;font-size:12px;font-weight:600;">1</div></div></div>' +
-                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📝 **陌拜记录**</div>' +
-                        '<div class="task-card" style="border-left:4px solid #3b82f6;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">博时基金（陌拜）</div><div class="task-desc">李总对收益互换感兴趣，下周二拜访</div></div>' +
-                        '<span style="display:inline-block;padding:2px 8px;background:rgba(59,130,246,0.1);color:#3b82f6;border-radius:4px;font-size:11px;">拜访中</span></div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
-                        '<div><strong>拜访时间：</strong>2024-03-12 14:00 | <strong>地点：</strong>博时基金总部</div>' +
-                        '<div style="margin-top:6px;"><strong>拜访目标：</strong>了解收益互换需求，介绍产品优势，争取试用</div></div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入拜访记录\')">录入拜访记录</button><button class="btn btn-secondary" onclick="completeAction(\'准备方案\')">准备方案</button><button class="btn btn-secondary" onclick="completeAction(\'设置提醒\')">设置提醒</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">嘉实基金（渠道推荐）</div><div class="task-desc">合作伙伴推荐，对接量化团队负责人</div></div>' +
-                        '<span style="display:inline-block;padding:2px 8px;background:rgba(16,185,129,0.1);color:#10b981;border-radius:4px;font-size:11px;">已约会议</span></div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px;">' +
-                        '<div><strong>会议时间：</strong>2024-03-15 10:00 | <strong>形式：</strong>线上腾讯会议</div>' +
-                        '<div style="margin-top:6px;"><strong>参会人员：</strong>对方量化团队3人，我方投资经理+客户经理</div></div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'录入渠道线索\')">录入渠道线索</button><button class="btn btn-secondary" onclick="completeAction(\'约会议\')">修改会议</button><button class="btn btn-secondary" onclick="completeAction(\'准备材料\')">准备材料</button></div></div>' +
-                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">📊 **渠道拓展**</div>' +
-                        '<div class="task-card">' +
-                        '<div class="task-title">银行渠道合作</div><div class="task-desc">与招商银行私人银行部建立合作，共同服务高净值客户</div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);margin:8px 0;"><strong>阶段：</strong>框架协议签署中 | <strong>预计获客：</strong>5-8家/季度</div>' +
-                        '<div class="task-actions"><button class="btn btn-secondary" onclick="completeAction(\'查看协议\')">查看协议</button><button class="btn btn-secondary" onclick="completeAction(\'跟进进度\')">跟进进度</button></div></div>' +
-                        '<div style="margin-top:16px;padding:16px;background:rgba(59,130,246,0.05);border-radius:12px;border:1px solid rgba(59,130,246,0.1);">' +
-                        '<div style="font-size:13px;color:#3b82f6;margin-bottom:8px;">💡 AI获客建议</div>' +
-                        '<div style="font-size:14px;">本月转化率略低于目标(10%)，建议：1) 增加拜访频次；2) 重点跟进博时基金争取突破；3) 优化陌拜话术，提高意向确认率。</div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['录入拜访记录', '查看转化分析', '优化陌拜策略', '渠道拓展计划']);
-                });
-            }, 500);
-        }
-
-        function showQuickOpenAccount() {
-            setTimeout(() => {
-                typeWriter('⚡ **高净值客户开户** - 专属开户通道\n\n请选择客户类型：', () => {
-                    const html = '<div class="sub-grid">' +
-                        '<div class="sub-item" onclick="startHighNetWorthOpen()">' +
-                        '<div class="sub-name" style="color:#3b82f6;">高净值个人</div>' +
-                        '<div class="sub-desc">资产1000万+，专属服务</div></div>' +
-                        '<div class="sub-item" onclick="startInstitutionOpen()">' +
-                        '<div class="sub-name" style="color:#8b5cf6;">专业机构</div>' +
-                        '<div class="sub-desc">私募/资管/企业客户</div></div>' +
-                        '<div class="sub-item" onclick="startFamilyOfficeOpen()">' +
-                        '<div class="sub-name" style="color:#10b981;">家族办公室</div>' +
-                        '<div class="sub-desc">家族财富管理</div></div>' +
-                        '<div class="sub-item" onclick="startProductOpen()">' +
-                        '<div class="sub-name" style="color:#f59e0b;">产品开户</div>' +
-                        '<div class="sub-desc">资管产品/私募基金产品</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['高净值个人开户', '专业机构开户', '家族办公室开户', '产品开户']);
-                });
-            }, 500);
-        }
-
-        function startHighNetWorthOpen() {
-            addUserMessage('高净值个人开户');
-            setTimeout(() => {
-                typeWriter('📋 **高净值个人开户**\n\n请提交客户信息：', () => {
-                    const formHtml = '<div class="task-card">' +
-                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">基本信息</div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="客户姓名" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="身份证号" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="联系电话" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="预计资产规模（万）" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div class="task-actions" style="margin-top:16px;">' +
-                        '<button class="btn btn-primary" onclick="submitClientInfo()">提交信息</button>' +
-                        '<button class="btn btn-secondary" onclick="scanIDCard()">扫描身份证</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
-                    updateSuggestions(['扫描身份证', '上传资料', '预约面签']);
-                });
-            }, 500);
-        }
-
-        function startInstitutionOpen() {
-            addUserMessage('专业机构开户');
-            setTimeout(() => {
-                typeWriter('🏢 **专业机构开户**\n\n请提交机构信息：', () => {
-                    const formHtml = '<div class="task-card">' +
-                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">机构信息</div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="机构全称" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="统一社会信用代码" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="法定代表人" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><select style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;"><option>机构类型</option><option>私募基金</option><option>证券资管</option><option>企业法人</option><option>其他机构</option></select></div>' +
-                        '<div class="task-actions" style="margin-top:16px;">' +
-                        '<button class="btn btn-primary" onclick="submitInstitutionInfo()">提交信息</button>' +
-                        '<button class="btn btn-secondary" onclick="uploadLicense()">上传营业执照</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
-                    updateSuggestions(['上传营业执照', '上传授权书', '预约尽调']);
-                });
-            }, 500);
-        }
-
-        function startFamilyOfficeOpen() {
-            addUserMessage('家族办公室开户');
-            setTimeout(() => {
-                typeWriter('👨‍👩‍👧‍👦 **家族办公室开户**\n\n请提交家族信息：', () => {
-                    const formHtml = '<div class="task-card">' +
-                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">家族信息</div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="家族代表姓名" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="家族总资产规模（亿）" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="投资需求描述" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><select style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;"><option>风险承受能力</option><option>R4-积极型</option><option>R5-激进型</option></select></div>' +
-                        '<div class="task-actions" style="margin-top:16px;">' +
-                        '<button class="btn btn-primary" onclick="submitFamilyInfo()">提交信息</button>' +
-                        '<button class="btn btn-secondary" onclick="schedulePrivateMeeting()">预约私享会</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
-                    updateSuggestions(['预约私享会', '定制方案', '专属服务']);
-                });
-            }, 500);
-        }
-
-        function startProductOpen() {
-            addUserMessage('产品开户');
-            setTimeout(() => {
-                typeWriter('📦 **产品开户**\n\n请提交产品信息：', () => {
-                    const formHtml = '<div class="task-card">' +
-                        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;">产品信息</div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="产品代码" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="产品名称" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="管理人" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="托管行" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><input type="text" placeholder="托管账户" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;"></div>' +
-                        '<div style="margin-bottom:10px;"><select style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;"><option>产品类型</option><option>私募基金</option><option>资管计划</option><option>信托计划</option><option>其他产品</option></select></div>' +
-                        '<div class="task-actions" style="margin-top:16px;">' +
-                        '<button class="btn btn-primary" onclick="submitProductInfo()">提交信息</button>' +
-                        '<button class="btn btn-secondary" onclick="uploadProductDoc()">上传产品文件</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', formHtml);
-                    updateSuggestions(['上传产品合同', '上传备案证明', '预约产品审核']);
-                });
-            }, 500);
-        }
-
-        // ========== 三个提示词的动作驱动函数 ==========
         function showMyClients() {
-            addUserMessage('我想查看一下我的客户列表和跟进状态');
-            setTimeout(() => {
-                typeWriter('👤 **我的客户看板**\n\n📊 **客户概览**：共服务 **23 家** 机构客户\n• 🔴 需关注：3 家\n• 🟡 跟进中：8 家\n• 🟢 正常维护：12 家\n\n🎯 **今日待跟进客户**：', () => {
-                    const html = '<div class="task-card" style="border-left:4px solid #ff6b6b;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">🔴 华泰资管 · 准入审核</div><div class="task-desc">资料待补充，今日截止，已逾期2小时</div></div>' +
-                        '<span class="tag-urgent">紧急</span></div>' +
-                        '<div class="task-actions"><button class="btn btn-success" onclick="completeAction(\'一键催办\')">✓ 一键催办</button><button class="btn btn-secondary" onclick="completeAction(\'查看详情\')">查看详情</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #ff9500;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">🟡 华夏理财 · 协议待签署</div><div class="task-desc">电子协议已发送，等待回复（3天前）</div></div></div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'电话跟进\')">📞 电话跟进</button><button class="btn btn-secondary" onclick="completeAction(\'重新发送\')">重新发送</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
-                        '<div><div class="task-title">🟢 易方达基金 · 正常维护</div><div class="task-desc">月度回访，交易活跃度良好</div></div></div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'发起回访\')">发起回访</button><button class="btn btn-secondary" onclick="completeAction(\'查看交易\')">查看交易</button></div></div>' +
-                        '<div class="sub-grid" style="margin-top:16px;">' +
-                        '<div class="sub-item" onclick="send(\'查看高价值客户\')" style="background:linear-gradient(135deg,#e8f0ff,#fff);"><div style="font-size:18px;font-weight:700;color:#3b82f6;">8家</div><div class="sub-desc">高价值客户</div></div>' +
-                        '<div class="sub-item" onclick="send(\'查看沉睡客户\')" style="background:linear-gradient(135deg,#fff5f0,#fff);"><div style="font-size:18px;font-weight:700;color:#ff6b6b;">5家</div><div class="sub-desc">沉睡预警</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['处理紧急客户', '查看高价值客户', '查看沉睡客户', '添加新客户']);
-                });
-            }, 500);
+            const clients = [
+                { name: '华泰资管', type: '公募基金', scale: '500亿+', status: '活跃', days: 2 },
+                { name: '高毅资产', type: '私募基金', scale: '1000亿+', status: '活跃', days: 5 },
+                { name: '易方达基金', type: '公募基金', scale: '1.5万亿', status: '待跟进', days: 12 }
+            ];
+            
+            let html = '📋 **我的客户列表**\n\n';
+            clients.forEach((c, i) => {
+                html += `${i+1}. **${c.name}**\n   ${c.type} · ${c.scale} · ${c.status === '活跃' ? '🟢' : '🟡'} ${c.status} · ${c.days}天前联系\n\n`;
+            });
+            
+            typeWriter(html, () => {
+                updateSuggestions(['🔍 搜索客户', '📊 客户分析', '➕ 新增客户']);
+            });
         }
 
         function pushServiceTasks() {
-            addUserMessage('帮我推进一下当前的服务事项和待办任务');
-            setTimeout(() => {
-                typeWriter('⚡ **服务事项推进中心**\n\n📋 **待办任务清单**（共 12 项）\n\n🔴 **今日截止**（2项）：', () => {
-                    const html = '<div class="task-card" style="border-left:4px solid #ff6b6b;">' +
-                        '<div class="task-title">📄 华泰资管准入资料补充</div><div class="task-desc">剩余时间：2小时 | 状态：待客户反馈</div>' +
-                        '<div class="task-actions"><button class="btn btn-success" onclick="completeAction(\'一键催办\')">✓ 一键催办</button><button class="btn btn-secondary" onclick="completeAction(\'申请延期\')">申请延期</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #ff6b6b;">' +
-                        '<div class="task-title">📊 中银基金舆情简报生成</div><div class="task-desc">剩余时间：5小时 | 状态：AI已分析待确认</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'生成简报\')">生成简报</button><button class="btn btn-secondary" onclick="completeAction(\'查看舆情\')">查看舆情</button></div></div>' +
-                        '<div style="margin:16px 0;font-size:14px;color:var(--text-secondary);">🟡 **本周内完成**（5项）</div>' +
-                        '<div class="task-card" style="border-left:4px solid #ff9500;">' +
-                        '<div class="task-title">📝 华夏理财协议签署跟进</div><div class="task-desc">截止日期：本周五 | 状态：客户已阅未签</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'电话跟进\')">电话跟进</button><button class="btn btn-secondary" onclick="completeAction(\'安排会面\')">安排会面</button></div></div>' +
-                        '<div style="margin-top:16px;padding:16px;background:rgba(0,122,255,0.05);border-radius:12px;">' +
-                        '<div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">💡 AI 推进建议</div>' +
-                        '<div style="font-size:14px;">当前任务负载较重，建议优先处理华泰资管（逾期风险），其他任务可协调团队分担。</div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['一键催办华泰', '生成中银简报', '申请团队支持', '调整优先级']);
-                });
-            }, 500);
+            const tasks = [
+                { title: '华泰资管 - 资料补充', deadline: '2小时内', type: '紧急' },
+                { title: '高毅资产 - 系统配置', deadline: '今日', type: '正常' },
+                { title: '易方达 - 定期回访', deadline: '本周', type: '计划' }
+            ];
+            
+            let html = '📋 **当前服务事项**\n\n';
+            tasks.forEach((t, i) => {
+                const emoji = t.type === '紧急' ? '🔴' : t.type === '正常' ? '🟡' : '⚪';
+                html += `${emoji} **${t.title}**\n   截止：${t.deadline} · 类型：${t.type}\n\n`;
+            });
+            
+            typeWriter(html, () => {
+                updateSuggestions(['开始处理', '调整优先级', '分配给他人']);
+            });
         }
 
         function createBusinessPlan() {
-            addUserMessage('定制我的机构经纪业务经营方案');
-            setTimeout(() => {
-                typeWriter('📊 **机构经纪业务经营方案定制**\n\n根据你的客户结构和服务数据，AI为你生成本月经营方案：\n\n📈 **业绩目标设定**：', () => {
-                    const html = '<div class="task-card">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
-                        '<div style="font-size:16px;font-weight:600;">💰 月度收入目标</div>' +
-                        '<div style="font-size:20px;font-weight:700;color:#3b82f6;">850万</div></div>' +
-                        '<div style="background:#f2f3f5;border-radius:8px;height:8px;margin-bottom:8px;"><div style="background:#3b82f6;width:65%;height:100%;border-radius:8px;"></div></div>' +
-                        '<div style="font-size:12px;color:var(--text-secondary);">当前进度：65%（554万/850万）</div></div>' +
-                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">🎯 **关键行动项**（AI推荐）</div>' +
-                        '<div class="task-card" style="border-left:4px solid #3b82f6;">' +
-                        '<div class="task-title">1️⃣ 重点突破华泰资管开户</div><div class="task-desc">预计贡献收入：120万/年 | 成功率：85%</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'启动开户攻坚\')">启动攻坚</button><button class="btn btn-secondary" onclick="completeAction(\'查看作战计划\')">作战计划</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
-                        '<div class="task-title">2️⃣ 激活沉睡客户-博时基金</div><div class="task-desc">预计贡献收入：60万/年 | 上次交易：90天前</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'制定激活方案\')">制定方案</button><button class="btn btn-secondary" onclick="completeAction(\'安排路演\')">安排路演</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #8b5cf6;">' +
-                        '<div class="task-title">3️⃣ 拓展新业务-跨境收益互换</div><div class="task-desc">目标客户：3家 | 预计贡献：200万/年</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'获取客户清单\')">获取清单</button><button class="btn btn-secondary" onclick="completeAction(\'准备材料\')">准备材料</button></div></div>' +
-                        '<div style="margin-top:16px;padding:16px;background:rgba(52,199,89,0.08);border-radius:12px;border:1px solid rgba(52,199,89,0.2);">' +
-                        '<div style="font-size:13px;color:#10b981;margin-bottom:8px;">✅ 方案可行性评估</div>' +
-                        '<div style="font-size:14px;">基于当前客户资源和市场情况，该方案达成概率 <strong>78%</strong>。建议优先执行前两项，预计可完成目标的 80%。</div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['启动开户攻坚', '制定激活方案', '获取跨境清单', '调整目标']);
-                });
-            }, 500);
+            typeWriter('📊 **机构经纪业务经营方案生成中...**\n\n正在分析您的客户结构、交易规模、服务需求...\n\n✅ 分析完成！\n\n📈 **核心建议**：\n1. 重点拓展量化私募客户（当前占比低，潜力大）\n2. 提升存量客户交易活跃度（当前月均15笔，目标30笔）\n3. 加强衍生品服务（需求增长40%）\n\n💡 **本月行动清单**已生成，请查看。', () => {
+                updateSuggestions(['查看详细方案', '导出PDF', '分享给团队']);
+            });
         }
 
-        function submitClientInfo() {
-            setTimeout(() => {
-                typeWriter('✓ **高净值个人开户信息已提交**\n\n📋 **提交详情**：\n• 客户姓名：张先生\n• 身份证号：310***********1234\n• 联系电话：138****8888\n• 预计资产规模：3000万\n• 风险承受能力：R4-积极型\n\n⚡ **处理流程**：\n1. ✓ 信息初审通过（AI自动校验）\n2. → 分配专属客户经理（预计5分钟）\n3. → 预约面签时间\n4. → 完成开户\n\n📅 **下一步**：\n客户经理将在30分钟内联系您确认面签时间\n\n🔔 **提醒设置**：\n已为您设置开户进度提醒，有更新将第一时间通知', () => {
-                    updateSuggestions(['查看进度', '预约面签', '上传补充资料', '联系客户经理']);
-                });
-            }, 500);
+        function showNewLeadEntry() {
+            typeWriter('🎯 **新客户开发入口**\n\n请选择客户类型：', () => {
+                const html = `
+                    <div class="sub-grid">
+                        <div class="sub-item" onclick="send('高净值个人开户')">
+                            <div class="sub-name">👤 高净值个人</div>
+                            <div class="sub-desc">资产1000万+</div>
+                        </div>
+                        <div class="sub-item" onclick="send('专业机构开户')">
+                            <div class="sub-name">🏢 专业机构</div>
+                            <div class="sub-desc">私募/公募基金</div>
+                        </div>
+                        <div class="sub-item" onclick="send('家族办公室开户')">
+                            <div class="sub-name">👑 家族办公室</div>
+                            <div class="sub-desc">超高净值家族</div>
+                        </div>
+                        <div class="sub-item" onclick="send('产品开户')">
+                            <div class="sub-name">📦 产品户</div>
+                            <div class="sub-desc">资管/信托计划</div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            updateSuggestions(['📋 查看线索池', '🔍 搜索潜客', '📊 转化分析']);
         }
 
-        function scanIDCard() {
-            setTimeout(() => {
-                typeWriter('📷 **身份证扫描**\n\n请将身份证正面放置在扫描框内，系统会自动识别信息。\n\n💡 **识别内容**：\n• 姓名\n• 身份证号\n• 有效期\n• 户籍地址\n\n🔒 **安全提示**：\n• 扫描数据仅用于开户审核\n• 采用银行级加密传输\n• 符合监管合规要求', () => {
-                    updateSuggestions(['开始扫描', '手动输入', '稍后上传']);
-                });
-            }, 500);
-        }
-
-        function submitInstitutionInfo() {
-            setTimeout(() => {
-                typeWriter('✓ **专业机构开户信息已提交**\n\n📋 **提交详情**：\n• 机构全称：嘉实基金管理有限公司\n• 统一社会信用代码：91110000710929****\n• 法定代表人：赵学军\n• 机构类型：证券资管\n• 注册资本：3亿元\n\n📊 **尽调流程启动**：\n1. ✓ 基本信息录入完成\n2. → 尽调小组分配（预计2小时）\n3. → 实地尽调预约\n4. → 尽调报告撰写\n5. → 审核委员会审批\n\n📅 **尽调安排**：\n预计尽调时间：2024-03-08\n尽调人员：风控部张经理 + 机构部李经理\n\n📑 **待补充材料**：\n• 近3年审计报告\n• 公司章程\n• 股东结构图\n• 投决会成员名单', () => {
-                    updateSuggestions(['上传尽调材料', '查看尽调进度', '预约尽调时间', '下载材料清单']);
-                });
-            }, 500);
-        }
-
-        function uploadLicense() {
-            setTimeout(() => {
-                typeWriter('📄 **营业执照上传**\n\n请选择上传方式：\n\n📷 **拍照上传**\n直接拍摄营业执照原件，系统自动识别关键信息\n\n📁 **文件上传**\n支持PDF、JPG、PNG格式，文件大小不超过10MB\n\n✅ **识别信息**：\n• 公司名称\n• 统一社会信用代码\n• 法定代表人\n• 注册资本\n• 成立日期\n• 经营范围\n\n🔍 **自动核验**：\n上传后将与工商系统自动核验真实性', () => {
-                    updateSuggestions(['拍照上传', '选择文件', '稍后上传']);
-                });
-            }, 500);
-        }
-
-        function submitFamilyInfo() {
-            setTimeout(() => {
-                typeWriter('✓ **家族办公室开户信息已提交**\n\n📋 **提交详情**：\n• 家族代表姓名：王先生\n• 家族总资产规模：5亿\n• 投资需求：财富传承+资产配置+税务优化\n• 风险承受能力：R5-激进型\n• 所在地区：上海\n\n👑 **私享会安排**：\n\n📅 **推荐场次**：\n• 2024-03-15 14:00 家族财富传承专题\n• 2024-03-22 14:00 全球资产配置策略\n• 2024-03-29 14:00 税务规划与家族信托\n\n📍 **地点**：上海中心大厦52层 私享厅\n\n🎯 **定制方案准备中**：\n1. ✓ 家族信息录入完成\n2. → 家族办公室团队分配\n3. → 初步方案设计（预计3个工作日）\n4. → 私享会面谈\n5. → 定制方案确认\n\n💡 **专属服务**：\n• 专属家族顾问：陈总（服务家族客户10年+）\n• 私密会议空间：已预留VIP会议室\n• 定制化服务：根据家族需求定制投资方案', () => {
-                    updateSuggestions(['预约私享会', '查看定制进度', '联系家族顾问', '了解服务内容']);
-                });
-            }, 500);
-        }
-
-        function schedulePrivateMeeting() {
-            setTimeout(() => {
-                typeWriter('📅 **私享会预约**\n\n请选择合适的私享会场次：\n\n🎯 **即将举办的私享会**：\n\n**场次一：家族财富传承专题**\n📅 时间：2024-03-15 14:00-16:00\n📍 地点：上海中心大厦52层\n👥 主讲：财富管理总监 张总\n📝 内容：家族信托架构、代际传承规划\n\n**场次二：全球资产配置策略**\n📅 时间：2024-03-22 14:00-16:00\n📍 地点：上海中心大厦52层\n👥 主讲：投资总监 李总\n📝 内容：2024全球市场展望、跨境配置机会\n\n**场次三：税务规划与家族信托**\n📅 时间：2024-03-29 14:00-16:00\n📍 地点：上海中心大厦52层\n👥 主讲：税务专家 王教授\n📝 内容：税务优化策略、离岸信托设立\n\n📋 **预约信息**：\n每场限额10组家族，确保私密交流\n已为您预留2个席位（家族代表+陪同人员）', () => {
-                    updateSuggestions(['预约3月15日场', '预约3月22日场', '预约3月29日场', '定制专场']);
-                });
-            }, 500);
-        }
-
-        function submitProductInfo() {
-            setTimeout(() => {
-                typeWriter('✓ **产品开户信息已提交**\n\n📋 **提交详情**：\n• 产品代码：SJP2024030101\n• 产品名称：嘉实量化精选1号\n• 管理人：嘉实基金管理有限公司\n• 托管行：招商银行\n• 托管账户：1234567890123456\n• 产品类型：私募基金\n• 预计规模：2亿元\n\n📊 **产品审核流程**：\n1. ✓ 产品信息录入完成\n2. → 产品合规审核（预计1个工作日）\n3. → 托管行对接确认\n4. → 交易系统配置\n5. → 产品正式上线\n\n🏦 **托管对接进度**：\n• 托管行：招商银行\n• 对接状态：已发起对接申请\n• 预计完成：2024-03-06\n• 对接专员：招商银行 刘经理 021-****8888\n\n📑 **待补充文件**：\n• 产品合同（已上传）\n• 基金备案证明\n• 托管协议\n• 风险揭示书\n\n🔔 **进度提醒**：\n已设置审核进度提醒，每个环节完成将自动通知', () => {
-                    updateSuggestions(['查看审核进度', '上传补充文件', '联系托管行', '配置交易权限']);
-                });
-            }, 500);
-        }
-
-        function uploadProductDoc() {
-            setTimeout(() => {
-                typeWriter('📁 **产品文件上传**\n\n请上传以下产品相关文件：\n\n📋 **必需文件清单**：\n1. 产品合同/招募说明书\n2. 基金业协会备案证明\n3. 托管协议\n4. 风险揭示书\n5. 投资者适当性匹配意见\n\n📄 **文件要求**：\n• 格式：PDF、JPG、PNG\n• 大小：单个文件不超过10MB\n• 清晰度：文字清晰可辨认\n• 完整性：所有页面完整上传\n\n✅ **智能识别**：\n系统将自动提取文件关键信息，减少手动录入', () => {
-                    updateSuggestions(['上传产品合同', '上传备案证明', '上传托管协议', '查看示例']);
-                });
-            }, 500);
+        function showQuickOpenAccount() {
+            typeWriter('⚡ **快速开户通道**\n\n请选择开户类型：', () => {
+                const html = `
+                    <div class="sub-grid">
+                        <div class="sub-item" onclick="send('个人极速开户')">
+                            <div class="sub-name">👤 个人极速</div>
+                            <div class="sub-desc">5分钟完成</div>
+                        </div>
+                        <div class="sub-item" onclick="send('机构标准开户')">
+                            <div class="sub-name">🏢 机构标准</div>
+                            <div class="sub-desc">1-3工作日</div>
+                        </div>
+                        <div class="sub-item" onclick="send('产品专项开户')">
+                            <div class="sub-name">📦 产品专项</div>
+                            <div class="sub-desc">定制化服务</div>
+                        </div>
+                        <div class="sub-item" onclick="send('跨境开户')">
+                            <div class="sub-name">🌍 跨境开户</div>
+                            <div class="sub-desc">QDII/QFII</div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            updateSuggestions(['📋 查看待审申请', '⚡ 加急处理', '📊 开户统计']);
         }
 
         function showApplyMenu() {
-            setTimeout(() => {
-                typeWriter('📋 **请示与协同** - 机构经纪业务协同支持\n\n请选择申请类型：', () => {
-                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
-                        '<div class="sub-item" onclick="showVerticalRequest()" style="background:linear-gradient(135deg,#fff5f0,#fff);">' +
-                        '<div style="font-size:24px;margin-bottom:8px;">🏛️</div>' +
-                        '<div class="sub-name" style="color:#ff6b6b;font-size:15px;">向上请示</div>' +
-                        '<div class="sub-desc">向公司经营层请示重大事项</div></div>' +
-                        '<div class="sub-item" onclick="showHorizontalRequest()" style="background:linear-gradient(135deg,#e8f0ff,#fff);">' +
-                        '<div style="font-size:24px;margin-bottom:8px;">🤝</div>' +
-                        '<div class="sub-name" style="color:#3370ff;font-size:15px;">横向协同</div>' +
-                        '<div class="sub-desc">请求其他业务线协同支持</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['🏛️ 向上请示重大事项', '🤝 横向业务协同']);
-                });
-            }, 500);
-        }
-
-        function showVerticalRequest() {
-            addUserMessage('🏛️ 向上请示重大事项');
-            setTimeout(() => {
-                typeWriter('🏛️ **向上请示** - 向公司经营层请示\n\n请选择请示类型：', () => {
-                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
-                        '<div class="sub-item" onclick="send(\'申请战略客户政策\')">' +
-                        '<div class="sub-name" style="color:#ff6b6b;">战略客户特殊政策</div>' +
-                        '<div class="sub-desc">百亿级客户费率/服务申请</div></div>' +
-                        '<div class="sub-item" onclick="send(\'申请资源支持\')">' +
-                        '<div class="sub-name" style="color:#ff9500;">资源投入申请</div>' +
-                        '<div class="sub-desc">算力/人力/预算超规申请</div></div>' +
-                        '<div class="sub-item" onclick="send(\'请示合规风险\')">' +
-                        '<div class="sub-name" style="color:#8b5cf6;">合规风险请示</div>' +
-                        '<div class="sub-desc">重大合规事项决策支持</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['战略客户政策', '资源投入', '合规风险']);
-                });
-            }, 500);
-        }
-
-        function showHorizontalRequest() {
-            addUserMessage('🤝 横向业务协同');
-            setTimeout(() => {
-                typeWriter('🤝 **横向协同** - 跨业务线协同支持\n\n请选择协同业务线：', () => {
-                    const html = '<div class="sub-grid" style="margin-top:16px;">' +
-                        '<div class="sub-item" onclick="send(\'协同研究所\')">' +
-                        '<div class="sub-name" style="color:#3b82f6;">📊 研究所</div>' +
-                        '<div class="sub-desc">研究服务/路演/专家访谈</div></div>' +
-                        '<div class="sub-item" onclick="send(\'协同资管\')">' +
-                        '<div class="sub-name" style="color:#8b5cf6;">💼 资管</div>' +
-                        '<div class="sub-desc">机构自有资金配置/理财产品投资</div></div>' +
-                        '<div class="sub-item" onclick="send(\'协同信用\')">' +
-                        '<div class="sub-name" style="color:#10b981;">💰 信用</div>' +
-                        '<div class="sub-desc">融资融券/股票质押</div></div>' +
-                        '<div class="sub-item" onclick="send(\'协同托管外包\')">' +
-                        '<div class="sub-name" style="color:#f59e0b;">📦 托管和外包</div>' +
-                        '<div class="sub-desc">资产托管/运营外包服务</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['研究所协同', '资管协同', '信用协同', '托管外包协同']);
-                });
-            }, 500);
+            typeWriter('📋 **请示与协同**\n\n请选择类型：', () => {
+                const html = `
+                    <div class="sub-grid">
+                        <div class="sub-item" onclick="send('向上请示')">
+                            <div class="sub-name">⬆️ 向上请示</div>
+                            <div class="sub-desc">需领导决策</div>
+                        </div>
+                        <div class="sub-item" onclick="send('横向协同')">
+                            <div class="sub-name">➡️ 横向协同</div>
+                            <div class="sub-desc">跨部门协作</div>
+                        </div>
+                        <div class="sub-item" onclick="send('资源申请')">
+                            <div class="sub-name">💎 资源申请</div>
+                            <div class="sub-desc">额度/权限/预算</div>
+                        </div>
+                        <div class="sub-item" onclick="send('特批申请')">
+                            <div class="sub-name">⚡ 特批申请</div>
+                            <div class="sub-desc">紧急例外事项</div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            updateSuggestions(['📋 我的请示', '📊 审批进度', '📈 协同效率']);
         }
 
         function showPerformanceDashboard() {
-            setTimeout(() => {
-                typeWriter('📊 **业绩看板** - 本月经营数据\n\n📈 **关键指标达成情况**：', () => {
-                    const html = '<div class="sub-grid" style="margin:16px 0;">' +
-                        '<div class="sub-item" style="background:linear-gradient(135deg,#e6f7e6,#fff);">' +
-                        '<div style="font-size:12px;color:#10b981;margin-bottom:4px;">收入目标</div>' +
-                        '<div style="font-size:20px;font-weight:700;color:#10b981;">68%</div>' +
-                        '<div style="font-size:11px;color:var(--text-secondary);">850万/1250万</div></div>' +
-                        '<div class="sub-item" style="background:linear-gradient(135deg,#e8f0ff,#fff);">' +
-                        '<div style="font-size:12px;color:#3b82f6;margin-bottom:4px;">客户新增</div>' +
-                        '<div style="font-size:20px;font-weight:700;color:#3b82f6;">4家</div>' +
-                        '<div style="font-size:11px;color:var(--text-secondary);">目标8家</div></div>' +
-                        '<div class="sub-item" style="background:linear-gradient(135deg,#fff5f0,#fff);">' +
-                        '<div style="font-size:12px;color:#ff6b6b;margin-bottom:4px;">成交额</div>' +
-                        '<div style="font-size:20px;font-weight:700;color:#ff6b6b;">2.3亿</div>' +
-                        '<div style="font-size:11px;color:var(--text-secondary);">今日</div></div>' +
-                        '<div class="sub-item" style="background:linear-gradient(135deg,#f3e5f5,#fff);">' +
-                        '<div style="font-size:12px;color:#8b5cf6;margin-bottom:4px;">客户满意度</div>' +
-                        '<div style="font-size:20px;font-weight:700;color:#8b5cf6;">96%</div>' +
-                        '<div style="font-size:11px;color:var(--text-secondary);">环比+2%</div></div></div>' +
-                        '<div style="margin:16px 0;font-size:14px;font-weight:600;">🎯 **重点行动建议**</div>' +
-                        '<div class="task-card" style="border-left:4px solid #ff6b6b;">' +
-                        '<div class="task-title">⚠️ 收入缺口预警</div>' +
-                        '<div class="task-desc">本月收入完成度68%，低于时间进度（83%），存在400万缺口</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'查看缺口明细\')">查看明细</button><button class="btn btn-secondary" onclick="completeAction(\'制定追赶计划\')">制定计划</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #3b82f6;">' +
-                        '<div class="task-title">💡 本月Top机会</div>' +
-                        '<div class="task-desc">华泰资管（预计120万）、嘉实基金（预计80万）、跨境收益互换（预计200万）</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'查看机会清单\')">查看清单</button><button class="btn btn-secondary" onclick="completeAction(\'分配跟进\')">分配跟进</button></div></div>' +
-                        '<div class="task-card" style="border-left:4px solid #10b981;">' +
-                        '<div class="task-title">✅ 值得表扬</div>' +
-                        '<div class="task-desc">客户满意度96%超目标，本月新增4家客户质量良好</div>' +
-                        '<div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'查看优秀案例\')">查看案例</button><button class="btn btn-secondary" onclick="completeAction(\'分享经验\')">分享经验</button></div></div>' +
-                        '<div style="margin-top:16px;padding:16px;background:rgba(0,122,255,0.05);border-radius:12px;border:1px solid rgba(0,122,255,0.1);">' +
-                        '<div style="font-size:13px;color:var(--primary);margin-bottom:8px;">📈 AI经营建议</div>' +
-                        '<div style="font-size:14px;">建议优先突破华泰资管开户（预计本周完成），同时启动跨境收益互换产品推介，预计可补足60%的收入缺口。</div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['制定追赶计划', '查看机会清单', '导出月报', '设置下月目标']);
-                });
-            }, 500);
+            typeWriter('📊 **业绩看板**\n\n📈 **本月关键指标**：\n\n├─ 新增客户：12户（目标15户，完成80%）\n├─ 新增资产：8.5亿（目标10亿，完成85%）\n├─ 交易量：156亿（环比增长23%）\n├─ 收入：342万（目标400万，完成86%）\n└─ 客户满意度：4.6/5.0 ⭐\n\n🏆 **排名**：团队第3名（共15人）', () => {
+                updateSuggestions(['📈 趋势分析', '📊 客户分析', '🎯 目标调整']);
+            });
         }
 
         function showUrgentTasks() {
-            setTimeout(() => {
-                typeWriter('🔴 **紧急事项** - 需立即处理\n\n共 **2 项** 紧急任务：', () => {
-                    const html = '<div class="task-card urgent"><div class="task-title">华泰资管</div><div class="task-desc">引入客户 · 资料待补充 · 剩余2小时</div><div class="task-actions"><button class="btn btn-success" onclick="completeAction(\'一键催办\')">✓ 一键催办</button><button class="btn btn-secondary" onclick="completeAction(\'电话提醒\')">电话提醒</button></div></div><div class="task-card urgent"><div class="task-title">中银基金</div><div class="task-desc">客户服务 · 舆情预警 · 2小时前</div><div class="task-actions"><button class="btn btn-primary" onclick="completeAction(\'生成简报\')">生成简报</button><button class="btn btn-secondary" onclick="completeAction(\'联系客户\')">联系客户</button></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['一键催办华泰', '生成中银简报']);
-                });
-            }, 500);
+            typeWriter('🔴 **紧急事项**（3项）\n\n1. **华泰资管资料补充**\n   截止：2小时内 · 影响：开户进度\n\n2. **中银基金舆情处理**\n   负面报道需紧急沟通\n\n3. **系统故障响应**\n   交易异常需技术介入', () => {
+                updateSuggestions(['立即处理', '分配资源', '上报升级']);
+            });
         }
 
         function showTodayOverview() {
-            setTimeout(() => {
-                typeWriter('📊 **今日任务概览**\n\n共 **18 项任务** · **2 个紧急**\n\n各业务线分布：', () => {
-                    for (const [keyword, data] of Object.entries(businessNav)) {
-                        const html = '<div class="task-card" style="cursor:pointer;" onclick="enterCategory(\'' + keyword + '\')"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:600;">' + keyword + '</div><div class="task-desc">' + data.desc + '</div></div><div style="text-align:right;"><div style="font-size:18px;font-weight:600;">' + data.count.total + '</div><div style="font-size:11px;color:var(--text-secondary);">' + (data.count.urgent > 0 ? '🔴 ' + data.count.urgent + '紧急' : '项任务') + '</div></div></div></div>';
-                        const lastMsg = chat.lastElementChild;
-                        if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    }
-                    updateSuggestions(['📝 客户开发', '⚡ 快速开户', '📋 请示与协同', '📊 业绩看板']);
-                });
-            }, 500);
+            typeWriter('📋 **今日工作台概览**\n\n🎯 **重点任务**：\n• 拓客准备：4项（1紧急）\n• 业务引入：3项\n• 交易服务：5项\n• 客户服务：6项（1预警）\n\n⏰ **今日日程**：\n• 10:00 华泰资管拜访\n• 14:00 团队周会\n• 16:00 易方达路演', () => {
+                updateSuggestions(['查看详情', '📅 日程管理', '⏰ 设置提醒']);
+            });
         }
 
         function startVoice() {
-            addUserMessage('🎤 语音输入中...');
-            setTimeout(() => {
-                typeWriter('收到语音消息，正在识别...\n\n识别结果："查看今日工作重点"\n\n为您展示今日业务概览：', () => {
-                    showTodayOverview();
-                });
-            }, 1500);
+            typeWriter('🎤 语音输入已开启，请说话...', () => {
+                setTimeout(() => {
+                    addUserMessage('我想查询高毅资产的最新持仓情况');
+                    setTimeout(() => {
+                        typeWriter('🔍 **高毅资产持仓查询**\n\n正在调取最新数据...\n\n✅ 查询完成！\n\n📊 **最新持仓**（截至昨日）：\n• 贵州茅台：15%\n• 宁德时代：12%\n• 比亚迪：10%\n• 其他：63%\n\n💡 **变化**：较上月增持新能源板块', () => {
+                            updateSuggestions(['📊 详细分析', '📈 走势预测', '💬 分享给客户']);
+                        });
+                    }, 1500);
+                }, 2000);
+            });
         }
 
         function openCamera() {
-            addUserMessage('📷 打开相机');
-            setTimeout(() => {
-                typeWriter('📷 **拍照识别**\n\n请拍摄客户名片或资料，我将自动提取信息并建档。\n\n💡 **支持识别**：\n• 名片信息（姓名、公司、职位、电话）\n• 证件资料（身份证、营业执照）\n• 合同文件（关键条款提取）', () => {
-                    updateSuggestions(['上传名片', '拍摄证件', '识别合同']);
-                });
-            }, 500);
+            typeWriter('📷 相机已开启，请对准需要识别的文件或证件...', () => {
+                updateSuggestions(['📄 证件识别', '📑 合同扫描', '✍️ 签名采集']);
+            });
         }
 
         function openMore() {
-            addUserMessage('更多功能');
-            setTimeout(() => {
-                typeWriter('📱 **更多功能**\n\n请选择功能：', () => {
-                    const html = '<div class="sub-grid"><div class="sub-item" onclick="send(\'文件传输\')"><div class="sub-name">📎 文件传输</div><div class="sub-desc">发送合同、协议等文件</div></div><div class="sub-item" onclick="send(\'位置共享\')"><div class="sub-name">📍 位置共享</div><div class="sub-desc">分享拜访位置</div></div><div class="sub-item" onclick="send(\'日程同步\')"><div class="sub-name">📅 日程同步</div><div class="sub-desc">同步客户拜访日程</div></div><div class="sub-item" onclick="send(\'历史记录\')"><div class="sub-name">📜 历史记录</div><div class="sub-desc">查看沟通历史</div></div></div>';
-                    const lastMsg = chat.lastElementChild;
-                    if (lastMsg) lastMsg.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
-                    updateSuggestions(['返回工作台']);
-                });
-            }, 500);
-        }
-
-        function updateSuggestions(list) {
-            suggestions.innerHTML = list.map(s => '<div class="chip" onclick="send(\'' + s + '\')">' + s + '</div>').join('');
+            typeWriter('📎 **更多功能**：\n\n• 📄 文档管理\n• 📊 数据导出\n• ⚙️ 系统设置\n• ❓ 帮助中心\n• 📞 联系客服', () => {
+                updateSuggestions(['📄 查看文档', '⚙️ 设置', '📞 联系客服']);
+            });
         }
     </script>
 </body>
