@@ -377,13 +377,34 @@
             
             setTimeout(() => {
                 typeWriter(welcomeMsgs[keyword], () => {
+                    // 拓客准备增加三个关键提示词
+                    if (keyword === '拓客准备') {
+                        addQuickPrompts(['📋 潜在客户清单', '🔍 查询客户信息', '📝 沟通要点准备']);
+                    }
                     // 显示案例卡片
                     data.cases.forEach((caseItem, idx) => {
-                        setTimeout(() => addCaseCard(caseItem, data.color), idx * 200);
+                        setTimeout(() => addCaseCard(caseItem, data.color), idx * 200 + (keyword === '拓客准备' ? 300 : 0));
                     });
                     updateSuggestions(['处理', '查看全部', '返回']);
                 });
             }, 300);
+        }
+        
+        function addQuickPrompts(prompts) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message message-ai';
+            wrapper.style.marginTop = '12px';
+            wrapper.innerHTML = `
+                <div class="ai-icon">💡</div>
+                <div class="ai-content">
+                    <div style="font-size:14px;margin-bottom:10px;">快速操作：</div>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        ${prompts.map(p => `<div class="prompt-tag" onclick="send('${p}')" style="padding:12px 16px;background:#f2f3f5;border-radius:12px;cursor:pointer;font-size:14px;">${p}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+            chat.appendChild(wrapper);
+            chat.scrollTop = chat.scrollHeight;
         }
 
         function addCaseCard(caseItem, color) {
