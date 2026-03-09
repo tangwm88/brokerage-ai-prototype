@@ -64,6 +64,66 @@
         .sub-item { padding: 12px; background: rgba(0,0,0,0.02); border-radius: 12px; cursor: pointer; }
         .sub-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
         .sub-desc { font-size: 11px; color: var(--text-secondary); }
+        
+        /* 数字分身入口样式 */
+        .ai-agents-bar {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            overflow-x: auto;
+            margin-bottom: 8px;
+        }
+        .ai-agents-bar::-webkit-scrollbar { display: none; }
+        .ai-agent-entry {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .ai-agent-entry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .ai-agent-entry.active {
+            border-color: var(--primary);
+            background: rgba(0,122,255,0.05);
+        }
+        .ai-agent-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .ai-agent-avatar.account { background: linear-gradient(135deg, #3370ff, #5b8cff); }
+        .ai-agent-avatar.trading { background: linear-gradient(135deg, #00b578, #5cdb8a); }
+        .ai-agent-avatar.risk { background: linear-gradient(135deg, #ff7d00, #ffa940); }
+        .ai-agent-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .ai-agent-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .ai-agent-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .ai-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 8px 0;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +134,32 @@
         </div>
         <div class="chat" id="chat"></div>
         <div class="input-area">
+            <!-- 数字分身入口 -->
+            <div class="ai-agents-bar" id="aiAgents">
+                <div class="ai-agent-entry active" onclick="selectAgent('account')">
+                    <div class="ai-agent-avatar account">👔</div>
+                    <div class="ai-agent-info">
+                        <span class="ai-agent-name">机构开户</span>
+                        <span class="ai-agent-role">材料·审核·进度</span>
+                    </div>
+                </div>
+                <div class="ai-agent-entry" onclick="selectAgent('trading')">
+                    <div class="ai-agent-avatar trading">📊</div>
+                    <div class="ai-agent-info">
+                        <span class="ai-agent-name">交易服务</span>
+                        <span class="ai-agent-role">系统·算法·异常</span>
+                    </div>
+                </div>
+                <div class="ai-agent-entry" onclick="selectAgent('risk')">
+                    <div class="ai-agent-avatar risk">⚠️</div>
+                    <div class="ai-agent-info">
+                        <span class="ai-agent-name">风险提示</span>
+                        <span class="ai-agent-role">风控·合规·预警</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ai-divider"></div>
+            
             <div class="suggestions" id="suggestions"></div>
             <div class="input-box">
                 <div class="input-voice" onclick="startVoice()">🎤</div>
@@ -134,6 +220,40 @@
                 });
             }, 200);
         };
+
+        // 当前选中的数字分身
+        let currentAgent = 'account';
+        
+        // 数字分身配置
+        const agentConfig = {
+            'account': { name: '机构开户专员', icon: '👔', desc: '材料·审核·进度', color: '#3370ff' },
+            'trading': { name: '交易服务员', icon: '📊', desc: '系统·算法·异常', color: '#00b578' },
+            'risk': { name: '风险提示官', icon: '⚠️', desc: '风控·合规·预警', color: '#ff7d00' }
+        };
+        
+        // 切换数字分身
+        function selectAgent(agentType) {
+            currentAgent = agentType;
+            
+            // 更新UI状态
+            document.querySelectorAll('.ai-agent-entry').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // 发送欢迎消息
+            const config = agentConfig[agentType];
+            typeWriter(`${config.icon} **${config.name}** 为您服务\n\n💡 ${config.desc}\n\n有什么可以帮您的？`, () => {
+                // 根据分身类型更新快捷建议
+                if (agentType === 'account') {
+                    updateSuggestions(['📋 查询开户进度', '📝 材料清单', '🔍 客户资质查询']);
+                } else if (agentType === 'trading') {
+                    updateSuggestions(['⚡ 系统配置申请', '📈 成交查询', '🔧 异常处理']);
+                } else if (agentType === 'risk') {
+                    updateSuggestions(['⚠️ 风险预警查看', '📊 持仓集中度', '🔔 合规提醒']);
+                }
+            });
+        }
 
         function typeWriter(text, callback) {
             const wrapper = document.createElement('div');
