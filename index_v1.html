@@ -350,6 +350,20 @@
                 showCustomerQuery();
             } else if (msg.includes('沟通要点准备') || msg === '📝 沟通要点准备') {
                 showCommunicationPrep();
+            } else if (msg.includes('客户拜访反馈') || msg === '📝 客户拜访反馈') {
+                showVisitFeedback();
+            } else if (msg.includes('客户信息登记') || msg === '➕ 客户信息登记') {
+                showCustomerRegistration();
+            } else if (msg.includes('客户材料提交') || msg === '📎 客户材料提交') {
+                showMaterialSubmission();
+            } else if (msg.includes('客户交易服务方案') || msg === '📊 客户交易服务方案') {
+                showServiceProposal();
+            } else if (msg.includes('开户申请及结果') || msg === '📝 开户申请及结果') {
+                showAccountApplication();
+            } else if (msg.includes('系统开通申请') || msg === '💻 系统开通申请') {
+                showSystemActivation();
+            } else if (msg.includes('特殊事项申请') || msg === '⚠️ 特殊事项申请') {
+                showSpecialRequest();
             } else if (msg.includes('快速开户') || msg.includes('开户申请')) {
                 showQuickOpenAccount();
             } else if (msg.includes('请示与协同')) {
@@ -385,9 +399,17 @@
                     if (keyword === '拓客准备') {
                         addQuickPrompts(['📋 潜在客户清单', '🔍 查询客户信息', '📝 沟通要点准备']);
                     }
+                    // 业务引入增加四个关键提示词
+                    if (keyword === '业务引入') {
+                        addQuickPrompts(['📝 客户拜访反馈', '➕ 客户信息登记', '📎 客户材料提交', '📊 客户交易服务方案']);
+                    }
+                    // 交易服务增加三个关键提示词
+                    if (keyword === '交易服务') {
+                        addQuickPrompts(['📝 开户申请及结果', '💻 系统开通申请', '⚠️ 特殊事项申请']);
+                    }
                     // 显示案例卡片
                     data.cases.forEach((caseItem, idx) => {
-                        setTimeout(() => addCaseCard(caseItem, data.color), idx * 200 + (keyword === '拓客准备' ? 300 : 0));
+                        setTimeout(() => addCaseCard(caseItem, data.color), idx * 200 + (keyword === '拓客准备' || keyword === '业务引入' || keyword === '交易服务' ? 300 : 0));
                     });
                     updateSuggestions(['处理', '查看全部', '返回']);
                 });
@@ -650,18 +672,18 @@
             }, 2000);
         }
 
-        // 📝 沟通要点准备 - 点击后展示
-        function showCommunicationPrep() {
-            typeWriter('📝 **沟通要点准备**\n\n请选择拜访客户：', () => {
+        // 📝 客户拜访反馈 - 业务引入
+        function showVisitFeedback() {
+            typeWriter('📝 **客户拜访反馈**\n\n请选择客户并填写拜访反馈：', () => {
                 const html = `
                     <div class="sub-grid">
-                        <div class="sub-item" onclick="send('准备拜访 华夏未来')">
+                        <div class="sub-item" onclick="send('反馈 华夏未来资产')">
                             <div class="sub-name">华夏未来资产</div>
-                            <div class="sub-desc">量化私募 · 意向强</div>
+                            <div class="sub-desc">昨日拜访 · 待反馈</div>
                         </div>
-                        <div class="sub-item" onclick="send('准备拜访 深圳创新投')">
-                            <div class="sub-name">深圳创新投资</div>
-                            <div class="sub-desc">股权投资 · 待跟进</div>
+                        <div class="sub-item" onclick="send('反馈 高毅资产')">
+                            <div class="sub-name">高毅资产</div>
+                            <div class="sub-desc">本周拜访 · 意向明确</div>
                         </div>
                     </div>
                 `;
@@ -669,19 +691,193 @@
                 chat.scrollTop = chat.scrollHeight;
             });
             
-            // 模拟选择后展示拜访准备
             setTimeout(() => {
-                addUserMessage('准备拜访 华夏未来');
+                addUserMessage('反馈 华夏未来资产');
                 setTimeout(() => {
-                    typeWriter('📝 **拜访准备 - 华夏未来资产**\n\n📋 **客户情报**\n• 类型：量化私募（80亿规模）\n• 核心人物：李明（投资总监，前高盛量化）\n• 近期动态：发布新产品、招聘扩张\n\n🎯 **痛点挖掘方向**\n1. 当前量化系统早盘延迟问题\n2. 交易执行滑点控制满意度\n3. 券源获取及时性\n\n💡 **产品推荐策略**\n主推：TradeX极速交易 + 算法交易\n价值点：延迟降低50%、TWAP/VWAP算法\n\n📝 **下一步建议**\n目标：邀请参观交易大厅 + 安排系统演示\n时间：建议本周内', () => {
+                    typeWriter('📝 **拜访反馈 - 华夏未来资产**\n\n📅 **拜访信息**\n• 时间：2026-03-08 14:00\n• 地点：客户公司会议室\n• 我方：张三、李四\n• 客户：李明（投资总监）\n\n📋 **沟通内容**\n• 客户痛点：当前系统早盘延迟严重\n• 关注点：交易执行效率、算法支持\n• 需求：TradeX极速交易+算法交易\n\n🎯 **意向评估**：A级（强烈意向）\n\n✅ **下一步行动**\n• 提供正式报价单\n• 安排系统演示\n• 邀请参观交易大厅', () => {
+                        updateSuggestions(['📋 查看详情', '📝 补充记录', '📊 更新状态']);
+                    });
+                }, 1000);
+            }, 2000);
+        }
+
+        // ➕ 客户信息登记 - 业务引入
+        function showCustomerRegistration() {
+            typeWriter('➕ **客户信息登记**\n\n请选择客户类型：', () => {
+                const html = `
+                    <div class="sub-grid">
+                        <div class="sub-item" onclick="send('登记 自营户')">
+                            <div class="sub-name">🏢 自营账户</div>
+                            <div class="sub-desc">机构自有资金</div>
+                        </div>
+                        <div class="sub-item" onclick="send('登记 资管户')">
+                            <div class="sub-name">📦 资管账户</div>
+                            <div class="sub-desc">资产管理计划</div>
+                        </div>
+                        <div class="sub-item" onclick="send('登记 产品户')">
+                            <div class="sub-name">📋 产品账户</div>
+                            <div class="sub-desc">基金/信托产品</div>
+                        </div>
+                        <div class="sub-item" onclick="send('登记 其他')">
+                            <div class="sub-name">🔹 其他类型</div>
+                            <div class="sub-desc">特殊机构客户</div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            
+            setTimeout(() => {
+                addUserMessage('登记 产品户');
+                setTimeout(() => {
+                    typeWriter('➕ **客户信息登记 - 产品户**\n\n📋 **基础信息**\n• 客户名称：华夏未来量化精选\n• 产品代码：SXXXXX\n• 产品类型：私募证券投资基金\n• 成立日期：2024-06-15\n• 管理规模：80亿\n\n👤 **管理人信息**\n• 名称：华夏未来资产管理有限公司\n• 统一代码：91310115XXXXXXXXXX\n• 法人：王某某\n• 联系人：李明\n\n✅ **登记完成**\n客户编号：C20260309001\n归属人：张三\n登记时间：2026-03-09', () => {
+                        updateSuggestions(['📎 上传材料', '🔍 查看详情', '📝 补充信息']);
+                    });
+                }, 1000);
+            }, 2000);
+        }
+
+        // 📎 客户材料提交 - 业务引入
+        function showMaterialSubmission() {
+            typeWriter('📎 **客户材料提交**\n\n📋 **材料清单（产品户）**\n\n✅ **已完成（3/8）**\n☑️ 营业执照副本\n☑️ 法定代表人身份证\n☑️ 产品合同\n\n⏳ **待提交（5/8）**\n◻️ 产品备案证明 ⚠️ 关键材料\n◻️ 托管协议 ⚠️ 关键材料\n◻️ 管理人资格证明\n◻️ 授权委托书\n◻️ 风险揭示书', () => {
+                const btnHtml = `
+                    <div class="task-actions" style="margin-top:12px;">
+                        <button class="btn btn-primary" onclick="send('上传材料')">📤 上传材料</button>
+                        <button class="btn btn-secondary" onclick="send('申请容缺')">⚡ 申请容缺</button>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', btnHtml);
+                updateSuggestions(['📤 上传', '⏰ 提醒客户', '📋 查看要求']);
+            });
+        }
+
+        // 📊 客户交易服务方案 - 业务引入
+        function showServiceProposal() {
+            typeWriter('📊 **客户交易服务方案生成**\n\n正在分析华夏未来资产的需求...', () => {
+                setTimeout(() => {
+                    typeWriter('📊 **华夏未来资产 - 交易服务方案**\n\n🎯 **客户画像**\n• 类型：量化私募（高频策略）\n• 规模：80亿\n• 痛点：交易延迟、券源不足\n\n💡 **推荐方案**\n\n**方案一：极速交易组合**\n• TradeX极速交易系统\n• FixStation专业终端\n• 专属席位（延迟<3ms）\n• 费率：0.025%（阶梯优惠）\n\n**方案二：算法交易增强**\n• TWAP/VWAP算法\n• 智能拆单\n• 实时风控监控\n• 费率：0.015%\n\n**增值服务**\n• 7×24小时技术支持\n• 定制量化API\n• 专属客户经理\n\n📈 **预期效果**：交易效率提升50%，滑点降低30%', () => {
                         const btnHtml = `
                             <div class="task-actions" style="margin-top:12px;">
-                                <button class="btn btn-primary" onclick="send('添加到日程')">添加到日程</button>
-                                <button class="btn btn-secondary" onclick="send('生成拜访纪要模板')">生成纪要模板</button>
+                                <button class="btn btn-primary" onclick="send('发送方案给客户')">📤 发送客户</button>
+                                <button class="btn btn-secondary" onclick="send('调整方案')">🔧 调整方案</button>
+                                <button class="btn btn-success" onclick="send('导出PDF')">📄 导出PDF</button>
                             </div>
                         `;
                         chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', btnHtml);
-                        updateSuggestions(['📅 约时间', '📊 发资料', '✅ 标记已拜访']);
+                        updateSuggestions(['📤 发客户', '💬 预约讲解', '✅ 确认签约']);
+                    });
+                }, 1500);
+            });
+        }
+
+        // 📝 开户申请及结果 - 交易服务
+        function showAccountApplication() {
+            typeWriter('📝 **开户申请及进度查询**\n\n📋 **近期申请（3条）**', () => {
+                const html = `
+                    <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
+                        <div style="background:rgba(0,0,0,0.02);padding:12px;border-radius:10px;border-left:3px solid var(--success);">
+                            <div style="font-weight:600;font-size:14px;">华夏未来量化精选</div>
+                            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">产品户 · 申请编号：KH20260309001</div>
+                            <div style="margin-top:6px;">
+                                <span style="background:var(--success);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;">✅ 已通过</span>
+                                <span style="font-size:12px;color:var(--text-secondary);margin-left:8px;">完成时间：2026-03-09</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background:rgba(0,0,0,0.02);padding:12px;border-radius:10px;border-left:3px solid var(--warning);">
+                            <div style="font-weight:600;font-size:14px;">深圳创新投资</div>
+                            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">自营户 · 申请编号：KH20260308002</div>
+                            <div style="margin-top:6px;">
+                                <span style="background:var(--warning);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;">🔄 审核中</span>
+                                <span style="font-size:12px;color:var(--text-secondary);margin-left:8px;">当前：风控审核 · 预计明日</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background:rgba(0,0,0,0.02);padding:12px;border-radius:10px;border-left:3px solid var(--primary);">
+                            <div style="font-weight:600;font-size:14px;">北京鼎信资本</div>
+                            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">资管户 · 申请编号：KH20260307003</div>
+                            <div style="margin-top:6px;">
+                                <span style="background:var(--primary);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;">📋 资料审核</span>
+                                <span style="font-size:12px;color:var(--text-secondary);margin-left:8px;">待补：产品备案证明</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                updateSuggestions(['🔍 查详情', '⏰ 催办', '➕ 新申请']);
+            });
+        }
+
+        // 💻 系统开通申请 - 交易服务
+        function showSystemActivation() {
+            typeWriter('💻 **系统开通申请**\n\n请选择要开通的系统：', () => {
+                const html = `
+                    <div class="sub-grid">
+                        <div class="sub-item" onclick="send('申请 TradeX')">
+                            <div class="sub-name">⚡ TradeX极速</div>
+                            <div class="sub-desc">超低延迟 · 量化专用</div>
+                        </div>
+                        <div class="sub-item" onclick="send('申请 FixStation')">
+                            <div class="sub-name">🖥️ FixStation</div>
+                            <div class="sub-desc">专业终端 · 复杂策略</div>
+                        </div>
+                        <div class="sub-item" onclick="send('申请 API')">
+                            <div class="sub-name">🔌 API接口</div>
+                            <div class="sub-desc">程序化交易 · 定制开发</div>
+                        </div>
+                        <div class="sub-item" onclick="send('申请 PB')">
+                            <div class="sub-name">📊 PB系统</div>
+                            <div class="sub-desc">标准版 · 一般机构</div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            
+            setTimeout(() => {
+                addUserMessage('申请 TradeX');
+                setTimeout(() => {
+                    typeWriter('💻 **TradeX极速交易系统申请**\n\n📋 **申请信息**\n• 客户：华夏未来资产\n• 账户：产品户（SXXXXX）\n• 申请类型：极速交易+算法\n\n⚙️ **配置需求**\n• 接入方式：专线\n• 部署位置：托管机房（金融街）\n• 网络：双线热备\n• 预计延迟：<3ms\n\n📎 **所需材料**\n• 系统开通申请表（已上传）\n• 网络接入方案（待上传）\n• 技术对接人信息（待填写）\n\n⏱️ **预计开通时间**：3-5个工作日', () => {
+                        updateSuggestions(['📤 上传材料', '⏰ 查看进度', '🔧 配置参数']);
+                    });
+                }, 1000);
+            }, 2000);
+        }
+
+        // ⚠️ 特殊事项申请 - 交易服务
+        function showSpecialRequest() {
+            typeWriter('⚠️ **特殊事项申请**\n\n请选择申请类型：', () => {
+                const html = `
+                    <div class="sub-grid">
+                        <div class="sub-item" onclick="send('申请 费率优惠')">
+                            <div class="sub-name">💰 费率优惠</div>
+                            <div class="sub-desc">佣金/融资利率调整</div>
+                        </div>
+                        <div class="sub-item" onclick="send('申请 功能定制')">
+                            <div class="sub-name">🔧 功能定制</div>
+                            <div class="sub-desc">API/报表/接口定制</div>
+                        </div>
+                        <div class="sub-item" onclick="send('申请 合规例外')">
+                            <div class="sub-name">📋 合规例外</div>
+                            <div class="sub-desc">流程简化/材料容缺</div>
+                        </div>
+                        <div class="sub-item" onclick="send('申请 紧急处理')">
+                            <div class="sub-name">⚡ 紧急处理</div>
+                            <div class="sub-desc">加急审批/特殊时效</div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            
+            setTimeout(() => {
+                addUserMessage('申请 费率优惠');
+                setTimeout(() => {
+                    typeWriter('💰 **费率优惠申请**\n\n📋 **申请信息**\n• 客户：华夏未来资产\n• 申请事项：股票交易佣金优惠\n• 当前费率：0.03%\n• 申请费率：0.015%\n• 优惠幅度：50%\n\n📝 **申请理由**\n• 管理规模80亿，量化高频策略\n• 预计年交易量500亿+\n• 竞品报价0.012%，需有竞争力\n\n💡 **预期收益**\n• 预计年收入：XXX万元\n• 客户粘性提升\n• 带动其他业务\n\n⏱️ **审批路径**：团队长→部门负责人→分管副总\n预计：2-3个工作日', () => {
+                        updateSuggestions(['📤 提交申请', '📝 修改内容', '📊 查看状态']);
                     });
                 }, 1000);
             }, 2000);
