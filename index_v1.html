@@ -344,8 +344,12 @@
                 pushServiceTasks();
             } else if (msg.includes('制定经营方案') || msg.includes('定制我的')) {
                 createBusinessPlan();
-            } else if (msg.includes('客户开发') || msg.includes('潜客挖掘') || msg.includes('潜在客户清单')) {
-                showNewLeadEntry();
+            } else if (msg.includes('客户开发') || msg.includes('潜客挖掘') || msg.includes('潜在客户清单') || msg === '📋 潜在客户清单') {
+                showProspectList();
+            } else if (msg.includes('查询客户信息') || msg === '🔍 查询客户信息') {
+                showCustomerQuery();
+            } else if (msg.includes('沟通要点准备') || msg === '📝 沟通要点准备') {
+                showCommunicationPrep();
             } else if (msg.includes('快速开户') || msg.includes('开户申请')) {
                 showQuickOpenAccount();
             } else if (msg.includes('请示与协同')) {
@@ -589,6 +593,98 @@
             typeWriter('📎 **更多功能**：\n\n• 📄 文档管理\n• 📊 数据导出\n• ⚙️ 系统设置\n• ❓ 帮助中心\n• 📞 联系客服', () => {
                 updateSuggestions(['📄 查看文档', '⚙️ 设置', '📞 联系客服']);
             });
+        }
+
+        // 📋 潜在客户清单 - 点击后展示
+        function showProspectList() {
+            const prospects = [
+                { name: '华夏未来资产管理', type: '私募证券', scale: '50-100亿', match: 92, signals: ['近期招聘产品经理', '调研3家上市公司'] },
+                { name: '深圳创新投资', type: '私募股权', scale: '100亿+', match: 88, signals: ['深圳地区头部PE', '扩张期有证券需求'] },
+                { name: '北京鼎信资本', type: '量化私募', scale: '20-50亿', match: 85, signals: ['对交易系统要求高', '符合TradeX定位'] }
+            ];
+            
+            let html = '📋 **AI推荐潜在客户清单**\n\n基于您的历史偏好（量化私募类），今日推荐8条潜客：\n\n';
+            prospects.forEach((p, i) => {
+                html += `**${i+1}. ${p.name}**\n`;
+                html += `   匹配度：${p.match}% | 类型：${p.type} | 规模：${p.scale}\n`;
+                html += `   💡 ${p.signals.join(' · ')}\n\n`;
+            });
+            
+            typeWriter(html, () => {
+                const btnHtml = `
+                    <div class="task-actions" style="margin-top:12px;">
+                        <button class="btn btn-primary" onclick="send('查看全部潜客')">查看全部8条</button>
+                        <button class="btn btn-secondary" onclick="send('调整推荐偏好')">调整偏好</button>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', btnHtml);
+                updateSuggestions(['🔍 查详情', '➕ 一键登记', '📝 生成拜访']);
+            });
+        }
+
+        // 🔍 查询客户信息 - 点击后展示
+        function showCustomerQuery() {
+            typeWriter('🔍 **客户信息查询**\n\n请输入客户名称或关键词：', () => {
+                const html = `
+                    <div style="background:rgba(0,0,0,0.02);padding:12px;border-radius:8px;margin-top:10px;">
+                        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">最近查询：</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                            <span class="chip" onclick="send('查询 华夏未来')" style="font-size:12px;">华夏未来</span>
+                            <span class="chip" onclick="send('查询 高毅资产')" style="font-size:12px;">高毅资产</span>
+                            <span class="chip" onclick="send('查询 易方达')" style="font-size:12px;">易方达</span>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            
+            // 模拟查询结果展示
+            setTimeout(() => {
+                addUserMessage('查询 华夏未来');
+                setTimeout(() => {
+                    typeWriter('🔍 **华夏未来资产管理有限公司**\n\n📋 **基础信息**\n• 统一代码：91110000XXXXXXXX\n• 成立日期：2014-01-23\n• 注册资本：10亿元\n• 类型：私募证券投资基金\n\n📊 **业务信息**\n• 管理规模：80亿\n• 策略类型：量化高频\n• 当前服务商：某券商\n• 痛点：交易延迟、券源不足\n\n💡 **商机分析**：有意愿更换交易系统，推荐TradeX', () => {
+                        updateSuggestions(['📊 查看画像', '📝 生成方案', '🤝 分配跟进']);
+                    });
+                }, 1000);
+            }, 2000);
+        }
+
+        // 📝 沟通要点准备 - 点击后展示
+        function showCommunicationPrep() {
+            typeWriter('📝 **沟通要点准备**\n\n请选择拜访客户：', () => {
+                const html = `
+                    <div class="sub-grid">
+                        <div class="sub-item" onclick="send('准备拜访 华夏未来')">
+                            <div class="sub-name">华夏未来资产</div>
+                            <div class="sub-desc">量化私募 · 意向强</div>
+                        </div>
+                        <div class="sub-item" onclick="send('准备拜访 深圳创新投')">
+                            <div class="sub-name">深圳创新投资</div>
+                            <div class="sub-desc">股权投资 · 待跟进</div>
+                        </div>
+                    </div>
+                `;
+                chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', html);
+                chat.scrollTop = chat.scrollHeight;
+            });
+            
+            // 模拟选择后展示拜访准备
+            setTimeout(() => {
+                addUserMessage('准备拜访 华夏未来');
+                setTimeout(() => {
+                    typeWriter('📝 **拜访准备 - 华夏未来资产**\n\n📋 **客户情报**\n• 类型：量化私募（80亿规模）\n• 核心人物：李明（投资总监，前高盛量化）\n• 近期动态：发布新产品、招聘扩张\n\n🎯 **痛点挖掘方向**\n1. 当前量化系统早盘延迟问题\n2. 交易执行滑点控制满意度\n3. 券源获取及时性\n\n💡 **产品推荐策略**\n主推：TradeX极速交易 + 算法交易\n价值点：延迟降低50%、TWAP/VWAP算法\n\n📝 **下一步建议**\n目标：邀请参观交易大厅 + 安排系统演示\n时间：建议本周内', () => {
+                        const btnHtml = `
+                            <div class="task-actions" style="margin-top:12px;">
+                                <button class="btn btn-primary" onclick="send('添加到日程')">添加到日程</button>
+                                <button class="btn btn-secondary" onclick="send('生成拜访纪要模板')">生成纪要模板</button>
+                            </div>
+                        `;
+                        chat.lastElementChild.querySelector('.ai-content').insertAdjacentHTML('beforeend', btnHtml);
+                        updateSuggestions(['📅 约时间', '📊 发资料', '✅ 标记已拜访']);
+                    });
+                }, 1000);
+            }, 2000);
         }
     </script>
 </body>
