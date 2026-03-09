@@ -65,26 +65,27 @@
         .sub-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
         .sub-desc { font-size: 11px; color: var(--text-secondary); }
         
-        /* 数字分身入口样式 */
+        /* 数字分身入口样式 - 上下布局 */
         .ai-agents-bar {
             display: flex;
-            gap: 12px;
-            padding: 12px 0;
-            overflow-x: auto;
+            justify-content: space-around;
+            gap: 16px;
+            padding: 16px 12px;
             margin-bottom: 8px;
         }
-        .ai-agents-bar::-webkit-scrollbar { display: none; }
         .ai-agent-entry {
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 8px;
-            padding: 10px 14px;
+            padding: 12px 8px;
             background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
             cursor: pointer;
             transition: all 0.2s;
-            flex-shrink: 0;
+            flex: 1;
+            max-width: 100px;
         }
         .ai-agent-entry:hover {
             transform: translateY(-2px);
@@ -95,28 +96,29 @@
             background: rgba(0,122,255,0.05);
         }
         .ai-agent-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 36px;
+            background: linear-gradient(135deg, #e8f0ff, #f0f7ff);
         }
-        .ai-agent-avatar.account { background: linear-gradient(135deg, #3370ff, #5b8cff); }
-        .ai-agent-avatar.trading { background: linear-gradient(135deg, #00b578, #5cdb8a); }
-        .ai-agent-avatar.risk { background: linear-gradient(135deg, #ff7d00, #ffa940); }
         .ai-agent-info {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
         .ai-agent-name {
             font-size: 13px;
             font-weight: 600;
             color: var(--text);
+            margin-bottom: 2px;
         }
         .ai-agent-role {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
         }
         .ai-divider {
@@ -137,21 +139,21 @@
             <!-- 数字分身入口 -->
             <div class="ai-agents-bar" id="aiAgents">
                 <div class="ai-agent-entry active" onclick="selectAgent('account')">
-                    <div class="ai-agent-avatar account">🤖</div>
+                    <div class="ai-agent-avatar">🤖</div>
                     <div class="ai-agent-info">
                         <span class="ai-agent-name">机构开户</span>
                         <span class="ai-agent-role">材料·审核·进度</span>
                     </div>
                 </div>
                 <div class="ai-agent-entry" onclick="selectAgent('trading')">
-                    <div class="ai-agent-avatar trading">🤖</div>
+                    <div class="ai-agent-avatar">🤖</div>
                     <div class="ai-agent-info">
                         <span class="ai-agent-name">交易支持</span>
                         <span class="ai-agent-role">系统·算法·异常</span>
                     </div>
                 </div>
                 <div class="ai-agent-entry" onclick="selectAgent('risk')">
-                    <div class="ai-agent-avatar risk">🤖</div>
+                    <div class="ai-agent-avatar">🤖</div>
                     <div class="ai-agent-info">
                         <span class="ai-agent-name">客户服务</span>
                         <span class="ai-agent-role">风控·合规·预警</span>
