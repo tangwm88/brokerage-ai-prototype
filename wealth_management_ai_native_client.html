@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>财富管理智能体 - AI原生客户端</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        
+        /* 隐藏滚动条 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 玻璃拟态效果 */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .glass-dark {
+            background: rgba(17, 24, 39, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        /* 渐变背景 */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-card-1 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .gradient-card-2 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .gradient-card-3 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .gradient-card-4 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        /* 卡片动画 */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card-animate {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+        
+        /* 脉冲动画 */
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        
+        /* 语音波形 */
+        @keyframes sound-wave {
+            0%, 100% { height: 4px; }
+            50% { height: 20px; }
+        }
+        
+        .sound-bar {
+            animation: sound-wave 1s ease-in-out infinite;
+        }
+        
+        /* 打字光标 */
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+        
+        /* 拖拽指示器 */
+        .drag-indicator {
+            width: 40px;
+            height: 4px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 2px;
+            margin: 8px auto;
+        }
+        
+        /* 智能卡片样式 */
+        .smart-card {
+            transition: all 0.3s ease;
+            transform: translateZ(0);
+        }
+        
+        .smart-card:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        /* 快捷意图胶囊 */
+        .intent-pill {
+            transition: all 0.2s ease;
+        }
+        
+        .intent-pill:hover {
+            transform: scale(1.05);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        /* 底部安全区域 */
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 移动端容器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gray-50 relative overflow-hidden">
+        
+        <!-- 状态栏 -->
+        <div class="glass fixed top-0 left-0 right-0 z-50 px-4 pt-2 pb-2 max-w-md mx-auto">
+            <div class="flex justify-between items-center text-xs font-medium text-gray-800">
+                <span>9:41</span>
+                <div class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                    </svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M17.778 8.232c-2.403-2.978-5.402-4.436-5.556-4.508a1 1 0 01-.443-.445c-.14-.3-.388-.608-.779-.608s-.64.308-.78.608a1 1 0 01-.443.445c-.154.072-3.153 1.53-5.556 4.508-2.344 2.902-2.571 6.956-.655 8.748 1.928 1.803 5.117 1.349 6.434-.222a.51.51 0 00-.006-.64c-.194-.206-.5-.185-.705.018-1.004 1.012-3.375 1.322-4.774.014-1.384-1.295-1.188-4.392.813-6.872 1.779-2.203 4.015-3.53 4.822-3.962.155-.084.303-.156.443-.217.14.061.288.133.443.217.807.432 3.043 1.76 4.822 3.962 2.001 2.48 2.197 5.577.813 6.872-1.399 1.308-3.77.998-4.774-.014-.205-.203-.511-.224-.705-.018a.51.51 0 00-.006.64c1.317 1.571 4.506 2.025 6.434.222 1.916-1.792 1.689-5.846-.655-8.748zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="w-6 h-3 border border-gray-800 rounded-sm relative">
+                        <div class="absolute inset-0.5 bg-gray-800 rounded-sm w-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 顶部导航 -->
+        <div class="fixed top-8 left-0 right-0 z-40 max-w-md mx-auto px-4 pt-2">
+            <div class="glass rounded-2xl px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-sm">
+                        王
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">早上好</p>
+                        <p class="text-sm font-semibold text-gray-800">王先生</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button class="relative p-2 rounded-full hover:bg-gray-100 transition-colors" onclick="showNotifications()">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <button class="p-2 rounded-full hover:bg-gray-100 transition-colors" onclick="showSearch()">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="pt-28 px-4 pb-32 safe-bottom overflow-y-auto no-scrollbar" style="height: 100vh;">
+            
+            <!-- AI意图输入区 -->
+            <div class="mb-6">
+                <div class="glass rounded-2xl p-4 shadow-lg">
+                    <div class="relative">
+                        <input type="text" 
+                               id="intentInput"
+                               placeholder="今天想看什么？" 
+                               class="w-full bg-gray-50 rounded-xl px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                               onkeypress="handleIntentInput(event)">
+                        <button class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white" onclick="activateVoice()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- 快捷意图胶囊 -->
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button class="intent-pill px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-xs font-medium" onclick="quickIntent('查看持仓')">📊 查看持仓</button>
+                        <button class="intent-pill px-3 py-1.5 bg-green-50 text-green-600 rounded-full text-xs font-medium" onclick="quickIntent('买入股票')">💰 买入股票</button>
+                        <button class="intent-pill px-3 py-1.5 bg-purple-50 text-purple-600 rounded-full text-xs font-medium" onclick="quickIntent('资产配置')">🎯 资产配置</button>
+                        <button class="intent-pill px-3 py-1.5 bg-orange-50 text-orange-600 rounded-full text-xs font-medium" onclick="quickIntent('今日市场')">📈 今日市场</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 智能卡片流 -->
+            <div id="cardStream" class="space-y-4">
+                <!-- 卡片将通过JS动态生成 -->
+            </div>
+            
+        </div>
+        
+        <!-- AI对话悬浮按钮 -->
+        <button class="fixed bottom-6 right-6 w-14 h-14 rounded-full gradient-bg shadow-2xl flex items-center justify-center text-white z-50 hover:scale-110 transition-transform" onclick="toggleChat()">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center">3</span>
+        </button>
+        
+        <!-- AI聊天界面 -->
+        <div id="chatModal" class="fixed inset-0 z-50 hidden">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleChat()"></div>
+            <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-3xl h-[80vh] flex flex-col">
+                <div class="drag-indicator"></div>
+                <div class="px-4 py-3 border-b flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <span class="font-semibold text-gray-800">AI投资伙伴</span>
+                    </div>
+                    <button onclick="toggleChat()" class="p-2 hover:bg-gray-100 rounded-full">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <!-- 欢迎消息 -->
+                    <div class="flex items-start space-x-2">
+                        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <div class="bg-gray-100 rounded-2xl rounded-tl-none px-4 py-3 max-w-[80%]">
+                            <p class="text-sm text-gray-700">早上好，王先生！我是您的AI投资伙伴。今天市场开盘了，需要我帮您看看持仓情况吗？</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 border-t bg-gray-50">
+                    <div class="flex items-center space-x-2">
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
+                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                            </svg>
+                        </button>
+                        <input type="text" 
+                               id="chatInput"
+                               placeholder="输入您的问题..." 
+                               class="flex-1 bg-white rounded-full px-4 py-2 text-sm border focus:outline-none focus:border-indigo-500"
+                               onkeypress="handleChatInput(event)">
+                        <button class="p-2 gradient-bg rounded-full" onclick="sendMessage()">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 交易弹窗 -->
+        <div id="tradeModal" class="fixed inset-0 z-50 hidden">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeTradeModal()"></div>
+            <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-3xl">
+                <div class="drag-indicator"></div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">快速交易</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-xs text-gray-500">股票代码/名称</label>
+                            <input type="text" placeholder="输入代码或拼音" class="w-full mt-1 px-4 py-3 bg-gray-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-gray-500">买入价格</label>
+                                <input type="text" placeholder="市价" class="w-full mt-1 px-4 py-3 bg-gray-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-500">买入数量</label>
+                                <input type="text" placeholder="100股" class="w-full mt-1 px-4 py-3 bg-gray-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 pt-2">
+                            <button class="flex-1 py-3 rounded-xl bg-gray-100 text-gray-700 font-medium" onclick="closeTradeModal()">取消</button>
+                            <button class="flex-1 py-3 rounded-xl gradient-bg text-white font-medium" onclick="executeTrade()">确认买入</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        // 智能卡片数据
+        const smartCards = [
+            {
+                id: 1,
+                type: 'warning',
+                priority: 'high',
+                icon: '⚠️',
+                title: '持仓预警',
+                content: '您持有的宁德时代（300750）今日跌幅超5%，建议关注',
+                actions: ['查看原因', '一键调仓'],
+                gradient: 'from-red-400 to-pink-500',
+                delay: 0
+            },
+            {
+                id: 2,
+                type: 'advisor',
+                priority: 'medium',
+                icon: '🤖',
+                title: 'AI投顾 · 早盘必读',
+                content: '今日3条与您持仓相关的消息：新能源补贴政策延续、美联储利率决议今晚公布、半导体板块资金净流入第一',
+                actions: ['深度解读', '调整策略'],
+                gradient: 'from-indigo-400 to-purple-500',
+                delay: 0.1
+            },
+            {
+                id: 3,
+                type: 'portfolio',
+                priority: 'medium',
+                icon: '💎',
+                title: '为您定制的理财方案',
+                content: '当前配置健康度78分，发现2个问题：新能源板块占比过高、缺少固收类资产',
+                actions: ['查看详情', '一键调仓'],
+                gradient: 'from-emerald-400 to-teal-500',
+                hasChart: true,
+                delay: 0.2
+            },
+            {
+                id: 4,
+                type: 'opportunity',
+                priority: 'medium',
+                icon: '🔥',
+                title: '交易机会',
+                content: '您关注的半导体板块出现异动，中芯国际涨幅超8%',
+                actions: ['查看标的', '设置提醒'],
+                gradient: 'from-orange-400 to-amber-500',
+                delay: 0.3
+            },
+            {
+                id: 5,
+                type: 'trade',
+                priority: 'low',
+                icon: '💰',
+                title: '快捷交易',
+                content: '最近关注：宁德时代、比亚迪、中芯国际',
+                actions: ['买入宁德', '卖出隆基'],
+                gradient: 'from-blue-400 to-cyan-500',
+                delay: 0.4
+            },
+            {
+                id: 6,
+                type: 'podcast',
+                priority: 'low',
+                icon: '🎧',
+                title: 'AI播客 · 3分钟听懂今日市场',
+                content: '今日要点：新能源政策利好、芯片板块爆发、美股关注美联储决议',
+                actions: ['立即收听', '查看文稿'],
+                gradient: 'from-violet-400 to-fuchsia-500',
+                delay: 0.5
+            }
+        ];
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCards();
+        });
+
+        // 渲染智能卡片
+        function renderCards() {
+            const container = document.getElementById('cardStream');
+            container.innerHTML = smartCards.map(card => createCardHTML(card)).join('');
+        }
+
+        // 创建卡片HTML
+        function createCardHTML(card) {
+            const chartHTML = card.hasChart ? `
+                <div class="mt-3 flex items-center space-x-4">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>权益类 65%</span>
+                            <span class="text-red-500">偏高</span>
+                        </div>
+                        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-red-400 rounded-full" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>固收类 20%</span>
+                            <span class="text-yellow-500">偏低</span>
+                        </div>
+                        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-yellow-400 rounded-full" style="width: 20%"></div>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+
+            return `
+                <div class="smart-card card-animate bg-gradient-to-r ${card.gradient} rounded-2xl p-4 text-white shadow-lg" style="animation-delay: ${card.delay}s">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="text-xl">${card.icon}</span>
+                                <span class="font-semibold text-sm">${card.title}</span>
+                            </div>
+                            <p class="text-sm text-white/90 leading-relaxed">${card.content}</p>
+                            ${chartHTML}
+                            <div class="flex space-x-2 mt-3">
+                                ${card.actions.map((action, idx) => `
+                                    <button onclick="handleCardAction('${card.type}', ${idx})" 
+                                            class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-medium transition-colors">
+                                        ${action}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 处理卡片动作
+        function handleCardAction(type, actionIndex) {
+            const messages = {
+                warning: ['正在分析下跌原因...', '已为您生成调仓方案'],
+                advisor: ['正在解读政策影响...', '已加载策略调整界面'],
+                portfolio: ['正在加载资产配置详情...', '正在生成调仓建议...'],
+                opportunity: ['正在加载标的详情...', '提醒设置成功'],
+                trade: ['正在打开交易界面...', '正在加载卖出界面...'],
+                podcast: ['正在播放AI播客...', '文稿加载中...']
+            };
+            
+            showToast(messages[type][actionIndex] || '处理中...');
+        }
+
+        // 快捷意图
+        function quickIntent(intent) {
+            document.getElementById('intentInput').value = intent;
+            showToast(`已选择：${intent}`);
+            
+            setTimeout(() => {
+                if (intent === '买入股票') {
+                    document.getElementById('tradeModal').classList.remove('hidden');
+                } else if (intent === '资产配置') {
+                    addChatMessage('user', intent);
+                    setTimeout(() => {
+                        addChatMessage('ai', '已为您生成个性化资产配置方案：\n\n📊 当前配置健康度：78分\n\n⚠️ 发现问题：\n1. 新能源板块占比35%，过度集中\n2. 缺少固收类资产，抗波动能力弱\n\n🎯 优化建议：\n• 新能源减仓10%，分散到消费、医药\n• 增加短债基金20%仓位\n• 预期提升整体收益稳定性15%');
+                    }, 1000);
+                } else {
+                    addChatMessage('user', intent);
+                    setTimeout(() => {
+                        addChatMessage('ai', `正在为您${intent}，请稍候...`);
+                    }, 500);
+                }
+            }, 300);
+        }
+
+        // 意图输入处理
+        function handleIntentInput(event) {
+            if (event.key === 'Enter') {
+                const value = event.target.value;
+                if (value.trim()) {
+                    addChatMessage('user', value);
+                    event.target.value = '';
+                    
+                    // 模拟AI响应
+                    setTimeout(() => {
+                        const responses = [
+                            '已为您找到相关信息，正在整理中...',
+                            '这是一个很好的问题，让我为您分析一下...',
+                            '根据您的持仓情况，我建议...',
+                            '正在查询最新数据，请稍候...'
+                        ];
+                        addChatMessage('ai', responses[Math.floor(Math.random() * responses.length)]);
+                    }, 800);
+                }
+            }
+        }
+
+        // 聊天输入处理
+        function handleChatInput(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addChatMessage('user', message);
+                input.value = '';
+                
+                // 模拟AI响应
+                setTimeout(() => {
+                    const aiResponse = generateAIResponse(message);
+                    addChatMessage('ai', aiResponse);
+                }, 1000);
+            }
+        }
+
+        // 生成AI响应
+        function generateAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('持仓') || lowerMessage.includes('资产')) {
+                return `📊 您的持仓概况：\n\n总资产：¥1,245,800\n当日盈亏：+¥8,320 (+0.67%)\n\n🏆 今日表现最佳：\n宁德时代 +5.2%\n比亚迪 +3.8%\n\n⚠️ 需要关注：\n隆基绿能 -2.1%\n\n需要查看详细持仓分析吗？`;
+            }
+            
+            if (lowerMessage.includes('买') || lowerMessage.includes('卖')) {
+                return '我可以帮您快速交易。请告诉我：\n1. 股票代码或名称\n2. 买入/卖出数量\n3. 价格（或市价）\n\n例如："买入宁德时代100股，市价"';
+            }
+            
+            if (lowerMessage.includes('配置') || lowerMessage.includes('理财')) {
+                return `💎 为您定制的配置方案：\n\n根据您的风险偏好（稳健型），建议：\n\n• 权益类：50%（核心资产）\n• 固收类：30%（债券基金）\n• 现金类：15%（货币基金）\n• 其他：5%（黄金/REITs）\n\n当前您的权益类占比偏高，建议适当调整。是否查看详细方案？`;
+            }
+            
+            if (lowerMessage.includes('市场') || lowerMessage.includes('行情')) {
+                return `📈 今日市场概况（截至10:30）：\n\n上证指数：3,245.68 +0.52%\n深证成指：10,892.34 +0.78%\n创业板指：2,156.78 +1.23%\n\n🔥 热门板块：\n1. 半导体 +4.5%\n2. 新能源 +3.2%\n3. 医药 +1.8%\n\n💧 调整板块：\n1. 银行 -0.8%\n2. 地产 -0.5%\n\n需要了解哪个板块的详细分析？`;
+            }
+            
+            return `收到您的消息："${message}"\n\n我正在学习理解您的需求。您可以尝试问我：\n• "查看我的持仓"\n• "今天市场行情"\n• "帮我配置资产"\n• "买入XX股票"`;
+        }
+
+        // 添加聊天消息
+        function addChatMessage(type, message) {
+            const container = document.getElementById('chatMessages');
+            const isAI = type === 'ai';
+            
+            const messageHTML = `
+                <div class="flex items-start space-x-2 ${isAI ? '' : 'flex-row-reverse space-x-reverse'}">
+                    ${isAI ? `
+                        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                    ` : `
+                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0 text-sm font-bold text-gray-600">
+                            王
+                        </div>
+                    `}
+                    <div class="${isAI ? 'bg-gray-100 rounded-2xl rounded-tl-none' : 'bg-indigo-500 text-white rounded-2xl rounded-tr-none'} px-4 py-3 max-w-[80%]">
+                        <p class="text-sm whitespace-pre-line">${message}</p>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', messageHTML);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 切换聊天界面
+        function toggleChat() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('chatInput').focus();
+            }
+        }
+
+        // 激活语音
+        function activateVoice() {
+            showToast('🎤 请说话，我在听...');
+            
+            setTimeout(() => {
+                showToast('✅ 识别成功："查看今日持仓"');
+                setTimeout(() => {
+                    addChatMessage('user', '查看今日持仓');
+                    setTimeout(() => {
+                        addChatMessage('ai', generateAIResponse('持仓'));
+                    }, 800);
+                }, 500);
+            }, 2000);
+        }
+
+        // 显示搜索
+        function showSearch() {
+            showToast('🔍 搜索功能开发中...');
+        }
+
+        // 显示通知
+        function showNotifications() {
+            showToast('🔔 您有3条新消息：\n1. 持仓预警\n2. 投顾建议\n3. 交易提醒');
+        }
+
+        // 关闭交易弹窗
+        function closeTradeModal() {
+            document.getElementById('tradeModal').classList.add('hidden');
+        }
+
+        // 执行交易
+        function executeTrade() {
+            showToast('🔄 正在提交订单...');
+            setTimeout(() => {
+                showToast('✅ 订单提交成功！');
+                closeTradeModal();
+            }, 1500);
+        }
+
+        // Toast提示
+        function showToast(message) {
+            const existingToast = document.querySelector('.toast-message');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-message fixed top-20 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm z-50 shadow-lg';
+            toast.innerHTML = message.replace(/\n/g, '<br>');
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
