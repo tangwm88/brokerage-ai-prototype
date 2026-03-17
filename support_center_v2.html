@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组织者工作台 - 业务支持中心</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f5f5f7; --surface: #ffffff; --primary: #2563eb;
+            --success: #34c759; --warning: #ff9500; --danger: #ff3b30;
+            --text: #1d1d1f; --text-secondary: rgba(0,0,0,0.5);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; background: var(--bg); height: 100vh; overflow: hidden; }
+        .app { height: 100vh; display: flex; flex-direction: column; }
+        .top-bar { padding: 12px 16px; background: linear-gradient(135deg, #2563eb, #60a5fa); color: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-size: 16px; font-weight: 600; }
+        .chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+        .message { max-width: 92%; }
+        .message-user { align-self: flex-end; background: var(--primary); color: white; padding: 12px 16px; border-radius: 20px 20px 4px 20px; }
+        .message-ai { display: flex; gap: 10px; }
+        .ai-icon { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #60a5fa); display: flex; align-items: center; justify-content: center; }
+        .ai-content { flex: 1; background: var(--surface); padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .nav-center { margin-top: 12px; }
+        .biz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
+        .biz-entry { background: rgba(0,0,0,0.03); border-radius: 12px; padding: 14px; cursor: pointer; }
+        .entry-keyword { font-size: 15px; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+        .entry-desc { font-size: 11px; color: var(--text-secondary); }
+        .task-card { background: var(--surface); border-radius: 12px; padding: 14px; margin: 10px 0; border: 1px solid rgba(0,0,0,0.08); }
+        .task-card.urgent { border-left: 3px solid var(--danger); }
+        .task-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+        .task-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
+        .task-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn { padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; border: none; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-warning { background: var(--warning); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
+        .input-area { padding: 12px 16px; background: var(--surface); border-top: 1px solid rgba(0,0,0,0.08); }
+        .input-box { display: flex; gap: 10px; align-items: center; }
+        .input-field { flex: 1; padding: 12px 16px; border: 1px solid rgba(0,0,0,0.1); border-radius: 24px; font-size: 15px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 6px; }
+        .badge-red { background: rgba(255,59,48,0.1); color: var(--danger); }
+        .badge-green { background: rgba(52,199,89,0.1); color: var(--success); }
+        .form-group { margin: 12px 0; }
+        .form-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+        .form-input, .form-textarea { width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; font-size: 14px; }
+        .form-textarea { min-height: 100px; }
+        .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .radio-item { padding: 8px 14px; background: rgba(0,0,0,0.04); border-radius: 8px; font-size: 13px; cursor: pointer; border: 2px solid transparent; }
+        .radio-item.selected { background: rgba(37,99,235,0.1); border-color: var(--primary); color: var(--primary); }
+        .ai-suggestion { background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(96,165,250,0.08)); border-radius: 12px; padding: 14px; margin: 12px 0; border-left: 3px solid var(--primary); }
+        .status-flow { display: flex; align-items: center; gap: 6px; margin: 12px 0; font-size: 12px; }
+        .status-step { padding: 4px 8px; border-radius: 4px; }
+        .status-step.active { background: rgba(37,99,235,0.1); color: var(--primary); font-weight: 600; }
+        .section-title { font-size: 14px; font-weight: 600; margin: 16px 0 8px 0; }
+        .detail-list { margin: 8px 0; }
+        .detail-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
+        .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 6px; font-size: 13px; }
+        .checkbox { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .checkbox.checked { background: var(--success); border-color: var(--success); color: #fff; }
+        .info-card { background: rgba(37,99,235,0.05); border-radius: 10px; padding: 12px; margin: 10px 0; }
+        .info-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .info-content { font-size: 12px; color: var(--text-secondary); }
+        .suggestions { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; margin-bottom: 8px; }
+        .chip { padding: 8px 14px; background: rgba(37,99,235,0.1); border-radius: 16px; font-size: 13px; white-space: nowrap; cursor: pointer; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="top-bar">
+            <div>🏛️ 业务支持中心（组织者工作台）</div>
+            <div style="font-size: 13px;">AI运行中 🟢</div>
+        </div>
+        <div class="chat" id="chat"></div>
+        <div class="input-area">
+            <div class="suggestions" id="suggestions"></div>
+            <div class="input-box">
+                <input type="text" class="input-field" id="input" placeholder="输入指令或选择上方快捷操作..." onkeypress="if(event.key==='Enter')send()">
+                <button class="btn btn-primary" onclick="send()">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('input');
+        const suggestions = document.getElementById('suggestions');
+
+        // 模块配置
+        const modules = {
+            '提示事项': { color: '#ff6b6b', desc: '重大事项、问题反馈、资源协调', submenu: ['重大事项请示', '问题反馈', '资源协调'] },
+            '业务组织': { color: '#3b82f6', desc: '客户确认、开户审核、系统开通', submenu: ['确认前端客户', '开户审核确认', '分支机构跟踪', '系统开通反馈'] },
+            '队伍状况': { color: '#10b981', desc: '团队人员、工作负载', submenu: ['机构经纪团队', '研究所协同', '资管协同'] },
+            '风险提示': { color: '#f59e0b', desc: '集中度、舆情、合规风险', submenu: ['集中度风险', '舆情风险', '合规检查'] },
+            '业绩看板': { color: '#8b5cf6', desc: '业务数据、业绩指标', submenu: ['业务概览', '业绩指标', '趋势分析'] }
+        };
+
+        window.onload = () => {
+            addWelcome();
+        };
+
+        function addWelcome() {
+            const html = `
+                <div class="message message-ai">
+                    <div class="ai-icon">🏛️</div>
+                    <div class="ai-content">
+                        <div style="font-weight:600;margin-bottom:8px;">🤖 您好！我是业务支持中心AI助手</div>
+                        <div style="font-size:14px;color:var(--text-secondary);">我可以帮您处理以下工作：</div>
+                        <div class="biz-grid" style="margin-top:12px;">
+                            ${Object.entries(modules).map(([name, data]) => `
+                                <div class="biz-entry" onclick="enterModule('${name}')">
+                                    <div class="entry-keyword" style="color:${data.color}">${name}</div>
+                                    <div class="entry-desc">${data.desc}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            chat.innerHTML = html;
+            updateSuggestions(['重大事项请示', '客户确认', '开户审核', '查看风险']);
+        }
+
+        function enterModule(name) {
+            send(name);
+        }
+
+        function send(text) {
+            const msg = text || input.value.trim();
+            if (!msg) return;
+            
+            // 用户消息
+            chat.innerHTML += `
+                <div class="message message-user">${msg}</div>
+            `;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+
+            // 处理响应
+            setTimeout(() => processResponse(msg), 300);
+        }
+
+        function processResponse(msg) {
+            if (msg === '重大事项请示' || msg.includes('请示')) {
+                showMajorRequest();
+            } else if (msg === '确认前端客户' || msg.includes('客户确认')) {
+                showCustomerConfirm();
+            } else if (msg === '开户审核确认' || msg.includes('开户审核')) {
+                showAccountAudit();
+            } else if (msg === '集中度风险' || msg.includes('风险')) {
+                showRiskAlert();
+            } else if (modules[msg]) {
+                showModuleMenu(msg);
+            } else {
+                chat.innerHTML += `
+                    <div class="message message-ai">
+                        <div class="ai-icon">🏛️</div>
+                        <div class="ai-content">
+                            收到。请从下方选择功能模块：
+                            <div class="suggestions" style="margin-top:12px;">
+                                ${Object.keys(modules).map(m => `<span class="chip" onclick="send('${m}')">${m}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chat.scrollTop = chat.scrollHeight;
+            }
+        }
+
+        // ===== 1. 重大事项请示 - 完整闭环 =====
+        function showMajorRequest() {
+            chat.innerHTML += `
+                <div class="message message-ai">
+                    <div class="ai-icon">🏛️</div>
+                    <div class="ai-content">
+                        <div style="font-weight:600;margin-bottom:12px;">📝 新建重大事项请示</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">请示类型</label>
+                            <div class="radio-group">
+                                <div class="radio-item selected" onclick="selectRadio(this)">战略客户政策</div>
+                                <div class="radio-item" onclick="selectRadio(this)">重大资源投入</div>
+                                <div class="radio-item" onclick="selectRadio(this)">跨部门协调</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">客户名称</label>
+                            <input type="text" class="form-input" value="华泰资管">
+                        </div>
+
+                        <div class="ai-suggestion">
+                            <div style="font-weight:600;color:var(--primary);margin-bottom:6px;">🤖 AI生成请示草稿</div>
+                            <div style="font-size:13px;">基于客户历史数据，已自动生成请示背景和业务分析</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">请示内容（可编辑）</label>
+                            <textarea class="form-textarea">关于申请华泰资管费率优惠的请示
+
+一、客户背景
+华泰资管是我司核心战略客户，合作年限3年，托管规模50亿元。
+
+二、业务机会
+客户拟新增股票交易规模20亿元。
+
+三、具体诉求
+申请股票交易佣金费率由万3下调至万1.5。
+
+四、预期收益
+预计年收入增加500万元。</textarea>
+                        </div>
+
+                        <div class="status-flow">
+                            <span class="status-step active">草稿</span>
+                            <span>→</span>
+                            <span class="status-step">部门审核</span>
+                            <span>→</span>
+                            <span class="status-step">分管副总</span>
+                            <span>→</span>
+                            <span class="status-step">完成</span>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-title">🎯 推荐审批人</div>
+                            <div class="info-content">王总（分管副总）- 基于请示类型和金额推荐</div>
+                        </div>
+
+                        <div class="task-actions">
+                            <button class="btn btn-success" onclick="submitSuccess('请示已提交', 'REQ-20260308-001')">✓ 提交请示</button>
+                            <button class="btn btn-secondary">保存草稿</button>
+                            <button class="btn btn-secondary">重新生成</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+            updateSuggestions(['提交请示', '保存草稿', '返回']);
+        }
+
+        // ===== 2. 客户确认 - 完整闭环 =====
+        function showCustomerConfirm() {
+            chat.innerHTML += `
+                <div class="message message-ai">
+                    <div class="ai-icon">🏛️</div>
+                    <div class="ai-content">
+                        <div style="font-weight:600;margin-bottom:12px;">👤 前端客户确认（5家待确认）</div>
+                        
+                        <div class="task-card urgent" style="border-left:3px solid var(--warning);">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <div class="task-title">华泰资管</div>
+                                <span class="badge badge-red">查重预警</span>
+                            </div>
+                            <div class="task-desc">提交人：张三（北京分公司）· 2026-03-08 09:30</div>
+                            
+                            <div class="info-card" style="background:rgba(255,149,0,0.05);border-left:3px solid var(--warning);">
+                                <div style="font-weight:600;color:var(--warning);margin-bottom:6px;">⚠️ 查重结果：发现相似客户</div>
+                                <div style="font-size:12px;padding:8px;background:#fff;border-radius:6px;">
+                                    <div style="font-weight:500;">华泰资产管理有限公司</div>
+                                    <div style="color:var(--text-secondary);">相似度：92% · 归属：李四 · 状态：已签约</div>
+                                </div>
+                            </div>
+
+                            <div class="ai-suggestion">
+                                <div style="font-weight:600;color:var(--primary);margin-bottom:4px;">🤖 AI建议</div>
+                                <div style="font-size:13px;">疑似重复客户，建议协同跟进。可分配给原归属人李四。</div>
+                            </div>
+
+                            <div class="section-title">📊 AI生成客户画像</div>
+                            <div class="detail-list">
+                                <div class="detail-item"><span>行业</span><span>资产管理</span></div>
+                                <div class="detail-item"><span>规模</span><span>大型（AUM > 100亿）</span></div>
+                                <div class="detail-item"><span>风险等级</span><span style="color:var(--success);">R2-中低风险</span></div>
+                            </div>
+
+                            <div class="task-actions">
+                                <button class="btn btn-success" onclick="submitSuccess('客户已确认', 'C-20240308-001')">✓ 确认通过</button>
+                                <button class="btn btn-primary">分配归属</button>
+                                <button class="btn btn-secondary">退回补充</button>
+                                <button class="btn btn-danger">合并客户</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:12px;text-align:center;font-size:13px;color:var(--text-secondary);">
+                            还有 4 家客户待确认 →
+                        </div>
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+            updateSuggestions(['确认通过', '分配归属', '下一家']);
+        }
+
+        // ===== 3. 开户审核 - 完整闭环 =====
+        function showAccountAudit() {
+            chat.innerHTML += `
+                <div class="message message-ai">
+                    <div class="ai-icon">🏛️</div>
+                    <div class="ai-content">
+                        <div style="font-weight:600;margin-bottom:12px;">📋 开户审核确认（3笔待审核）</div>
+                        
+                        <div class="section-title" style="margin-top:0;">申请信息</div>
+                        <div class="detail-list">
+                            <div class="detail-item"><span>申请编号</span><span>ACC-20260308-001</span></div>
+                            <div class="detail-item"><span>客户名称</span><span>XX私募证券投资基金</span></div>
+                            <div class="detail-item"><span>账户类型</span><span>产品户</span></div>
+                        </div>
+
+                        <div class="section-title">📎 申请材料清单</div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item"><div class="checkbox checked">✓</div><span>产品备案函 ✅</span></div>
+                            <div class="checkbox-item"><div class="checkbox checked">✓</div><span>托管协议 ✅</span></div>
+                            <div class="checkbox-item"><div class="checkbox" style="border-color:var(--warning);">!</div><span style="color:var(--warning);">产品合同（缺少签字页）⚠️</span></div>
+                            <div class="checkbox-item"><div class="checkbox checked">✓</div><span>管理人资质证明 ✅</span></div>
+                        </div>
+
+                        <div class="ai-suggestion" style="border-left-color:var(--warning);">
+                            <div style="font-weight:600;color:var(--warning);margin-bottom:4px;">🤖 AI预审结果</div>
+                            <div style="font-size:13px;">
+                                <div>预审得分：<strong>85/100</strong></div>
+                                <div>风险等级：<span style="color:var(--warning);">中等</span></div>
+                                <div style="margin-top:4px;">⚠️ 缺少材料：产品合同签字页</div>
+                                <div>💡 建议：要求补充材料后通过</div>
+                            </div>
+                        </div>
+
+                        <div class="info-card" style="background:rgba(52,199,89,0.05);border-left:3px solid var(--success);">
+                            <div style="font-weight:600;color:var(--success);">🛡️ 底座风控检查</div>
+                            <div style="font-size:12px;margin-top:6px;">
+                                <div>✅ 合规检查通过</div>
+                                <div>✅ 反洗钱筛查通过</div>
+                                <div style="color:var(--warning);">⚠️ 集中度预警</div>
+                            </div>
+                        </div>
+
+                        <div class="task-actions">
+                            <button class="btn btn-success" onclick="submitSuccess('审核已通过', 'ACC-20240308-001')">✓ 审核通过</button>
+                            <button class="btn btn-warning">要求补充</button>
+                            <button class="btn btn-danger">✗ 拒绝</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+            updateSuggestions(['审核通过', '要求补充', '下一笔']);
+        }
+
+        // ===== 4. 风险提示 - 完整闭环 =====
+        function showRiskAlert() {
+            chat.innerHTML += `
+                <div class="message message-ai">
+                    <div class="ai-icon">🏛️</div>
+                    <div class="ai-content">
+                        <div style="font-weight:600;margin-bottom:12px;">⚠️ 集中度风险预警</div>
+                        
+                        <div class="task-card urgent" style="border-left:3px solid var(--danger);">
+                            <div class="task-title" style="color:var(--danger);">🔴 高风险 - 华泰资管</div>
+                            <div class="task-desc">预警时间：2026-03-08 10:30</div>
+                            <div class="task-desc">风险类型：单一证券持仓集中度超标</div>
+
+                            <div class="section-title">风险详情</div>
+                            <div class="detail-list">
+                                <div class="detail-item"><span>客户</span><span>华泰资管</span></div>
+                                <div class="detail-item"><span>证券</span><span>宁德时代（300750）</span></div>
+                                <div class="detail-item"><span>持仓占比</span><span style="color:var(--danger);font-weight:600;">18.5%</span></div>
+                                <div class="detail-item"><span>预警阈值</span><span>15%</span></div>
+                                <div class="detail-item"><span>超出比例</span><span style="color:var(--danger);">3.5%</span></div>
+                            </div>
+
+                            <div class="ai-suggestion" style="border-left-color:var(--danger);">
+                                <div style="font-weight:600;color:var(--danger);margin-bottom:4px;">🤖 AI风险评估</div>
+                                <div style="font-size:13px;">
+                                    <div>风险等级：<strong>高</strong></div>
+                                    <div style="margin-top:4px;">潜在影响：</div>
+                                    <div>• 该证券近5日波动率8.5%</div>
+                                    <div>• 单日最大可能损失：4420万元</div>
+                                    <div style="margin-top:4px;">建议措施：</div>
+                                    <div>1. 今日内减仓至15%以下</div>
+                                    <div>2. 设定止损线-8%</div>
+                                </div>
+                            </div>
+
+                            <div class="task-actions">
+                                <button class="btn btn-primary" onclick="submitSuccess('预警通知已发送', 'ALT-20240308-001')">发送预警通知</button>
+                                <button class="btn btn-secondary">生成处置方案</button>
+                                <button class="btn btn-success">标记已处理</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+            updateSuggestions(['发送预警', '生成方案', '标记处理']);
+        }
+
+        // ===== 辅助函数 =====
+        function showModuleMenu(name) {
+            const data = modules[name];
+            chat.innerHTML += `
+                <div class="message message-ai">
+                    <div class="ai-icon">🏛️</div>
+                    <div class="ai-content">
+                        <div style="font-weight:600;margin-bottom:12px;">${name}</div>
+                        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">请选择二级功能：</div>
+                        <div class="biz-grid">
+                            ${data.submenu.map(item => `
+                                <div class="biz-entry" onclick="send('${item}')">
+                                    <div class="entry-keyword" style="color:${data.color};font-size:14px;">${item}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+            updateSuggestions(data.submenu.slice(0, 3));
+        }
+
+        function selectRadio(el) {
+            el.parentElement.querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function submitSuccess(action, no) {
+            chat.innerHTML += `
+                <div class="message message-ai">
+                    <div class="ai-icon">✅</div>
+                    <div class="ai-content" style="background:rgba(52,199,89,0.1);border:1px solid var(--success);">
+                        <div style="font-weight:600;color:var(--success);">${action}</div>
+                        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">编号：${no}</div>
+                        <div style="margin-top:12px;">
+                            <button class="btn btn-secondary" onclick="send('返回')">返回工作台</button>
+                            <button class="btn btn-primary" onclick="send('查看进度')">查看进度</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function updateSuggestions(chips) {
+            suggestions.innerHTML = chips.map(c => `<span class="chip" onclick="send('${c}')">${c}</span>`).join('');
+        }
+    </script>
+</body>
+</html>
